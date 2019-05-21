@@ -9,6 +9,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 
 import com.management.implementation.managerImplementation;
+import com.management.model.eventData;
 
 /**
  *
@@ -17,6 +18,7 @@ import com.management.implementation.managerImplementation;
 public class Ottawa {
 
 	managerImplementation managerObj = null;
+	eventData serverData;
 	public Ottawa(managerImplementation aThis) {
 
 		this.managerObj = aThis;
@@ -25,7 +27,9 @@ public class Ottawa {
 	public void xyz(int port) throws SocketException {
 
 		System.out.println("Ottawa Server");
-
+		serverData = new eventData();
+		serverData.setServerName("Ottawa Server Data Model Crearted");
+        System.out.println(serverData.getServerName());
 		DatagramSocket conSocket = null;
 		conSocket = new DatagramSocket(port);
 	}

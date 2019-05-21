@@ -5,6 +5,7 @@
  */
 package com.management.interfaceDef;
 
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
@@ -16,5 +17,6 @@ import java.util.Map;
 public interface managerInterface extends Remote {
 
 	public void sendMessage(String msg) throws RemoteException;
+	public void addEvent(String msg) throws IOException;
 
 }

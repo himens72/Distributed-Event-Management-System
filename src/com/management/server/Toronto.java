@@ -6,10 +6,12 @@
 package com.management.server;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
 import com.management.implementation.managerImplementation;
+import com.management.model.eventData;
 
 /**
  *
@@ -18,6 +20,7 @@ import com.management.implementation.managerImplementation;
 public class Toronto {
 
 	managerImplementation managerObj = null;
+	eventData serverData;
 
 	public Toronto(managerImplementation aThis) {
 
@@ -27,8 +30,21 @@ public class Toronto {
 	public void xyz(int port) throws SocketException, IOException {
 
 		System.out.println("Toronto Server");
+		serverData = new eventData();
+		serverData.setServerName("Toronto Server Data Model Crearted");
+		System.out.println(serverData.getServerName());
+		DatagramPacket packet = null;
+		byte[] receiveData = new byte[65535];
+		DatagramSocket datagramSocket = datagramSocket = new DatagramSocket(port);
+			packet = new DatagramPacket(receiveData, receiveData.length);
+			datagramSocket.receive(packet);
+			System.out.println("Client:-" + processData(receiveData));
+			receiveData = new byte[65535];
+	}
 
-		DatagramSocket conSocket = null;
-		conSocket = new DatagramSocket(port);
+	private String processData(byte[] receiveData) {
+		// TODO Auto-generated method stub
+		System.out.println("Data Started Processing");
+		return "Event Created";
 	}
 }
