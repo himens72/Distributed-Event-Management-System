@@ -10,7 +10,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import com.management.implementation.managerImplementation;
+import org.json.simple.parser.ParseException;
+
+import com.management.implementation.EventManagerClient;
 
 /**
  *
@@ -18,13 +20,12 @@ import com.management.implementation.managerImplementation;
  */
 public class server {
 
-	public static void main(String args[]) throws RemoteException, AlreadyBoundException {
+	public static void main(String args[]) throws RemoteException, AlreadyBoundException, ParseException {
 
-	
 		Registry reg = LocateRegistry.createRegistry(8080);
-		managerImplementation toronto = new managerImplementation("TOR");
-		managerImplementation montreal = new managerImplementation("MTL");
-		managerImplementation ottawa = new managerImplementation("OTW");
+		EventManagerClient toronto = new EventManagerClient("TOR");
+		EventManagerClient montreal = new EventManagerClient("MTL");
+		EventManagerClient ottawa = new EventManagerClient("OTW");
 
 		reg.bind("Toronto M", toronto);
 		reg.bind("Montreal M", montreal);

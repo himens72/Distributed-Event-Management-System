@@ -16,6 +16,17 @@ import java.rmi.RemoteException;
 public interface managerInterface extends Remote {
 
 	public void sendMessage(String msg) throws RemoteException;
-	public void addEvent(String msg) throws IOException;
+
+	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) throws IOException;
+
+	public String removeEvent(String managerId, String eventId, String eventType) throws IOException;
+
+	public String listEventAvailability(String managerId, String eventType) throws IOException, InterruptedException;
+
+	public String eventBooking(String customerId, String eventId, String eventType) throws IOException;
+
+	public String cancelBooking(String customerId, String eventId, String eventType) throws IOException;
+
+	public String getBookingSchedule(String customerId) throws IOException;
 
 }
