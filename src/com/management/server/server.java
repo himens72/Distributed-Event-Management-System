@@ -10,8 +10,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import org.json.simple.parser.ParseException;
-
 import com.management.implementation.EventManagerClient;
 
 /**
@@ -20,7 +18,8 @@ import com.management.implementation.EventManagerClient;
  */
 public class server {
 
-	public static void main(String args[]) throws RemoteException, AlreadyBoundException, ParseException {
+
+	public static void main(String args[]) throws RemoteException, AlreadyBoundException {
 
 		Registry reg = LocateRegistry.createRegistry(8080);
 		EventManagerClient toronto = new EventManagerClient("TOR");

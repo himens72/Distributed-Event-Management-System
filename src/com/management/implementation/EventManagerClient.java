@@ -14,8 +14,6 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import org.json.simple.parser.ParseException;
-
 import com.management.interfaceDef.managerInterface;
 import com.management.model.eventData;
 import com.management.server.Montreal;
@@ -44,7 +42,7 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 		this.serverData = serverData;
 	}
 
-	public EventManagerClient(String location) throws RemoteException, ParseException {
+	public EventManagerClient(String location) throws RemoteException {
 		super();
 		serverData = new eventData();
 		this.location = location;

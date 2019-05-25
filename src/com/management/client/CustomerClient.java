@@ -13,6 +13,10 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 import com.management.interfaceDef.managerInterface;
 
 /**
@@ -24,18 +28,17 @@ public class CustomerClient {
 	static Registry reg;
 	static managerInterface managerObj;
 	static BufferedReader br;
+	private static Logger logger;
 
 	public static void main(String[] args) throws NotBoundException, IOException, InterruptedException {
 
 		reg = LocateRegistry.getRegistry(8080);
 		br = new BufferedReader(new InputStreamReader(System.in));
-
 		while (true) {
 			System.out.println("Enter Your ID");
 			String id = br.readLine().trim();
-
 			managerObj = null;
-
+			setLogger("logs/" + id + ".txt", id);
 			if (id.charAt(3) == 'M') {
 				createManagerObject(id.substring(0, 3));
 				System.out.println("1. Add Event ");
@@ -92,7 +95,7 @@ public class CustomerClient {
 		String eventId = br.readLine().trim();
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
-		System.out.println(managerObj.eventBooking(customerId, eventId, eventType));
+		logger.info(managerObj.eventBooking(customerId, eventId, eventType));
 	}
 
 	public static void listScheduleEventOption(String customerId) {
@@ -114,7 +117,7 @@ public class CustomerClient {
 		String eventType = br.readLine().trim();
 		System.out.println("3. Booking Capacity");
 		String eventCapacity = br.readLine().trim();
-		System.out.println(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));
+		logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));
 	}
 
 	public static void listEventAvailabilityOption(String managerId) throws IOException, InterruptedException {
@@ -129,5 +132,18 @@ public class CustomerClient {
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
 		System.out.println(managerObj.removeEvent(managerId, eventId, eventType));
+	}
+
+	static void setLogger(String location, String id) {
+		try {
+			logger = Logger.getLogger(id);
+			FileHandler fileTxt = new FileHandler(location, true);
+			SimpleFormatter formatterTxt = new SimpleFormatter();
+			fileTxt.setFormatter(formatterTxt);
+			logger.addHandler(fileTxt);
+		} catch (Exception err) {
+			System.out.println("Couldn't Initiate Logger. Please check file permission");
+		}
+
 	}
 }
