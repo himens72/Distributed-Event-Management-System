@@ -15,7 +15,6 @@ import java.rmi.RemoteException;
  */
 public interface managerInterface extends Remote {
 
-	public void sendMessage(String msg) throws RemoteException;
 
 	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) throws IOException;
 

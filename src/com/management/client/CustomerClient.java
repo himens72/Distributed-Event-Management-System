@@ -34,7 +34,6 @@ public class CustomerClient {
 
 		reg = LocateRegistry.getRegistry(8080);
 		br = new BufferedReader(new InputStreamReader(System.in));
-		while (true) {
 			System.out.println("Enter Your ID");
 			String id = br.readLine().trim();
 			managerObj = null;
@@ -47,10 +46,14 @@ public class CustomerClient {
 				System.out.println("Select Any above option");
 				String option = br.readLine().trim();
 				if (option.equals("1")) {
+					logger.info(id+ " started peforming add event operation");
 					addEventOption(id);
 				} else if (option.equals("3")) {
+					logger.info(id+ " started peforming list all available  event operation");
 					listEventAvailabilityOption(id);
 				} else if (option.equals("2")) {
+					logger.info(id+ " started peforming remove event operation");
+
 					removeEventOption(id);
 				}
 			} else if (id.charAt(3) == 'C') {
@@ -61,17 +64,18 @@ public class CustomerClient {
 				System.out.println("Select Any above option");
 				String option = br.readLine().trim();
 				if (option.equals("1")) {
+					logger.info(id+ " started peforming book event operation");
 					bookEventOption(id);
 				} else if (option.equals("2")) {
-					System.out.println(managerObj.getBookingSchedule(id));
+					logger.info(id+ " started peforming schedule event operation");
+
+					logger.info(managerObj.getBookingSchedule(id));
 				} else if (option.equals("3")) {
+					logger.info(id+ " started peforming cancel event operation");
+
 					cancelEventOption(id);
 				}
 			}
-			if (id.equals("quit")) {
-				break;
-			}
-		}
 
 	}
 
@@ -79,14 +83,10 @@ public class CustomerClient {
 			throws AccessException, RemoteException, NotBoundException {
 		if (serverName.startsWith("TOR")) {
 			managerObj = (managerInterface) reg.lookup("Toronto M");
-			managerObj.sendMessage("Request on Toronto Server ");
 		} else if (serverName.startsWith("MTL")) {
 			managerObj = (managerInterface) reg.lookup("Montreal M");
-			managerObj.sendMessage("Request on Montreal Server ");
-
 		} else if (serverName.startsWith("OTW")) {
 			managerObj = (managerInterface) reg.lookup("Ottawa M");
-			managerObj.sendMessage("Request on Ottawa Server ");
 		}
 	}
 
@@ -98,16 +98,12 @@ public class CustomerClient {
 		logger.info(managerObj.eventBooking(customerId, eventId, eventType));
 	}
 
-	public static void listScheduleEventOption(String customerId) {
-
-	}
-
 	public static void cancelEventOption(String customerId) throws IOException {
 		System.out.println("1. Event ID ");
 		String eventId = br.readLine().trim();
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
-		System.out.println(managerObj.cancelBooking(customerId, eventId, eventType));
+		logger.info(managerObj.cancelBooking(customerId, eventId, eventType));
 	}
 
 	public static void addEventOption(String managerId) throws IOException {
@@ -123,7 +119,7 @@ public class CustomerClient {
 	public static void listEventAvailabilityOption(String managerId) throws IOException, InterruptedException {
 		System.out.println("1. Event Type");
 		String eventType = br.readLine().trim();
-		System.out.println(managerObj.listEventAvailability(managerId, eventType));
+		logger.info(managerObj.listEventAvailability(managerId, eventType));
 	}
 
 	public static void removeEventOption(String managerId) throws IOException {
@@ -131,7 +127,7 @@ public class CustomerClient {
 		String eventId = br.readLine().trim();
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
-		System.out.println(managerObj.removeEvent(managerId, eventId, eventType));
+		logger.info(managerObj.removeEvent(managerId, eventId, eventType));
 	}
 
 	static void setLogger(String location, String id) {
@@ -142,8 +138,7 @@ public class CustomerClient {
 			fileTxt.setFormatter(formatterTxt);
 			logger.addHandler(fileTxt);
 		} catch (Exception err) {
-			System.out.println("Couldn't Initiate Logger. Please check file permission");
+			logger.info("Couldn't Initiate Logger. Please check file permission");
 		}
-
 	}
 }

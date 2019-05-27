@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 import com.management.implementation.EventManagerClient;
 
 /**
@@ -17,17 +21,20 @@ import com.management.implementation.EventManagerClient;
  */
 public class Ottawa {
 
+
 	EventManagerClient managerObj = null;
+	private static Logger logger;
 
 	public Ottawa(EventManagerClient aThis) {
 
 		this.managerObj = aThis;
 	}
 
-	public void xyz(int port) {
-
-		System.out.println("Ottawa Server");
+	public void serverConnection(int port) {
+		setLogger("logs/OTW.txt", "OTW");
+		logger.info("Ottawa Server Started");
 		DatagramSocket datagramSocket = null;
+
 		while (true) {
 			try {
 				datagramSocket = new DatagramSocket(port);
@@ -36,49 +43,47 @@ public class Ottawa {
 				datagramSocket.receive(packetReceive);
 				byte[] data = packetReceive.getData();
 				String[] receiveData = new String(data).split(",");
-				System.out.println("receive Data : " + new String(data));
-				System.out.println(receiveData[receiveData.length - 1].trim());
+				logger.info("Receive Data : " + new String(data));
+				logger.info("Operation Performed " + receiveData[receiveData.length - 1].trim());
 				if (receiveData[receiveData.length - 1].trim().equals("listOperation")) {
-					System.out.println("Montreal Server XXX");
 					String temp = managerObj.serverData.retrieveEvent(receiveData[2]);
-					System.out.println("Main Response : " + managerObj.serverData.getServerData());
+					logger.info("Reply send to customer : "  +temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
-					System.out.println("Ottawa Server XXX");
 					String temp = managerObj.serverData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
-					System.out.println("Main Response : " + managerObj.serverData.getServerData());
+					logger.info("Reply send to customer : "  +temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("bookOperation")) {
 					String temp = managerObj.serverData.bookEvent(receiveData[0], receiveData[1], receiveData[2]);
+					logger.info("Reply send to customer : "  +temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("cancelOperation")) {
 					String temp = managerObj.serverData.removeEvent(receiveData[0], receiveData[1], receiveData[2]);
+					logger.info("Reply send to customer : "  +temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("scheduleOperation")) {
-					System.out.println("Montreal Server XXX");
 					String temp = managerObj.serverData.getBookingSchedule(receiveData[0]);
-					System.out.println("Main Response : " + managerObj.serverData.getBookingSchedule(receiveData[0]));
+					logger.info("Reply send to customer : "  +temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
-					System.out.println("Montreal Server XXX");
 					String temp = managerObj.serverData.getBookingCount(receiveData[0], receiveData[1]);
-					System.out.println("Ottawa Main Response : " + managerObj.serverData.getBookingCount(receiveData[0], receiveData[1]));
+					logger.info("Reply send to customer : "  +temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else {
-					System.out.println("ERROR");
-				}
+					logger.info("Some problem in Server");				}
+				
 				receive = new byte[65535];
 				data = new byte[65535];
 
@@ -94,7 +99,17 @@ public class Ottawa {
 
 		}
 	}
-
+	static void setLogger(String location, String id) {
+		try {
+			logger = Logger.getLogger(id);
+			FileHandler fileTxt = new FileHandler(location, true);
+			SimpleFormatter formatterTxt = new SimpleFormatter();
+			fileTxt.setFormatter(formatterTxt);
+			logger.addHandler(fileTxt);
+		} catch (Exception err) {
+			logger.info("Couldn't Initiate Logger. Please check file permission");
+		}
+	}
 	public String processData(byte[] receiveData) {
 		return null;
 	}

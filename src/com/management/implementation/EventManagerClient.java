@@ -13,6 +13,9 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import com.management.interfaceDef.managerInterface;
 import com.management.model.eventData;
@@ -33,6 +36,7 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	public String location;
 	public String response;
 	public eventData serverData;
+	private static Logger logger;
 
 	public eventData getServerData() {
 		return serverData;
@@ -46,30 +50,32 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 		super();
 		serverData = new eventData();
 		this.location = location;
+		setLogger("logs/" + location + ".txt", location);
+
 		if (location.equals("TOR")) {
 
 			Toronto toronto = new Toronto(this);
 
 			Runnable task1 = () -> {
-				toronto.xyz(9990);
+				toronto.serverConnection(9990);
 
 			};
-			Thread t1 = new Thread(task1);
-			t1.start();
+			Thread thread1 = new Thread(task1);
+			thread1.start();
 		} else if (location.equals("MTL")) {
 			Runnable task2 = () -> {
 				Montreal montreal = new Montreal(this);
-				montreal.xyz(9991);
+				montreal.serverConnection(9991);
 			};
-			Thread t2 = new Thread(task2);
-			t2.start();
+			Thread thread2 = new Thread(task2);
+			thread2.start();
 		} else if (location.equals("OTW")) {
 			Ottawa ottawa = new Ottawa(this);
 			Runnable task3 = () -> {
-				ottawa.xyz(9992);
+				ottawa.serverConnection(9992);
 			};
-			Thread t3 = new Thread(task3);
-			t3.start();
+			Thread thread3 = new Thread(task3);
+			thread3.start();
 		} else {
 
 			System.out.println("Server not started");
@@ -79,20 +85,12 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	}
 
 	@Override
-	public void sendMessage(String msg) {
-		// TODO Auto-generated method stub
-		System.out.println("Current Msg " + msg);
-
-	}
-
-	@Override
 	public String addEvent(String managerId, String eventId, String eventtype, String eventCapacity)
 			throws IOException {
 		if (eventtype.equals("Seminars") || eventtype.equals("Conferences") || eventtype.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
-				System.out.println("Before Added-----> " + serverData.getServerData());
 				String output = serverData.addEvent(eventId, eventtype, eventCapacity);
-				System.out.println("After Added-----> " + serverData.getServerData());
+				
 				return output;
 			} else {
 				return "Please Enter Proper Event Id";
@@ -104,7 +102,6 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 
 	@Override
 	public String removeEvent(String managerId, String eventId, String eventtype) throws IOException {
-		// TODO Auto-generated method stub
 
 		if (eventtype.equals("Seminars") || eventtype.equals("Conferences") || eventtype.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
@@ -123,26 +120,29 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 
 	@Override
 	public String listEventAvailability(String managerId, String eventType) throws IOException, InterruptedException {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences") || eventType.trim().equals("Trade Shows")) {
+
+		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
+				|| eventType.trim().equals("Trade Shows")) {
 			String temp = serverData.retrieveEvent(eventType).trim();
-			System.out.println("Current Server List " + temp);
 			if (managerId.substring(0, 3).trim().equals("TOR")) {
-				System.out.println("HERE tor +++++++++");
-				temp += requestOnOtherServer(managerId, "xxx", eventType, "xxx", 9991, "listOperation").trim();
-				temp = temp + requestOnOtherServer(managerId, "xxx", eventType, "xxx", 9992, "listOperation").trim();
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991, "listOperation")
+						.trim();
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
+						"listOperation").trim();
 				return temp.trim() == "" ? "No Events Available" : temp.trim();
 			} else if (managerId.substring(0, 3).trim().equals("MTL")) {
-				System.out.println("HERE +++++++++");
-				temp += requestOnOtherServer(managerId, "xxx", eventType, "xxx", 9990, "listOperation").trim();
-				temp = temp + requestOnOtherServer(managerId, "xxx", eventType, "xxx", 9992, "listOperation").trim();
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
+						.trim();
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
+						"listOperation").trim();
 				return temp.trim() == "" ? "No Events Available" : temp.trim();
 			} else if (managerId.substring(0, 3).trim().equals("OTW")) {
-				System.out.println("HERE +++++++++");
-				temp += requestOnOtherServer(managerId, "xxx", eventType, "xxx", 9990, "listOperation").trim();
-				temp = temp + requestOnOtherServer(managerId, "xxx", eventType, "xxx", 9991, "listOperation").trim();
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
+						.trim();
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991,
+						"listOperation").trim();
 				return temp.trim() == "" ? "No Events Available" : temp.trim();
 			}
-			System.out.println("List Availability : " + temp);
 			return temp.trim() == "" ? "No Events Available" : temp.trim();
 
 		} else {
@@ -152,10 +152,10 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 
 	public String requestOnOtherServer(String managerId, String eventId, String eventType, String eventCapacity,
 			int port, String operation) {
+
 		DatagramSocket datagramSocket = null;
 		try {
-			String requestData = managerId+","+eventId + "," + eventType + "," + eventCapacity + "," + operation;
-			System.out.println("requesrData : " + requestData + " " + port);
+			String requestData = managerId + "," + eventId + "," + eventType + "," + eventCapacity + "," + operation;
 			datagramSocket = new DatagramSocket();
 			DatagramPacket packetSend = new DatagramPacket(requestData.getBytes(), requestData.getBytes().length,
 					InetAddress.getByName("localhost"), port);
@@ -164,17 +164,13 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			datagramSocket.receive(reply);
 			String response = new String(reply.getData());
-			System.out.println("response : " + response);
 			return response.trim();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		} finally {
 			datagramSocket.close();
 		}
@@ -183,42 +179,57 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 
 	@Override
 	public String eventBooking(String customerId, String eventId, String eventType) throws IOException {
-		// TODO Auto-generated method stub
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences") || eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
+				|| eventType.trim().equals("Trade Shows")) {
 			StringBuilder count = new StringBuilder();
-			if(!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
+			if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				if (customerId.trim().substring(0, 3).equals("TOR")) {
-					count.append(requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")+",");
-					count.append(requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")+",");
+					count.append(
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
+							+ ",");
+					count.append(
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
+							+ ",");
 				} else if (customerId.trim().substring(0, 3).equals("MTL")) {
-					count.append(requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")+",");
-					count.append(requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")+",");
+					count.append(
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
+							+ ",");
+					count.append(
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
+							+ ",");
 				} else if (customerId.trim().substring(0, 3).equals("OTW")) {
-					count.append(requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")+",");
-					count.append(requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")+",");
+					count.append(
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
+							+ ",");
+					count.append(
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
+							+ ",");
 				}
 				String[] split = count.toString().trim().split(",");
 				int totalEve = 0;
-				for(int i = 0; i < split.length;i++) {
+				for (int i = 0; i < split.length; i++) {
 					totalEve += Integer.parseInt(split[i].trim());
 				}
-				if(totalEve >= 3) {
+				if (totalEve >= 3) {
 					return "you have already reached maximum limit of Current Month Outside city registration ";
 				}
-			} 
-			
+			}
+
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				String temp= serverData.bookEvent(customerId, eventId, eventType);
-				return temp == "" ? "Unable to Book  Event" : temp + " -- > "+ count;
+				String temp = serverData.bookEvent(customerId, eventId, eventType);
+				return temp == "" ? "Unable to Book  Event" : temp.trim();
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990, "bookOperation");
-				return temp == "" ? "Unable to Book  Event" : temp+ " -- > "+ count;
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990,
+						"bookOperation");
+				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
 			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991, "bookOperation");
-				return temp == "" ? "Unable to Book  Event" : temp+ " -- > "+ count;
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991,
+						"bookOperation");
+				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992, "bookOperation");
-				return temp == "" ? "Unable to Book  Event" : temp+ " -- > "+ count;
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992,
+						"bookOperation");
+				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
 
 			} else {
 				return "Please Enter Event ID Properly";
@@ -231,18 +242,23 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 
 	@Override
 	public String cancelBooking(String customerId, String eventId, String eventType) throws IOException {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences") || eventType.trim().equals("Trade Shows")) {
+
+		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
+				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				String temp= serverData.removeEvent(customerId, eventId, eventType);
+				String temp = serverData.removeEvent(customerId, eventId, eventType);
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990, "cancelOperation");
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990,
+						"cancelOperation");
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991, "cancelOperation");
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991,
+						"cancelOperation");
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992, "cancelOperation");
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992,
+						"cancelOperation");
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 
 			} else {
@@ -257,26 +273,40 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	@Override
 	public String getBookingSchedule(String customerId) throws IOException {
 		// TODO Auto-generated method stub
+
 		StringBuilder temp = new StringBuilder();
 		temp.append(serverData.getBookingSchedule(customerId.trim()));
 		if (customerId.substring(0, 3).trim().equals("TOR")) {
-			System.out.println("HERE tor +++++++++");
-			temp.append(requestOnOtherServer(customerId, "xxx", "No Types", "xxx", 9991, "scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "xxx", "No Types", "xxx", 9992, "scheduleOperation").trim());
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9991,
+					"scheduleOperation").trim());
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9992,
+					"scheduleOperation").trim());
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		} else if (customerId.substring(0, 3).trim().equals("MTL")) {
-			System.out.println("HERE +++++++++");
-			temp.append(requestOnOtherServer(customerId, "xxx", "No Types", "xxx", 9990, "scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "xxx", "No Types", "xxx", 9992, "scheduleOperation").trim());
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9990,
+					"scheduleOperation").trim());
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9992,
+					"scheduleOperation").trim());
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		} else if (customerId.substring(0, 3).trim().equals("OTW")) {
-			System.out.println("HERE +++++++++");
-			temp.append(requestOnOtherServer(customerId, "xxx", "No Types", "xxx", 9990, "scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "xxx", "No Types", "xxx", 9991, "scheduleOperation").trim());
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9990,
+					"scheduleOperation").trim());
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9991,
+					"scheduleOperation").trim());
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		}
-		System.out.println("List Schedule : " + temp);
 		return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 	}
 
+	static void setLogger(String location, String id) {
+		try {
+			logger = Logger.getLogger(id);
+			FileHandler fileTxt = new FileHandler(location, true);
+			SimpleFormatter formatterTxt = new SimpleFormatter();
+			fileTxt.setFormatter(formatterTxt);
+			logger.addHandler(fileTxt);
+		} catch (Exception err) {
+			logger.info("Couldn't Initiate Logger. Please check file permission");
+		}
+	}
 }
