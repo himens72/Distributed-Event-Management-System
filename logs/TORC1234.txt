@@ -1,0 +1,4 @@
+Jun 05, 2019 11:58:10 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming schedule event operation
+Jun 05, 2019 11:58:10 PM com.management.client.CustomerClient main
+INFO: Seminars = TORM123456,Seminars = MTLM987654,Seminars = MTLM113456,Seminars = OTWA123456,Seminars = OTWE123456,

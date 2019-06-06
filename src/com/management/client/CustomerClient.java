@@ -29,11 +29,13 @@ public class CustomerClient {
 	static managerInterface managerObj;
 	static BufferedReader br;
 	private static Logger logger;
+	private static FileHandler fileTxt;
 
 	public static void main(String[] args) throws NotBoundException, IOException, InterruptedException {
 
 		reg = LocateRegistry.getRegistry(8080);
 		br = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
 			System.out.println("Enter Your ID");
 			String id = br.readLine().trim();
 			managerObj = null;
@@ -46,14 +48,14 @@ public class CustomerClient {
 				System.out.println("Select Any above option");
 				String option = br.readLine().trim();
 				if (option.equals("1")) {
-					logger.info(id+ " started peforming add event operation");
+					logger.info(id + " started peforming add event operation");
 					addEventOption(id);
+					fileTxt.close();
 				} else if (option.equals("3")) {
-					logger.info(id+ " started peforming list all available  event operation");
+					logger.info(id + " started peforming list all available  event operation");
 					listEventAvailabilityOption(id);
 				} else if (option.equals("2")) {
-					logger.info(id+ " started peforming remove event operation");
-
+					logger.info(id + " started peforming remove event operation");
 					removeEventOption(id);
 				}
 			} else if (id.charAt(3) == 'C') {
@@ -64,18 +66,19 @@ public class CustomerClient {
 				System.out.println("Select Any above option");
 				String option = br.readLine().trim();
 				if (option.equals("1")) {
-					logger.info(id+ " started peforming book event operation");
+					logger.info(id + " started peforming book event operation");
 					bookEventOption(id);
 				} else if (option.equals("2")) {
-					logger.info(id+ " started peforming schedule event operation");
+					logger.info(id + " started peforming schedule event operation");
 
 					logger.info(managerObj.getBookingSchedule(id));
 				} else if (option.equals("3")) {
-					logger.info(id+ " started peforming cancel event operation");
+					logger.info(id + " started peforming cancel event operation");
 
 					cancelEventOption(id);
 				}
 			}
+		}
 
 	}
 
@@ -133,7 +136,7 @@ public class CustomerClient {
 	static void setLogger(String location, String id) {
 		try {
 			logger = Logger.getLogger(id);
-			FileHandler fileTxt = new FileHandler(location, true);
+			fileTxt = new FileHandler(location, true);
 			SimpleFormatter formatterTxt = new SimpleFormatter();
 			fileTxt.setFormatter(formatterTxt);
 			logger.addHandler(fileTxt);

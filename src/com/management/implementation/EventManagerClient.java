@@ -87,32 +87,38 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	@Override
 	public String addEvent(String managerId, String eventId, String eventtype, String eventCapacity)
 			throws IOException {
+		logger.info("Add Event Operation :  " + managerId + " has started creating event with id " + eventId
+				+ " of type " + eventtype + " with capacity " + eventCapacity);
 		if (eventtype.equals("Seminars") || eventtype.equals("Conferences") || eventtype.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = serverData.addEvent(eventId, eventtype, eventCapacity);
-				
+				logger.info("Add Event Operation Output : " + output);
 				return output;
 			} else {
+				logger.info("Please Enter Proper Event Id");
 				return "Please Enter Proper Event Id";
 			}
 		} else {
+			logger.info("Please Enter proper event type");
 			return "Please Enter proper event type";
 		}
 	}
 
 	@Override
 	public String removeEvent(String managerId, String eventId, String eventtype) throws IOException {
-
+		logger.info("Remove Event Operation :  " + managerId + " has delete event with id " + eventId + " of type "
+				+ eventtype);
 		if (eventtype.equals("Seminars") || eventtype.equals("Conferences") || eventtype.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
-				System.out.println("Before Removed " + serverData.getServerData());
 				String output = serverData.removeEvent(eventId, eventtype);
-				System.out.println("After Removed " + serverData.getServerData());
+				logger.info("Add Remove Operation Output : " + output);
 				return output.trim();
 			} else {
+				logger.info("Please Enter proper Event Id");
 				return "Please Enter Proper Event Id";
 			}
 		} else {
+			logger.info("Please Enter Proper Event Type");
 			return "Please Enter proper event type";
 		}
 
@@ -120,32 +126,15 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 
 	@Override
 	public String listEventAvailability(String managerId, String eventType) throws IOException, InterruptedException {
-
+		logger.info("List  Event Operation :  " + managerId + " want to see All available list of type " + eventType);
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = serverData.retrieveEvent(eventType).trim();
-			if (managerId.substring(0, 3).trim().equals("TOR")) {
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991, "listOperation")
-						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
-						"listOperation").trim();
-				return temp.trim() == "" ? "No Events Available" : temp.trim();
-			} else if (managerId.substring(0, 3).trim().equals("MTL")) {
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
-						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
-						"listOperation").trim();
-				return temp.trim() == "" ? "No Events Available" : temp.trim();
-			} else if (managerId.substring(0, 3).trim().equals("OTW")) {
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
-						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991,
-						"listOperation").trim();
-				return temp.trim() == "" ? "No Events Available" : temp.trim();
-			}
+			logger.info("Event  Available : " + temp.trim());
 			return temp.trim() == "" ? "No Events Available" : temp.trim();
 
 		} else {
+			logger.info("Please enter event type properly");
 			return "Please enter Event type properly";
 		}
 	}
@@ -186,24 +175,24 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 				if (customerId.trim().substring(0, 3).equals("TOR")) {
 					count.append(
 							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
-							+ ",");
+									+ ",");
 					count.append(
 							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
-							+ ",");
+									+ ",");
 				} else if (customerId.trim().substring(0, 3).equals("MTL")) {
 					count.append(
 							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
-							+ ",");
+									+ ",");
 					count.append(
 							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
-							+ ",");
+									+ ",");
 				} else if (customerId.trim().substring(0, 3).equals("OTW")) {
 					count.append(
 							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
-							+ ",");
+									+ ",");
 					count.append(
 							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
-							+ ",");
+									+ ",");
 				}
 				String[] split = count.toString().trim().split(",");
 				int totalEve = 0;
@@ -273,6 +262,7 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	@Override
 	public String getBookingSchedule(String customerId) throws IOException {
 		// TODO Auto-generated method stub
+		logger.info("Booking Schedule Operation :  " + customerId);
 
 		StringBuilder temp = new StringBuilder();
 		temp.append(serverData.getBookingSchedule(customerId.trim()));
@@ -281,20 +271,24 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 					"scheduleOperation").trim());
 			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9992,
 					"scheduleOperation").trim());
+			logger.info("Booking Schedule for " + customerId + " : " + temp);
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		} else if (customerId.substring(0, 3).trim().equals("MTL")) {
 			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9990,
 					"scheduleOperation").trim());
 			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9992,
 					"scheduleOperation").trim());
+			logger.info("Booking Schedule for " + customerId + " : " + temp);
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		} else if (customerId.substring(0, 3).trim().equals("OTW")) {
 			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9990,
 					"scheduleOperation").trim());
 			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9991,
 					"scheduleOperation").trim());
+			logger.info("Booking Schedule for " + customerId + " : " + temp);
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		}
+		logger.info("Booking Schedule for " + customerId + " : " + temp);
 		return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 	}
 

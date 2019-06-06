@@ -18,7 +18,6 @@ import com.management.implementation.EventManagerClient;
  */
 public class server {
 
-
 	public static void main(String args[]) throws RemoteException, AlreadyBoundException {
 
 		Registry reg = LocateRegistry.createRegistry(8080);

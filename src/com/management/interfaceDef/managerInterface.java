@@ -15,7 +15,6 @@ import java.rmi.RemoteException;
  */
 public interface managerInterface extends Remote {
 
-
 	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) throws IOException;
 
 	public String removeEvent(String managerId, String eventId, String eventType) throws IOException;

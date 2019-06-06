@@ -106,18 +106,18 @@ public class eventData {
 						return eventId + " is not Available for booking of type " + eventType;
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
-						if(currentEvent.get("customerId").contains(customerID)) {
-							return customerID + " has already book event " + eventId + "of event type " + eventType ;
+						if (currentEvent.get("customerId").contains(customerID)) {
+							return customerID + " has already book event " + eventId + "of event type " + eventType;
 						}
 						customers.append(customerID.trim());
-						currentEvent.replace("customerId", customers.toString().trim()+",");
+						currentEvent.replace("customerId", customers.toString().trim() + ",");
 						currentEvent.replace("capacity", currentEvent.get("capacity"),
 								Integer.toString(Integer.parseInt(currentEvent.get("capacity"))));
 						currentEvent.replace("totalBooking", currentEvent.get("totalBooking"),
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) + 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
-						return customerID + " has book event " + eventId + " of event  type " + eventType; 
+						return customerID + " has book event " + eventId + " of event  type " + eventType;
 					}
 				} else {
 					return "No Event Found;";
@@ -128,6 +128,7 @@ public class eventData {
 			return "No Event Type Found";
 		}
 	}
+
 	public String removeEvent(String customerID, String eventId, String eventType) {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
@@ -141,17 +142,17 @@ public class eventData {
 						return eventId + " is not booked by anyone";
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
-						if(!currentEvent.get("customerId").contains(customerID)) {
-							return customerID + " has not book event " + eventId + "of event type " + eventType ;
+						if (!currentEvent.get("customerId").contains(customerID)) {
+							return customerID + " has not book event " + eventId + "of event type " + eventType;
 						}
-						currentEvent.replace("customerId", customers.toString().replace(customerID.trim()+",",""));
+						currentEvent.replace("customerId", customers.toString().replace(customerID.trim() + ",", ""));
 						currentEvent.replace("capacity", currentEvent.get("capacity"),
 								Integer.toString(Integer.parseInt(currentEvent.get("capacity"))));
 						currentEvent.replace("totalBooking", currentEvent.get("totalBooking"),
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) - 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
-						return customerID + " has cancel book event " + eventId + " of event  type " + eventType; 
+						return customerID + " has cancel book event " + eventId + " of event  type " + eventType;
 					}
 				} else {
 					return "No Event Found;";
@@ -162,24 +163,26 @@ public class eventData {
 			return "No Event Type Found";
 		}
 	}
-	
-	public  String getBookingSchedule(String customerId) {
+
+	public String getBookingSchedule(String customerId) {
 		StringBuilder customers = new StringBuilder();
-		for(Entry<String, HashMap<String,HashMap<String, String>>> types : serverData.entrySet()) {
-			for(Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
-				if(events.getValue().get("customerId").contains(customerId.trim())) {
-					customers.append(types.getKey()+" = " + events.getKey() +",");
+		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
+			for (Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
+				if (events.getValue().get("customerId").contains(customerId.trim())) {
+					customers.append(types.getKey() + " = " + events.getKey() + ",");
 				}
 			}
 		}
 		return customers.length() == 0 ? "" : customers.toString();
 	}
-	public  String getBookingCount(String customerId, String eventType) {
+
+	public String getBookingCount(String customerId, String eventType) {
 		int count = 0;
-		String month = eventType.trim().substring(6,8);
-		for(Entry<String, HashMap<String,HashMap<String, String>>> types : serverData.entrySet()) {
-			for(Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
-				if(events.getValue().get("customerId").trim().contains(customerId.trim()) && events.getKey().substring(6, 8).trim().equals(month.trim())) {
+		String month = eventType.trim().substring(6, eventType.trim().length());
+		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
+			for (Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
+				if (events.getValue().get("customerId").trim().contains(customerId.trim())
+						&& events.getKey().substring(6, events.getKey().trim().length()).trim().equals(month.trim())) {
 					count++;
 				}
 			}

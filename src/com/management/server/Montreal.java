@@ -46,43 +46,44 @@ public class Montreal {
 				logger.info("Operation Performed " + receiveData[receiveData.length - 1].trim());
 				if (receiveData[receiveData.length - 1].trim().equals("listOperation")) {
 					String temp = managerObj.serverData.retrieveEvent(receiveData[2]);
-					logger.info("Reply send to customer : "  +temp);
+					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
 					String temp = managerObj.serverData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
-					logger.info("Reply send to customer : "  +temp);
+					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("bookOperation")) {
 					String temp = managerObj.serverData.bookEvent(receiveData[0], receiveData[1], receiveData[2]);
-					logger.info("Reply send to customer : "  +temp);
+					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("cancelOperation")) {
 					String temp = managerObj.serverData.removeEvent(receiveData[0], receiveData[1], receiveData[2]);
-					logger.info("Reply send to customer : "  +temp);
+					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("scheduleOperation")) {
 					String temp = managerObj.serverData.getBookingSchedule(receiveData[0]);
-					logger.info("Reply send to customer : "  +temp);
+					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
 					String temp = managerObj.serverData.getBookingCount(receiveData[0], receiveData[1]);
-					logger.info("Reply send to customer : "  +temp);
+					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else {
-					logger.info("Some problem in Server");				}
-				
+					logger.info("Some problem in Server");
+				}
+
 				receive = new byte[65535];
 				data = new byte[65535];
 
@@ -98,6 +99,7 @@ public class Montreal {
 
 		}
 	}
+
 	static void setLogger(String location, String id) {
 		try {
 			logger = Logger.getLogger(id);
@@ -109,6 +111,7 @@ public class Montreal {
 			logger.info("Couldn't Initiate Logger. Please check file permission");
 		}
 	}
+
 	public String processData(byte[] receiveData) {
 		return null;
 	}
