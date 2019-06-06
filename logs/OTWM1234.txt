@@ -18,3 +18,15 @@ Jun 06, 2019 1:14:14 PM com.management.client.CustomerClient main
 INFO: OTWM1234 started peforming list all available  event operation
 Jun 06, 2019 1:14:17 PM com.management.client.CustomerClient listEventAvailabilityOption
 INFO: OTWA123456 4,OTWE123456 6,
+Jun 06, 2019 7:49:25 PM com.management.client.CustomerClient main
+INFO: OTWM1234 started peforming add event operation
+Jun 06, 2019 7:50:02 PM com.management.client.CustomerClient addEventOption
+INFO: OTWM123456 is created with capacity 5 of type Seminars
+Jun 06, 2019 7:51:41 PM com.management.client.CustomerClient main
+INFO: OTWM1234 started peforming list all available  event operation
+Jun 06, 2019 7:51:43 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: OTWM123456 5,TORM123456 5,MTLM123456 6,
+Jun 06, 2019 7:51:51 PM com.management.client.CustomerClient main
+INFO: OTWM1234 started peforming list all available  event operation
+Jun 06, 2019 7:51:56 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLM987654 5,

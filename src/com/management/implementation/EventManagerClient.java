@@ -130,11 +130,33 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = serverData.retrieveEvent(eventType).trim();
-			logger.info("Event  Available : " + temp.trim());
+			if (managerId.substring(0, 3).trim().equals("TOR")) {
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991, "listOperation")
+						.trim();
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
+						"listOperation").trim();
+				logger.info(temp.trim() == "" ? "No Events Available" : temp.trim());
+				return temp.trim() == "" ? "No Events Available" : temp.trim();
+			} else if (managerId.substring(0, 3).trim().equals("MTL")) {
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
+						.trim();
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
+						"listOperation").trim();
+				logger.info(temp.trim() == "" ? "No Events Available" : temp.trim());
+				return temp.trim() == "" ? "No Events Available" : temp.trim();
+			} else if (managerId.substring(0, 3).trim().equals("OTW")) {
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
+						.trim();
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991,
+						"listOperation").trim();
+				logger.info(temp.trim() == "" ? "No Events Available" : temp.trim());
+				return temp.trim() == "" ? "No Events Available" : temp.trim();
+			}
+			logger.info(temp.trim() == "" ? "No Events Available" : temp.trim());
 			return temp.trim() == "" ? "No Events Available" : temp.trim();
 
 		} else {
-			logger.info("Please enter event type properly");
+			logger.info("Please enter Event type properly");
 			return "Please enter Event type properly";
 		}
 	}
