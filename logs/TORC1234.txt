@@ -1,4 +1,28 @@
-Jun 05, 2019 11:58:10 PM com.management.client.CustomerClient main
+Jun 06, 2019 1:13:18 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming book event operation
+Jun 06, 2019 1:13:25 PM com.management.client.CustomerClient bookEventOption
+INFO: TORC1234 has book event OTWM123456 of event  type Seminars
+Jun 06, 2019 1:13:31 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming book event operation
+Jun 06, 2019 1:13:42 PM com.management.client.CustomerClient bookEventOption
+INFO: TORC1234 has book event OTWA123456 of event  type Seminars
+Jun 06, 2019 1:13:58 PM com.management.client.CustomerClient main
 INFO: TORC1234 started peforming schedule event operation
-Jun 05, 2019 11:58:10 PM com.management.client.CustomerClient main
-INFO: Seminars = TORM123456,Seminars = MTLM987654,Seminars = MTLM113456,Seminars = OTWA123456,Seminars = OTWE123456,
+Jun 06, 2019 1:13:58 PM com.management.client.CustomerClient main
+INFO: Seminars = OTWM123456,Seminars = OTWA123456,
+Jun 06, 2019 1:17:13 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming book event operation
+Jun 06, 2019 1:22:29 PM com.management.client.CustomerClient bookEventOption
+INFO: TORC1234 has book event MTLA123456 of event  type Seminars
+Jun 06, 2019 1:24:04 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming book event operation
+Jun 06, 2019 1:24:24 PM com.management.client.CustomerClient bookEventOption
+INFO: you have already reached maximum limit of Current Month Outside city registration 
+Jun 06, 2019 1:49:52 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming cancel event operation
+Jun 06, 2019 1:50:02 PM com.management.client.CustomerClient cancelEventOption
+INFO: OTWE123456 is not booked by anyone
+Jun 06, 2019 1:50:16 PM com.management.client.CustomerClient main
+INFO: TORC1234 started peforming schedule event operation
+Jun 06, 2019 1:50:16 PM com.management.client.CustomerClient main
+INFO: Seminars = MTLA123456,Seminars = OTWM123456,Seminars = OTWA123456,

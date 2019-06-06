@@ -30,7 +30,7 @@ public class eventData {
 		serverData.put("Trade Shows", new HashMap<>());
 	}
 
-	public String addEvent(String eventId, String eventtype, String eventCapacity) {
+	synchronized public String addEvent(String eventId, String eventtype, String eventCapacity) {
 		if (!serverData.containsKey(eventtype)) {
 			return "Event Type Doesn't Exist. Please Enter proper Event Type";
 		}
@@ -56,7 +56,7 @@ public class eventData {
 		}
 	}
 
-	public String removeEvent(String eventId, String eventType) {
+	synchronized public String removeEvent(String eventId, String eventType) {
 		if (!serverData.containsKey(eventType)) {
 			return "Event Type Doesn't Exist. Please Enter proper Event Type";
 		}
@@ -69,7 +69,7 @@ public class eventData {
 		}
 	}
 
-	public String retrieveEvent(String eventType) {
+	synchronized public String retrieveEvent(String eventType) {
 		System.out.println("Event Type : " + eventType);
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> temp = serverData.get(eventType);
@@ -92,7 +92,7 @@ public class eventData {
 		}
 	}
 
-	public String bookEvent(String customerID, String eventId, String eventType) {
+	synchronized public String bookEvent(String customerID, String eventId, String eventType) {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
@@ -129,7 +129,7 @@ public class eventData {
 		}
 	}
 
-	public String removeEvent(String customerID, String eventId, String eventType) {
+	synchronized public String removeEvent(String customerID, String eventId, String eventType) {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
@@ -164,7 +164,7 @@ public class eventData {
 		}
 	}
 
-	public String getBookingSchedule(String customerId) {
+	synchronized public String getBookingSchedule(String customerId) {
 		StringBuilder customers = new StringBuilder();
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
 			for (Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
@@ -176,7 +176,7 @@ public class eventData {
 		return customers.length() == 0 ? "" : customers.toString();
 	}
 
-	public String getBookingCount(String customerId, String eventType) {
+	synchronized public String getBookingCount(String customerId, String eventType) {
 		int count = 0;
 		String month = eventType.trim().substring(6, eventType.trim().length());
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {

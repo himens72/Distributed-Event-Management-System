@@ -1,4 +1,2 @@
-Jun 05, 2019 11:16:06 PM com.management.server.Toronto serverConnection
-INFO: Toronto Server Started
-Jun 05, 2019 11:59:08 PM com.management.server.Toronto serverConnection
+Jun 06, 2019 12:50:22 PM com.management.server.Toronto serverConnection
 INFO: Toronto Server Started
