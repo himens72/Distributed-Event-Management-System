@@ -45,6 +45,9 @@ public class CustomerClient {
 				System.out.println("1. Add Event ");
 				System.out.println("2. Remove Event");
 				System.out.println("3. List all Available Event");
+				System.out.println("4. Book Event ");
+				System.out.println("5. List all event schedule");
+				System.out.println("6. Cancel Event");
 				System.out.println("Select Any above option");
 				String option = br.readLine().trim();
 				if (option.equals("1")) {
@@ -57,6 +60,16 @@ public class CustomerClient {
 				} else if (option.equals("2")) {
 					logger.info(id + " started peforming remove event operation");
 					removeEventOption(id);
+				}else if (option.equals("4")) {
+					logger.info(id + " started peforming book event operation");
+					bookEventOption(id);
+				} else if (option.equals("5")) {
+					logger.info(id + " started peforming schedule event operation");
+
+					logger.info(managerObj.getBookingSchedule(id));
+				} else if (option.equals("6")) {
+					logger.info(id + " started peforming cancel event operation");
+					cancelEventOption(id);
 				}
 			} else if (id.charAt(3) == 'C') {
 				createManagerObject(id.substring(0, 3));
