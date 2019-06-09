@@ -1,0 +1,16 @@
+Jun 07, 2019 10:38:45 AM com.management.client.CustomerClient main
+INFO: MTLM9087 started peforming add event operation
+Jun 07, 2019 10:38:59 AM com.management.client.CustomerClient addEventOption
+INFO: MTLA090619 is created with capacity 2 of type Conferences
+Jun 07, 2019 10:39:12 AM com.management.client.CustomerClient main
+INFO: MTLM9087 started peforming add event operation
+Jun 07, 2019 10:39:33 AM com.management.client.CustomerClient addEventOption
+INFO: MTLA080619 is created with capacity 2 of type Trade Shows
+Jun 07, 2019 10:40:06 AM com.management.client.CustomerClient main
+INFO: MTLM9087 started peforming add event operation
+Jun 07, 2019 10:40:25 AM com.management.client.CustomerClient addEventOption
+INFO: MTLE230719 is created with capacity 1 of type Seminars
+Jun 07, 2019 10:51:55 AM com.management.client.CustomerClient main
+INFO: MTLM9087 started peforming remove event operation
+Jun 07, 2019 10:52:10 AM com.management.client.CustomerClient removeEventOption
+INFO: MTLA080619 is removed for event typeTrade Shows

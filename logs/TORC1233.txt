@@ -1,4 +1,0 @@
-Jun 06, 2019 1:13:50 PM com.management.client.CustomerClient main
-INFO: TORC1233 started peforming schedule event operation
-Jun 06, 2019 1:13:50 PM com.management.client.CustomerClient main
-INFO: No Events Schedule
