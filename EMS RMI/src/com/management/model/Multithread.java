@@ -4,9 +4,9 @@ import java.awt.print.Book;
 import java.util.ArrayList;
 
 class MultithreadingDemo extends Thread {
-	eventData data;
+	TorontoData data;
 	String id;
-	public MultithreadingDemo(eventData data,String id) {
+	public MultithreadingDemo(TorontoData data,String id) {
 		// TODO Auto-generated constructor stub
 		this.data = data;
 		this.id= id;
@@ -26,10 +26,10 @@ class MultithreadingDemo extends Thread {
 
 // Main Class 
 public class Multithread {
-	private static eventData data;
+	private static TorontoData data;
 
 	public static void main(String[] args) {
-		data = new eventData();
+		data = new TorontoData();
 		data.addEvent("OTWE070619", "Seminars", "2");
 		System.out.println(data.serverData);
 		int n = 3; // Number of threads

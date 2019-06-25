@@ -45,37 +45,37 @@ public class Ottawa {
 				logger.info("Receive Data : " + new String(data));
 				logger.info("Operation Performed " + receiveData[receiveData.length - 1].trim());
 				if (receiveData[receiveData.length - 1].trim().equals("listOperation")) {
-					String temp = managerObj.serverData.retrieveEvent(receiveData[2]);
+					String temp = managerObj.ottawaData.retrieveEvent(receiveData[2]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
-					String temp = managerObj.serverData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
+					String temp = managerObj.ottawaData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("bookOperation")) {
-					String temp = managerObj.serverData.bookEvent(receiveData[0], receiveData[1], receiveData[2]);
+					String temp = managerObj.ottawaData.bookEvent(receiveData[0], receiveData[1], receiveData[2]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("cancelOperation")) {
-					String temp = managerObj.serverData.removeEvent(receiveData[0], receiveData[1], receiveData[2]);
+					String temp = managerObj.ottawaData.removeEvent(receiveData[0], receiveData[1], receiveData[2]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("scheduleOperation")) {
-					String temp = managerObj.serverData.getBookingSchedule(receiveData[0]);
+					String temp = managerObj.ottawaData.getBookingSchedule(receiveData[0]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
-					String temp = managerObj.serverData.getBookingCount(receiveData[0], receiveData[1]);
+					String temp = managerObj.ottawaData.getBookingCount(receiveData[0], receiveData[1]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());

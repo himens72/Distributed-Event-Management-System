@@ -14,3 +14,15 @@ Jun 07, 2019 10:46:34 AM com.management.client.CustomerClient main
 INFO: TORM6785 started peforming cancel event operation
 Jun 07, 2019 10:47:44 AM com.management.client.CustomerClient cancelEventOption
 INFO: TORM6785 has not book event MTLA090619of event type Conferences
+Jun 25, 2019 7:03:10 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jun 25, 2019 7:03:20 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA090619 2,OTWE110619 1,OTWE080619 1,
+Jun 25, 2019 7:03:41 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jun 25, 2019 7:03:47 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLE230719 1,
+Jun 25, 2019 7:04:00 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jun 25, 2019 7:04:04 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA080619 2,

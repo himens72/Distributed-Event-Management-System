@@ -1,8 +1,0 @@
-Jun 07, 2019 10:50:23 AM com.management.client.CustomerClient main
-INFO: OTWC7890 started peforming book event operation
-Jun 07, 2019 10:51:01 AM com.management.client.CustomerClient bookEventOption
-INFO: OTWE080619 is not Available for booking of type Conferences
-Jun 07, 2019 10:52:26 AM com.management.client.CustomerClient main
-INFO: OTWC7890 started peforming schedule event operation
-Jun 07, 2019 10:52:26 AM com.management.client.CustomerClient main
-INFO: No Events Schedule

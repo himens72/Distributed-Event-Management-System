@@ -30,3 +30,25 @@ Jun 07, 2019 11:06:34 AM com.management.client.CustomerClient main
 INFO: OTWM4560 started peforming list all available  event operation
 Jun 07, 2019 11:06:37 AM com.management.client.CustomerClient listEventAvailabilityOption
 INFO: OTWE110619 1,MTLA090619 1,
+Jun 25, 2019 7:00:32 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jun 25, 2019 7:00:38 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619 is created with capacity 1 of type Conferences
+Jun 25, 2019 7:00:55 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jun 25, 2019 7:01:04 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE110619 is created with capacity 1 of type Conferences
+Jun 25, 2019 7:01:14 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jun 25, 2019 7:01:26 PM com.management.client.CustomerClient addEventOption
+INFO: Please Enter Proper Event Id
+Jun 25, 2019 7:16:55 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming remove event operation
+Jun 25, 2019 7:17:12 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming list all available  event operation
+Jun 25, 2019 7:17:14 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLE230719 0,
+Jun 25, 2019 7:17:31 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming list all available  event operation
+Jun 25, 2019 7:17:37 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: OTWE110619 1,OTWE080619 0,MTLA090619 2,

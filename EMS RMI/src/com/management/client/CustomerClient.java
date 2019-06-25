@@ -42,59 +42,72 @@ public class CustomerClient {
 			setLogger("logs/" + id + ".txt", id);
 			if (id.charAt(3) == 'M') {
 				createManagerObject(id.substring(0, 3));
-				System.out.println("1. Add Event ");
-				System.out.println("2. Remove Event");
-				System.out.println("3. List all Available Event");
-				System.out.println("4. Book Event ");
-				System.out.println("5. List all event schedule");
-				System.out.println("6. Cancel Event");
-				System.out.println("Select Any above option");
-				String option = br.readLine().trim();
-				if (option.equals("1")) {
-					logger.info(id + " started peforming add event operation");
-					addEventOption(id);
-					fileTxt.close();
-				} else if (option.equals("3")) {
-					logger.info(id + " started peforming list all available  event operation");
-					listEventAvailabilityOption(id);
-				} else if (option.equals("2")) {
-					logger.info(id + " started peforming remove event operation");
-					removeEventOption(id);
-				}else if (option.equals("4")) {
-					logger.info(id + " started peforming book event operation");
-					bookEventOption(id);
-				} else if (option.equals("5")) {
-					logger.info(id + " started peforming schedule event operation");
-
-					logger.info(managerObj.getBookingSchedule(id));
-				} else if (option.equals("6")) {
-					logger.info(id + " started peforming cancel event operation");
-					cancelEventOption(id);
-				}
+				managerOption(id);
 			} else if (id.charAt(3) == 'C') {
 				createManagerObject(id.substring(0, 3));
-				System.out.println("1. Book Event ");
-				System.out.println("2. List all event schedule");
-				System.out.println("3. Cancel Event");
-				System.out.println("Select Any above option");
-				String option = br.readLine().trim();
-				if (option.equals("1")) {
-					logger.info(id + " started peforming book event operation");
-					bookEventOption(id);
-				} else if (option.equals("2")) {
-					logger.info(id + " started peforming schedule event operation");
-
-					logger.info(managerObj.getBookingSchedule(id));
-				} else if (option.equals("3")) {
-					logger.info(id + " started peforming cancel event operation");
-
-					cancelEventOption(id);
-				}
+				customerOption(id);
 			}
+			if(id.equals("exit"))
+				break;
 		}
 
 	}
+	
+	public static  void managerOption(String id) throws IOException, InterruptedException{
+		System.out.println("1. Add Event ");
+		System.out.println("2. Remove Event");
+		System.out.println("3. List all Available Event");
+		System.out.println("4. Book Event ");
+		System.out.println("5. List all event schedule");
+		System.out.println("6. Cancel Event");
+		System.out.println("Select Any above option");
+		String option = br.readLine().trim();
+		if (option.equals("1")) {
+			logger.info(id + " started peforming add event operation");
+			addEventOption(id);
+		} else if (option.equals("3")) {
+			logger.info(id + " started peforming list all available  event operation");
+			listEventAvailabilityOption(id);
+		} else if (option.equals("2")) {
+			logger.info(id + " started peforming remove event operation");
+			removeEventOption(id);
+		}else if (option.equals("4")) {
+			System.out.println("Enter Customer ID");
+			String customerId = br.readLine();
+			logger.info(id + " started peforming book event operation for  " + customerId );
+			bookEventOption(customerId);
+		} else if (option.trim().equals("5")) {
+			System.out.println("Enter Customer ID");
+			String customerId = br.readLine();
+			logger.info(id + " started peforming schedule event operation for " + customerId);
+			logger.info(managerObj.getBookingSchedule(customerId));
+		} else if (option.trim().equals("6")) {
+			System.out.println("Enter Customer ID");
+			String customerId = br.readLine().trim();
+			logger.info(id + " started peforming cancel event operation for " + customerId);
+			cancelEventOption(customerId);
+		}
 
+	}
+	public static void customerOption(String id) throws IOException {
+		System.out.println("1. Book Event ");
+		System.out.println("2. List all event schedule");
+		System.out.println("3. Cancel Event");
+		System.out.println("Select Any above option");
+		String option = br.readLine().trim();
+		if (option.equals("1")) {
+			logger.info(id + " started peforming book event operation");
+			bookEventOption(id);
+		} else if (option.equals("2")) {
+			logger.info(id + " started peforming schedule event operation");
+
+			logger.info(managerObj.getBookingSchedule(id));
+		} else if (option.equals("3")) {
+			logger.info(id + " started peforming cancel event operation");
+
+			cancelEventOption(id);
+		}
+	}
 	public static void createManagerObject(String serverName)
 			throws AccessException, RemoteException, NotBoundException {
 		if (serverName.startsWith("TOR")) {
