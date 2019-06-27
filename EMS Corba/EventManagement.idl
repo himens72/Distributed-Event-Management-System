@@ -14,6 +14,6 @@ interface managerInterface {
 	
 	string getBookingSchedule(in string customerId);
 	
-	string passMsg(in string message);
+	string swapEvent(in string customerId, in string newEventId, in string newEventType, in string oldEventId, in string oldEventType);
 };
 };
