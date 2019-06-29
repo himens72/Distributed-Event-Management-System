@@ -7,8 +7,6 @@ package com.management.interfaceDef;
 
 import java.io.IOException;
 import java.rmi.Remote;
-import java.rmi.RemoteException;
-
 /**
  *
  * @author Himen Sidhpura
@@ -26,5 +24,8 @@ public interface managerInterface extends Remote {
 	public String cancelBooking(String customerId, String eventId, String eventType) throws IOException;
 
 	public String getBookingSchedule(String customerId) throws IOException;
+
+	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
+			String oldEventType) throws IOException;
 
 }

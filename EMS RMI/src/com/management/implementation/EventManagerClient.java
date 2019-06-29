@@ -349,4 +349,11 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 			logger.info("Couldn't Initiate Logger. Please check file permission");
 		}
 	}
+
+	@Override
+	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
+			String oldEventType) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
