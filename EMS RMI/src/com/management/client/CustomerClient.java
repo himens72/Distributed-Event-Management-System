@@ -86,13 +86,13 @@ public class CustomerClient {
 			String customerId = br.readLine().trim();
 			logger.info(id + " started peforming cancel event operation for " + customerId);
 			cancelEventOption(customerId);
-		}
-
+		} 
 	}
 	public static void customerOption(String id) throws IOException {
 		System.out.println("1. Book Event ");
 		System.out.println("2. List all event schedule");
 		System.out.println("3. Cancel Event");
+		System.out.println("4. Swap Event");
 		System.out.println("Select Any above option");
 		String option = br.readLine().trim();
 		if (option.equals("1")) {
@@ -100,14 +100,28 @@ public class CustomerClient {
 			bookEventOption(id);
 		} else if (option.equals("2")) {
 			logger.info(id + " started peforming schedule event operation");
-
 			logger.info(managerObj.getBookingSchedule(id));
 		} else if (option.equals("3")) {
 			logger.info(id + " started peforming cancel event operation");
-
 			cancelEventOption(id);
+		} else if (option.equals("4")) {
+			logger.info(id + " started peforming swap event operation");
+			swapEventOption(id);
 		}
 	}
+	private static void swapEventOption(String customerID) throws IOException {
+		// TODO Auto-generated method stub
+		System.out.println("1. New Event ID ");
+		String newEventId = br.readLine().trim();
+		System.out.println("2. New Event Type");
+		String newEventType = br.readLine().trim();
+		System.out.println("3. Old Event ID ");
+		String oldEventId = br.readLine().trim();
+		System.out.println("4. Old Event Type");
+		String oldEventType = br.readLine().trim();
+		logger.info(managerObj.swapEvent(customerID, newEventId, newEventType, oldEventId, oldEventType));
+	}
+
 	public static void createManagerObject(String serverName)
 			throws AccessException, RemoteException, NotBoundException {
 		if (serverName.startsWith("TOR")) {

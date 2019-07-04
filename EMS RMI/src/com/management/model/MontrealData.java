@@ -174,7 +174,25 @@ public class MontrealData {
 		}
 		return customers.length() == 0 ? "" : customers.toString();
 	}
-
+	public synchronized boolean getEvent(String customerID, String eventId, String eventType) {
+		if (serverData.containsKey(eventType)) {
+			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
+			if (typeData.size() == 0) {
+				System.out.println("No Events Found");
+				return false;
+			} else {
+				if (typeData.containsKey(eventId)) {
+					HashMap<String, String> currentEvent = typeData.get(eventId);
+					return currentEvent.get("customerId").contains(customerID.trim());
+				} else {
+					return false;
+				}
+			}
+		} else {
+			System.out.println("No Event Type Found");
+			return false;
+		}
+	}
 	public synchronized String getBookingCount(String customerId, String eventType) {
 		int count = 0;
 		String month = eventType.trim().substring(6, eventType.trim().length());
