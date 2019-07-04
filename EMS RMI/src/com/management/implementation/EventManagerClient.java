@@ -389,7 +389,7 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 			}
 		} else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
 				&& !customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
-			if (newEventID.trim().equals(newEventID.trim().substring(6, oldEventID.trim().length()))) {
+			if (newEventID.trim().substring(6, newEventID.length()).equals(oldEventID.trim().substring(6, oldEventID.trim().length()))) {
 				boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
 				if (bookFlag) {
 					boolean cancelFlag = swapCancelBooking(customerID, oldEventID, oldEventType);
@@ -400,8 +400,19 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 				}
 			} else {
 				boolean flag = checkMaximumLimt(customerID, newEventID);
-				if (flag)
+				if (flag) {
 					return "you have already reached maximum limit of Current Month Outside city registration ";
+				}
+				else {
+					boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
+					if (bookFlag) {
+						boolean cancelFlag = swapCancelBooking(customerID, oldEventID, oldEventType);
+						return cancelFlag ? customerID + " : Swap Event Operation Successful. "
+								: customerID + " : Swap Event Operation Failure.";
+					} else {
+						return "Swap Operation : Unable to Book New Event ID";
+					}	
+				}
 			}
 		}
 		return "Some error might occur. Please check Data and Try again";

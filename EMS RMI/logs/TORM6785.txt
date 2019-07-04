@@ -26,3 +26,43 @@ Jun 25, 2019 7:04:00 PM com.management.client.CustomerClient managerOption
 INFO: TORM6785 started peforming list all available  event operation
 Jun 25, 2019 7:04:04 PM com.management.client.CustomerClient listEventAvailabilityOption
 INFO: MTLA080619 2,
+Jul 04, 2019 3:16:10 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 3:16:13 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLE230719 1,
+Jul 04, 2019 3:16:27 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 3:16:31 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA090619 2,OTWE110619 1,OTWE080619 1,
+Jul 04, 2019 3:16:57 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 3:17:09 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA080619 2,
+Jul 04, 2019 5:05:03 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 5:05:16 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA090619 2,OTWE110619 1,OTWE080619 0,
+Jul 04, 2019 5:09:08 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 5:09:15 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA090619 2,OTWE110619 1,OTWE080619 1,
+Jul 04, 2019 5:09:35 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 5:09:39 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLA080619 2,
+Jul 04, 2019 5:09:53 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 5:09:55 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: MTLE230719 1,
+Jul 04, 2019 5:58:06 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 5:58:39 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: OTWE110619 1,OTWE080619 1,
+Jul 04, 2019 5:59:17 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 5:59:21 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: OTWE200619 2,OTWE230719 1,
+Jul 04, 2019 6:00:01 PM com.management.client.CustomerClient managerOption
+INFO: TORM6785 started peforming list all available  event operation
+Jul 04, 2019 6:00:27 PM com.management.client.CustomerClient listEventAvailabilityOption
+INFO: OTWE300619 1,

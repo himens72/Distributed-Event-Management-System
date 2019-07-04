@@ -52,3 +52,95 @@ Jun 25, 2019 7:17:31 PM com.management.client.CustomerClient managerOption
 INFO: OTWM4560 started peforming list all available  event operation
 Jun 25, 2019 7:17:37 PM com.management.client.CustomerClient listEventAvailabilityOption
 INFO: OTWE110619 1,OTWE080619 0,MTLA090619 2,
+Jul 04, 2019 3:11:31 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 3:11:54 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619 is created with capacity 1 of type Conferences
+Jul 04, 2019 3:12:10 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 3:12:24 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE110619 is created with capacity 1 of type Conferences
+Jul 04, 2019 3:12:56 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 3:13:07 PM com.management.client.CustomerClient addEventOption
+INFO: Please Enter Proper Event Id
+Jul 04, 2019 3:18:43 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming book event operation for  TORC1234
+Jul 04, 2019 3:18:56 PM com.management.client.CustomerClient bookEventOption
+INFO: TORC1234 has book event OTWE080619 of event  type Conferences
+Jul 04, 2019 4:41:27 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 4:41:54 PM com.management.client.CustomerClient addEventOption
+INFO: Please Enter Proper Event Id
+Jul 04, 2019 4:42:28 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 4:42:37 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619 is created with capacity 1 of type Conferences
+Jul 04, 2019 4:42:54 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 4:43:04 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE110619 is created with capacity 1 of type Conferences
+Jul 04, 2019 4:43:21 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 4:43:38 PM com.management.client.CustomerClient addEventOption
+INFO: Please Enter Proper Event Id
+Jul 04, 2019 5:06:15 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:06:28 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619 is created with capacity 1 of type Conferences
+Jul 04, 2019 5:06:36 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:06:49 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE110619 is created with capacity 1 of type Conferences
+Jul 04, 2019 5:07:03 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:07:10 PM com.management.client.CustomerClient addEventOption
+INFO: Please Enter Proper Event Id
+Jul 04, 2019 5:19:22 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:19:35 PM com.management.client.CustomerClient addEventOption
+INFO: Please Enter proper event type
+Jul 04, 2019 5:23:27 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:24:08 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619 is created with capacity 1 of type Conferences
+Jul 04, 2019 5:24:35 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:24:46 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE110619 is created with capacity 1 of type Conferences
+Jul 04, 2019 5:24:54 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:25:31 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE200619 is created with capacity 1 of type Trade Shows
+Jul 04, 2019 5:25:42 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:26:06 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE230719 is created with capacity 1 of type Seminars
+Jul 04, 2019 5:31:06 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:31:27 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE300619 is created with capacity 2 of type Seminars
+Jul 04, 2019 5:42:10 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:42:30 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619event Capacity is updated to 1 of type Conferences
+Jul 04, 2019 5:44:12 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:44:29 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE080619 is created with capacity 1 of type Conferences
+Jul 04, 2019 5:49:49 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:50:57 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE110619 is created with capacity 1 of type Conferences
+Jul 04, 2019 5:52:45 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:53:28 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE200619 is created with capacity 2 of type Seminars
+Jul 04, 2019 5:54:37 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:55:47 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE300619 is created with capacity 1 of type Trade Shows
+Jul 04, 2019 5:57:03 PM com.management.client.CustomerClient managerOption
+INFO: OTWM4560 started peforming add event operation
+Jul 04, 2019 5:57:35 PM com.management.client.CustomerClient addEventOption
+INFO: OTWE230719 is created with capacity 1 of type Seminars
