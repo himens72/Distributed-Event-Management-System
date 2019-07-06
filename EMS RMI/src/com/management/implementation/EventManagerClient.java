@@ -305,7 +305,7 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	public String getBookingSchedule(String customerId) throws IOException {
 		// TODO Auto-generated method stub
 		logger.info("Booking Schedule Operation :  " + customerId);
-
+	
 		StringBuilder temp = new StringBuilder();
 		if (customerId.substring(0, 3).trim().equals("TOR")) {
 			temp.append(torontoData.getBookingSchedule(customerId.trim()));
@@ -351,6 +351,10 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 	@Override
 	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
 			String oldEventType) throws IOException {
+		boolean existanceFlag = checkEventExistance(customerID, oldEventID, oldEventType);
+		System.out.println("Existance Flag : " + existanceFlag);
+		if(existanceFlag == false)
+			return "Some error might occur. Please check Data and Try again";
 		if (customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
 		/*
 		 * && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0,
@@ -454,7 +458,39 @@ public class EventManagerClient extends UnicastRemoteObject implements managerIn
 		}
 		return false;
 	}
-
+	public boolean checkEventExistance(String customerID, String eventId, String eventType) {
+		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
+				|| eventType.trim().equals("Trade Shows")) {
+			if (customerID.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
+				boolean temp = false;
+				if (eventId.trim().substring(0, 3).equals("TOR")) {
+					temp = torontoData.getEvent(customerID, eventId, eventType);
+				} else if (eventId.trim().substring(0, 3).equals("MTL")) {
+					temp = montrealData.getEvent(customerID, eventId, eventType);
+				} else if (eventId.trim().substring(0, 3).equals("OTW")) {
+					temp = ottawaData.getEvent(customerID, eventId, eventType);
+				}
+				return temp == false ? temp : true;
+			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
+				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 9990,
+						"existanceOperation");
+				return temp.trim().equals("Denies") ? false : true;
+			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
+				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 9991,
+						"existanceOperation");
+				return temp.trim().equals("Denies") ? false : true;
+			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
+				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 9992,
+						"existanceOperation");
+				System.out.println(temp);
+				return temp.trim().equals("Denies") ? false : true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 	public boolean swapEventBooking(String customerId, String eventId, String eventType) {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
