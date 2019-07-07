@@ -188,4 +188,24 @@ public class TorontoData {
 		}
 		return Integer.toString(count);
 	}
+	
+	public synchronized boolean getEvent(String customerId, String eventId, String eventType) {
+		if (serverData.containsKey(eventType)) {
+			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
+			if (typeData.size() == 0) {
+				System.out.println("No Events Found");
+				return false;
+			} else {
+				if (typeData.containsKey(eventId)) {
+					HashMap<String, String> currentEvent = typeData.get(eventId);
+					return currentEvent.get("customerId").contains(customerId.trim());
+				} else {
+					return false;
+				}
+			}
+		} else {
+			System.out.println("No Event Type Found");
+			return false;
+		}
+	}
 }

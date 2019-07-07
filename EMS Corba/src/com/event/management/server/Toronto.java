@@ -79,6 +79,13 @@ public class Toronto {
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
+				}else if (receiveData[receiveData.length - 1].trim().equals("existanceOperation")) {
+					boolean temp = managerObj.torontoData.getEvent(receiveData[0], receiveData[1], receiveData[2]);
+					logger.info("Reply send to customer : " + temp);
+					String newTemp = temp == false ? "Denies" : "Approves";
+					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
+							packetReceive.getAddress(), packetReceive.getPort());
+					datagramSocket.send(reply);
 				} else {
 					logger.info("Some problem in Server");
 				}
