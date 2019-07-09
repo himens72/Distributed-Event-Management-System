@@ -1,0 +1,2 @@
+Jul 09, 2019 10:45:37 AM com.event.management.client.CustomerClient customerOption
+INFO: OTWC123456 started peforming book event operation
