@@ -1,6 +1,6 @@
 module FrontEnd{
 
-interface frontEndInterface {
+interface FrontEndInterface {
 
 	string addEvent(in string managerId, in string eventId, in string eventType,in string eventCapacity);
 	
