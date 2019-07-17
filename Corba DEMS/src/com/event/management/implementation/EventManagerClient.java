@@ -16,9 +16,7 @@ import org.omg.CORBA.ORB;
 import com.event.management.model.MontrealData;
 import com.event.management.model.OttawaData;
 import com.event.management.model.TorontoData;
-import com.event.management.server.Montreal;
-import com.event.management.server.Ottawa;
-import com.event.management.server.Toronto;
+
 
 import EventManagement.managerInterfacePOA;
 
@@ -47,34 +45,6 @@ public class EventManagerClient extends managerInterfacePOA {
 		ottawaData = new OttawaData();
 		this.location = location;
 		setLogger("logs/" + location + ".txt", location);
-
-		if (location.equals("TOR")) {
-			Toronto toronto = new Toronto(this);
-			Runnable task1 = () -> {
-				toronto.serverConnection(9990);
-			};
-			Thread thread1 = new Thread(task1);
-			thread1.start();
-		} else if (location.equals("MTL")) {
-			Runnable task2 = () -> {
-				Montreal montreal = new Montreal(this);
-				montreal.serverConnection(9991);
-			};
-			Thread thread2 = new Thread(task2);
-			thread2.start();
-		} else if (location.equals("OTW")) {
-			Ottawa ottawa = new Ottawa(this);
-			Runnable task3 = () -> {
-				ottawa.serverConnection(9992);
-			};
-			Thread thread3 = new Thread(task3);
-			thread3.start();
-		} else {
-
-			System.out.println("Server not started");
-
-		}
-
 	}
 
 	@Override

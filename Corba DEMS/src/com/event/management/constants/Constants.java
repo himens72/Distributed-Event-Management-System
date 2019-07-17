@@ -12,8 +12,8 @@ public class Constants {
     public static final String NONE = "None";
     public static final String LOCALHOST = "localhost";
     public static final String ID = "id";
-    public static final String EVENT_ID = "localhost";
-    public static final String EVENT_TYPE = "eventId";
+    public static final String EVENT_ID = "eventId";
+    public static final String EVENT_TYPE = "eventType";
     public static final String EVENT_CAPACITY = "eventCapacity";
     public static final String OLD_EVENT_ID = "oldEventId";
     public static final String OLD_EVENT_TYPE = "oldEventType";

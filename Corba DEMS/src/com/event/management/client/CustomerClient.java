@@ -20,13 +20,11 @@ class CustomerClient {
 
 	static BufferedReader br;
 	static managerInterface managerObj;
-	static EventManagerClient eventManager;
 	private static Logger logger;
 	private static FileHandler fileTxt;
 
 	public static void main(String[] args) {
 		br = new BufferedReader(new InputStreamReader(System.in));
-		eventManager = null;
 
 		try {
 			ORB orb = ORB.init(args, null);
@@ -120,13 +118,16 @@ class CustomerClient {
 	}
 
 	public static void createManagerObject(String serverName, NamingContextExt ncRef) throws Exception {
-		if (serverName.startsWith("TOR")) {
-			managerObj = managerInterfaceHelper.narrow(ncRef.resolve_str("TOR"));
-		} else if (serverName.startsWith("MTL")) {
-			managerObj = managerInterfaceHelper.narrow(ncRef.resolve_str("MTL"));
-		} else if (serverName.startsWith("OTW")) {
-			managerObj = managerInterfaceHelper.narrow(ncRef.resolve_str("OTW"));
-		}
+		managerObj = managerInterfaceHelper.narrow(ncRef.resolve_str("FrontEnd"));
+
+		/*
+		 * if (serverName.startsWith("TOR")) { managerObj =
+		 * managerInterfaceHelper.narrow(ncRef.resolve_str("TOR")); } else if
+		 * (serverName.startsWith("MTL")) { managerObj =
+		 * managerInterfaceHelper.narrow(ncRef.resolve_str("MTL")); } else if
+		 * (serverName.startsWith("OTW")) { managerObj =
+		 * managerInterfaceHelper.narrow(ncRef.resolve_str("OTW")); }
+		 */
 	}
 
 	public static void bookEventOption(String customerId) throws IOException {
