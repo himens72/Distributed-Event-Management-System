@@ -64,6 +64,8 @@ public static  void managerOption(String id) throws InterruptedException, IOExce
 	System.out.println("4. Book Event ");
 	System.out.println("5. List all event schedule");
 	System.out.println("6. Cancel Event");
+
+	System.out.println("7. Swap Event Event");
 	System.out.println("Select Any above option");
 	String option = br.readLine().trim();
 	if (option.equals("1")) {
@@ -90,6 +92,11 @@ public static  void managerOption(String id) throws InterruptedException, IOExce
 		String customerId = br.readLine().trim();
 		logger.info(id + " started peforming cancel event operation for " + customerId);
 		cancelEventOption(customerId);
+	}else if (option.trim().equals("7")) {
+		System.out.println("Enter Customer ID");
+		String customerId = br.readLine().trim();
+		logger.info(id + " started peforming cancel event operation for " + customerId);
+		customerOption(customerId);
 	}
 
 }
