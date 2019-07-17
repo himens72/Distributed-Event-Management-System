@@ -1,0 +1,22 @@
+Jul 14, 2019 8:35:23 PM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 14, 2019 8:35:30 PM com.event.management.client.CustomerClient addEventOption
+INFO: TORM123456 is created with capacity 5 of type Seminars
+Jul 16, 2019 2:46:58 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 16, 2019 2:48:49 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 16, 2019 2:51:46 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 16, 2019 2:53:57 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 16, 2019 3:03:50 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 16, 2019 3:04:28 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 16, 2019 7:37:00 PM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 17, 2019 6:56:00 PM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
+Jul 17, 2019 7:22:57 PM com.event.management.client.CustomerClient managerOption
+INFO: TORM1234 started peforming add event operation
