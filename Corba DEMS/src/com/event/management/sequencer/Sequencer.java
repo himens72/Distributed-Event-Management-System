@@ -41,10 +41,10 @@ public class Sequencer {
 				System.out.println("Sequencer Data : " + jsonObject.toString());
 				counter++;
 
-				InetAddress aHost = InetAddress.getByName("230.1.1.5");
+				InetAddress aHost = InetAddress.getByName("224.0.0.252");
 				System.out.println("Inet Addess " + aHost.getHostName() + " " +aHost.getHostAddress());
 				byte[] msg = message.getBytes();
-				DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 1313);
+				DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9990);
 				aSocket.send(packet);
 
 			}
