@@ -59,7 +59,7 @@ public class TorontoServer {
 		MulticastSocket aSocket = null;
 		try {
 			aSocket = new MulticastSocket(9990);
-			aSocket.joinGroup(InetAddress.getByName("224.0.0.252"));
+			aSocket.joinGroup(InetAddress.getByName("230.1.2.5"));
 
 			while (true) {
 				byte[] buffer = new byte[1000];

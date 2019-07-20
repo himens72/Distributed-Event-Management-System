@@ -5,18 +5,22 @@
  */
 package com.event.management.server;
 
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 /**
  *
  * @author Jenny
  */
 public class MontrealServer {
+	private static Logger logger;
 
 	public static void main(String args[]) throws Exception {
 
 		MontrealServer montrealServer = new MontrealServer();
-
-		System.out.println("Montreal Server started");
-
+		montrealServer.setLogger("logs/MTL.txt", "MTL");
+		logger.info("Montreal Server Started");
 		Runnable task = () -> {
 			montrealServer.receive();
 		};
@@ -36,7 +40,6 @@ public class MontrealServer {
 		thread1.start();
 		thread2.start();
 
-		System.out.println("Montreal Server Exiting ...");
 	}
 
 	void receive() {
@@ -53,5 +56,17 @@ public class MontrealServer {
 
 	private static void receiveFailedResponse() {
 
+	}
+
+	private void setLogger(String location, String id) {
+		try {
+			logger = Logger.getLogger(id);
+			FileHandler fileTxt = new FileHandler(location, true);
+			SimpleFormatter formatterTxt = new SimpleFormatter();
+			fileTxt.setFormatter(formatterTxt);
+			logger.addHandler(fileTxt);
+		} catch (Exception err) {
+			logger.info("Couldn't Initiate Logger. Please check file permission");
+		}
 	}
 }
