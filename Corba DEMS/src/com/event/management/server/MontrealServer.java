@@ -5,9 +5,16 @@
  */
 package com.event.management.server;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.SocketException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
+import com.event.management.constants.Constants;
 
 /**
  *
@@ -15,27 +22,28 @@ import java.util.logging.SimpleFormatter;
  */
 public class MontrealServer {
 	private static Logger logger;
+	String response = "";
 
 	public static void main(String args[]) throws Exception {
 
 		MontrealServer montrealServer = new MontrealServer();
 		montrealServer.setLogger("logs/MTL.txt", "MTL");
 		logger.info("Montreal Server Started");
-		Runnable task = () -> {
+		Runnable montrealTask = () -> {
 			montrealServer.receive();
 		};
-		Thread thread = new Thread(task);
+		Thread thread = new Thread(montrealTask);
 		thread.start();
 
-		Runnable task1 = () -> {
+		Runnable montrealRequestTask = () -> {
 			montrealServer.receiveMulticastRequest();
 		};
 
-		Runnable task2 = () -> {
+		Runnable montrealResponseTask = () -> {
 			receiveFailedResponse();
 		};
-		Thread thread1 = new Thread(task1);
-		Thread thread2 = new Thread(task2);
+		Thread thread1 = new Thread(montrealRequestTask);
+		Thread thread2 = new Thread(montrealRequestTask);
 
 		thread1.start();
 		thread2.start();
@@ -46,9 +54,7 @@ public class MontrealServer {
 
 	}
 
-	private void receiveMulticastRequest() {
-
-	}
+	private void receiveMulticastRequest() {}
 
 	private void sendRequestToFrontEnd(String message) {
 

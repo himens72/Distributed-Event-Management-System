@@ -12,5 +12,5 @@ public class ServerLocks {
 	public static ReadWriteLock lockTorontoServerData = new ReentrantReadWriteLock();
 	public static ReadWriteLock lockMontrealServerData = new ReentrantReadWriteLock();
 
-	public static ReadWriteLock lockDiffLibraryData = new ReentrantReadWriteLock();
+	public static ReadWriteLock lockDiffServerData = new ReentrantReadWriteLock();
 }
