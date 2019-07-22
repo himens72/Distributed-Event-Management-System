@@ -41,11 +41,21 @@ public class Sequencer {
 				System.out.println("Sequencer Data : " + jsonObject.toString());
 				counter++;
 
-				InetAddress aHost = InetAddress.getByName("230.1.1.5");
+				InetAddress aHost = InetAddress.getByName("230.0.0.0");
 				System.out.println("Inet Addess " + aHost.getHostName() + " " +aHost.getHostAddress());
 				byte[] msg = jsonObject.toString().getBytes();
-				DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9990);
-				aSocket.send(packet);
+				if(jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("TOR")) {
+					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9990);	
+					aSocket.send(packet);
+				} else if(jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("MTL")) {
+					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9991);	
+					aSocket.send(packet);
+				} else if(jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("OTW")) {
+					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9992);	
+					aSocket.send(packet);
+				}
+				
+				
 
 			}
 		} catch (SocketException e) {

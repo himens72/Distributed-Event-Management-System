@@ -41,12 +41,20 @@ public class FrontEnd {
 			// get object reference from the servant
 
 			System.out.println("FrontEnd Started");
+			Runnable task1 = frontEndImpl::ReplicaOneReply;
+            Runnable task2 = frontEndImpl::ReplicaTwoReply;
+            Runnable task3 = frontEndImpl::ReplicaThreeReply;
+
+            Thread thread = new Thread(task1);
+            Thread thread2 = new Thread(task2);
+            Thread thread3 = new Thread(task3);
+
+            thread.start();
+            thread2.start();
+            thread3.start();
 
 			// wait for invocations from clients
-			for (;;) {
-				orb.run();
-			}
-		}
+				orb.run();		}
 
 		catch (InvalidName | CannotProceed | org.omg.CosNaming.NamingContextPackage.InvalidName | NotFound
 				| AdapterInactive | ServantNotActive | WrongPolicy e) {

@@ -85,25 +85,25 @@ public class EventManagerToronto {
 			String temp = "";
 			if (managerId.substring(0, 3).trim().equals("TOR")) {
 				temp = torontoData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991, "listOperation")
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8991, "listOperation")
 						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8992,
 						"listOperation").trim();
 				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
 				return temp.trim().equals("") ? "No Events Available" : temp.trim();			 
 			} else if (managerId.substring(0, 3).trim().equals("MTL")) {
 				temp = montrealData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8990, "listOperation")
 						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9992,
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8992,
 						"listOperation").trim();
 				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
 				return temp.trim().equals("") ? "No Events Available" : temp.trim();
 			} else if (managerId.substring(0, 3).trim().equals("OTW")) {
 				temp = ottawaData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9990, "listOperation")
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8990, "listOperation")
 						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 9991,
+				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8991,
 						"listOperation").trim();
 				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
 				return temp.trim().equals("") ? "No Events Available" : temp.trim();
@@ -150,24 +150,24 @@ public class EventManagerToronto {
 			if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				if (customerId.trim().substring(0, 3).equals("TOR")) {
 					count.append(
-							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8991, "countOperation")
 							+ ",");
 					count.append(
-							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8992, "countOperation")
 							+ ",");
 				} else if (customerId.trim().substring(0, 3).equals("MTL")) {
 					count.append(
-							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8990, "countOperation")
 							+ ",");
 					count.append(
-							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8992, "countOperation")
 							+ ",");
 				} else if (customerId.trim().substring(0, 3).equals("OTW")) {
 					count.append(
-							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8990, "countOperation")
 							+ ",");
 					count.append(
-							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
+							requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8991, "countOperation")
 							+ ",");
 				}
 				String[] split = count.toString().trim().split(",");
@@ -191,16 +191,16 @@ public class EventManagerToronto {
 				}
 				return temp == "" ? "Unable to Book  Event" : temp.trim();
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
 						"bookOperation");
 				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
 			} 
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
 						"bookOperation");
 				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
 						"bookOperation");
 				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
 			}
@@ -227,16 +227,16 @@ public class EventManagerToronto {
 				}
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
 						"cancelOperation");
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 			} 
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
 						"cancelOperation");
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
 						"cancelOperation");
 				return temp == "" ? "Unable to Cancel  Event" : temp;
 
@@ -256,25 +256,25 @@ public class EventManagerToronto {
 		StringBuilder temp = new StringBuilder();
 		if (customerId.substring(0, 3).trim().equals("TOR")) {
 			temp.append(torontoData.getBookingSchedule(customerId.trim()));
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9991,
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991,
 					"scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9992,
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8992,
 					"scheduleOperation").trim());
 			logger.info("Booking Schedule for " + customerId + " : " + temp);
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		} else if (customerId.substring(0, 3).trim().equals("MTL")) {
 			temp.append(montrealData.getBookingSchedule(customerId.trim()));
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9990,
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8990,
 					"scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9992,
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8992,
 					"scheduleOperation").trim());
 			logger.info("Booking Schedule for " + customerId + " : " + temp);
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 		} else if (customerId.substring(0, 3).trim().equals("OTW")) {
 			temp.append(ottawaData.getBookingSchedule(customerId.trim()));
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9990,
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8990,
 					"scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 9991,
+			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991,
 					"scheduleOperation").trim());
 			logger.info("Booking Schedule for " + customerId + " : " + temp);
 			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
@@ -361,24 +361,24 @@ public class EventManagerToronto {
 		if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 			if (customerId.trim().substring(0, 3).equals("TOR")) {
 				count.append(
-						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
+						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8991, "countOperation")
 								+ ",");
 				count.append(
-						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
+						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8992, "countOperation")
 								+ ",");
 			} else if (customerId.trim().substring(0, 3).equals("MTL")) {
 				count.append(
-						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
+						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8990, "countOperation")
 								+ ",");
 				count.append(
-						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9992, "countOperation")
+						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8992, "countOperation")
 								+ ",");
 			} else if (customerId.trim().substring(0, 3).equals("OTW")) {
 				count.append(
-						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9990, "countOperation")
+						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8990, "countOperation")
 								+ ",");
 				count.append(
-						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 9991, "countOperation")
+						requestOnOtherServer(customerId, eventId, "No Types", "No Capacity", 8991, "countOperation")
 								+ ",");
 			}
 			String[] split = count.toString().trim().split(",");
@@ -406,15 +406,15 @@ public class EventManagerToronto {
 				}
 				return temp == false ? temp : true;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 9990,
+				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 8990,
 						"existanceOperation");
 				return temp.trim().equals("Denies") ? false : true;
 			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 9991,
+				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 8991,
 						"existanceOperation");
 				return temp.trim().equals("Denies") ? false : true;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 9992,
+				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 8992,
 						"existanceOperation");
 				System.out.println(temp);
 				return temp.trim().equals("Denies") ? false : true;
@@ -439,16 +439,16 @@ public class EventManagerToronto {
 				}
 				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
 						"bookOperation");
 				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
 			}
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
 						"bookOperation");
 				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
 						"bookOperation");
 				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
 			} 
@@ -475,16 +475,16 @@ public class EventManagerToronto {
 				}
 				return temp.trim().isEmpty() ? false : true;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9990,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
 						"cancelOperation");
 				return temp.trim().isEmpty() ? false : true;
 			} 
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9991,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
 						"cancelOperation");
 				return temp.trim().isEmpty() ? false : true;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 9992,
+				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
 						"cancelOperation");
 				return temp.trim().isEmpty() ? false : true;
 			} 

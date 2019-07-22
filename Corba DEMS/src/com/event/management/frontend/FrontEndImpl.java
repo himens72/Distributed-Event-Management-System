@@ -21,6 +21,9 @@ public class FrontEndImpl extends managerInterfacePOA {
 
 	private static Logger logger;
 	private ORB orb;
+	String replicaOneResponse = "";
+	String replicaTwoResponse = "";
+	String replicaThreeResponse = "";
 
 	public FrontEndImpl() {
 		// TODO Auto-generated constructor stub
@@ -39,6 +42,12 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE,
 				Constants.NONE, Constants.ADD_OPERATION);
 		udpRequest(requestMessage);
+		System.out.println("waiting for response...");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -48,6 +57,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.REMOVE_OPERATION);
 		udpRequest(requestMessage);
+		try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -57,6 +71,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(managerId, Constants.NONE, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.LIST_OPERATION);
 		udpRequest(requestMessage);
+		try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -66,6 +85,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.BOOK_OPERATION);
 		udpRequest(requestMessage);
+		try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -75,6 +99,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.CANCEL_OPERATION);
 		udpRequest(requestMessage);
+		try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -84,6 +113,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, Constants.NONE, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.NONE, Constants.SCHEDULE_OPERATION);
 		udpRequest(requestMessage);
+		try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -94,6 +128,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, newEventId, newEventType, Constants.NONE, oldEventId,
 				oldEventType, Constants.SWAP_OPERATION);
 		udpRequest(requestMessage);
+		try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -131,17 +170,27 @@ public class FrontEndImpl extends managerInterfacePOA {
 		}
 	}
 
-	public String udpReply() {
-		DatagramSocket datagramSocket = null;
+	public void ReplicaOneReply() {
+		String message = "";
+		DatagramSocket aSocket = null;
 		try {
-			datagramSocket = new DatagramSocket(0110);
-			byte[] buffer = new byte[65535];
+			aSocket = new DatagramSocket(1110);
 			while (true) {
-				DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
-				datagramSocket.receive(datagramPacket);
-				String response = new String(datagramPacket.getData());
-				System.out.println("Gotcha on FE: " + response);
-				return response;
+				byte[] buffer = new byte[1000];
+
+				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+				aSocket.receive(request);
+				replicaOneResponse = new String(request.getData(), 0, request.getLength());
+				System.out.println("ReplicaOneReply " +replicaOneResponse);
+				if (!replicaOneResponse.isEmpty()) {
+					System.out.println("response received from RM 1" + replicaOneResponse);
+				}
+
+				/*
+				 * byte[] msg = message.getBytes(); DatagramPacket reply = new
+				 * DatagramPacket(msg, msg.length, request.getAddress(), request.getPort());
+				 * aSocket.send(reply);
+				 */
 			}
 
 		} catch (SocketException e) {
@@ -153,7 +202,82 @@ public class FrontEndImpl extends managerInterfacePOA {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		return null;
+	}
+
+	public void ReplicaTwoReply() {
+		String message = "";
+		DatagramSocket aSocket = null;
+		try {
+			aSocket = new DatagramSocket(1111);
+
+			while (true) {
+				byte[] buffer = new byte[1000];
+
+				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+				aSocket.receive(request);
+				replicaTwoResponse = new String(request.getData(), 0, request.getLength());
+				System.out.println("replicaTwoResponse " +replicaTwoResponse);
+
+				if (!replicaTwoResponse.isEmpty()) {
+					System.out.println("response received from RM 2" + replicaTwoResponse);
+				}
+
+				/*
+				 * byte[] msg = message.getBytes(); DatagramPacket reply = new
+				 * DatagramPacket(msg, msg.length, request.getAddress(), request.getPort());
+				 * aSocket.send(reply);
+				 */
+			}
+
+		} catch (SocketException e) {
+			System.out.println(e.getMessage());
+		} catch (UnknownHostException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+
+	}
+
+	public void ReplicaThreeReply() {
+		String message = "";
+		DatagramSocket aSocket = null;
+		try {
+			aSocket = new DatagramSocket(1112);
+
+			while (true) {
+				byte[] buffer = new byte[1000];
+				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+				aSocket.receive(request);
+				replicaThreeResponse = new String(request.getData(), 0, request.getLength());
+				System.out.println("replicaThreeResponse " +replicaThreeResponse);
+
+				if (!replicaThreeResponse.isEmpty()) {
+					System.out.println("response received from RM 3" + replicaThreeResponse);
+				}
+				/*
+				 * byte[] msg = message.getBytes(); DatagramPacket reply = new
+				 * DatagramPacket(msg, msg.length, request.getAddress(), request.getPort());
+				 * aSocket.send(reply)
+				 */
+				;
+			}
+
+		} catch (SocketException e) {
+			System.out.println(e.getMessage());
+		} catch (UnknownHostException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public String udpReply() {
+		return replicaOneResponse;
 	}
 
 	static void setLogger(String location, String id) {
