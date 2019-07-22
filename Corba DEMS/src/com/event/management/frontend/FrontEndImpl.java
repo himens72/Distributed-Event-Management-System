@@ -140,6 +140,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 				DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
 				datagramSocket.receive(datagramPacket);
 				String response = new String(datagramPacket.getData());
+				System.out.println("Gotcha on FE: " + response);
 				return response;
 			}
 

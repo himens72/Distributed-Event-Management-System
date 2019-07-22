@@ -37,8 +37,6 @@ public class TorontoServer {
 		TorontoServer torontoServer = new TorontoServer();
 		torontoServer.setLogger("logs/TOR.txt", "TOR");
 		logger.info("Toronto Server Started");
-		System.out.println("Toronto Server started");
-
 		Runnable torontoTask = () -> {
 			torontoServer.receive();
 		};
@@ -57,8 +55,6 @@ public class TorontoServer {
 
 		thread1.start();
 		thread2.start();
-
-		System.out.println("Toronto Server Exiting ...");
 	}
 
 	void receive() {
@@ -69,78 +65,80 @@ public class TorontoServer {
 
 		MulticastSocket aSocket = null;
 		try {
-			aSocket = new MulticastSocket(1313);
-			aSocket.joinGroup(InetAddress.getByName("230.1.2.5"));
+			aSocket = new MulticastSocket(9990);
+			aSocket.joinGroup(InetAddress.getByName("230.1.1.5"));
 
 			while (true) {
 				byte[] buffer = new byte[1000];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-				aSocket.receive(request);
-				logger.info("Request:" + new String(request.getData()));
-				String[] requestString = new String(request.getData()).trim().split("\\|+");
-
-				switch (requestString[0]) {
-					case Constants.ADD_OPERATION: {
-						String managerId = requestString[1];
-						String eventId = requestString[2];
-						String eventType = requestString[3];
-						String eventCapacity = requestString[4];
+				aSocket.receive(request);				
+				String requestMessage = new String(request.getData());
+				Object obj = new JSONParser().parse(requestMessage.trim());
+				JSONObject jsonObject = (JSONObject) obj;
+				logger.info("Request:" + jsonObject);
+				switch (jsonObject.get(Constants.OPERATION).toString()) {
+					case "addEventOperation": {
+						String managerId = jsonObject.get(Constants.ID).toString();
+						String eventId = jsonObject.get(Constants.EVENT_ID).toString();
+						String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
+						String eventCapacity = jsonObject.get(Constants.EVENT_CAPACITY).toString();
 
 						response = torObject.addEvent(managerId, eventId, eventType, eventCapacity);
 
 						break;
 					}
-					case Constants.REMOVE_OPERATION: {
-						String managerId = requestString[1];
-						String eventId = requestString[2];
-						String eventType = requestString[3];
+					case "removeEventOperation": {
+						String managerId = jsonObject.get(Constants.ID).toString();
+						String eventId = jsonObject.get(Constants.EVENT_ID).toString();
+						String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 
 						response = torObject.removeEvent(managerId, eventId, eventType);
 						break;
 					}
-					case Constants.LIST_OPERATION: {
-						String managerId = requestString[1];
-						String eventType = requestString[2];
+					case "listEventOperation": {
+						String managerId = jsonObject.get(Constants.ID).toString();
+						String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 
 						response = torObject.listEventAvailability(managerId,eventType);
 						break;
 					}
-					case Constants.BOOK_OPERATION: {
-						String customerId = requestString[1];
-						String eventId = requestString[2];
-						String eventType = requestString[3];
+					case "eventBookingOperation": {
+						String customerId = jsonObject.get(Constants.ID).toString();
+						String eventId = jsonObject.get(Constants.EVENT_ID).toString();
+						String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 
 						response = torObject.eventBooking(customerId, eventId, eventType);
 						break;
 					}
 
-					case Constants.CANCEL_OPERATION: {
-						String customerId = requestString[1];
-						String eventId = requestString[2];
-						String eventType = requestString[3];
+					case "cancelBookingOperation": {
+						String customerId = jsonObject.get(Constants.ID).toString();
+						String eventId = jsonObject.get(Constants.EVENT_ID).toString();
+						String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 
 						response = torObject.cancelBooking(customerId, eventId, eventType);
 						break;
 					}
 
-					case Constants.SCHEDULE_OPERATION: {
-						String customerId = requestString[1];
+					case "bookingScheduleOperation": {
+						String customerId = jsonObject.get(Constants.ID).toString();
 
 						response = torObject.getBookingSchedule(customerId);
 						break;
 					}
-					case Constants.SWAP_OPERATION: {
-						String customerId = requestString[1];
-						String newEventId = requestString[2];
-						String newEventType = requestString[3];
-						String oldEventId = requestString[4];
-						String oldEventType = requestString[5];
+					case "swapEventOperation": {
+						String customerId = jsonObject.get(Constants.ID).toString();
+						String newEventId = jsonObject.get(Constants.EVENT_ID).toString(); 
+						String newEventType = jsonObject.get(Constants.EVENT_TYPE).toString();
+						String oldEventId = jsonObject.get(Constants.OLD_EVENT_ID).toString();
+						String oldEventType = jsonObject.get(Constants.OLD_EVENT_TYPE).toString();
+						
 						response = torObject.swapEvent(customerId, newEventId, newEventType,oldEventId,oldEventType);
 						break;
 					}					
 					}
 
-					System.out.println("Response: " + response);
+					System.out.println("TOR Response: " + response);
 					sendRequestToFrontEnd(response);
 				
 				/*
@@ -154,6 +152,9 @@ public class TorontoServer {
 			System.out.println("Socket: " + e.getMessage());
 		} catch (IOException e) {
 			System.out.println("IO: " + e.getMessage());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			if (aSocket != null)
 				aSocket.close();
@@ -165,13 +166,13 @@ public class TorontoServer {
 		DatagramSocket aSocket = null;
 		byte[] buffer = new byte[1000];
 		try {
-			System.out.println("Request sent to Front End!");
+			System.out.println("Request from TOR Server sent to Front End!");
 			aSocket = new DatagramSocket();
 			byte[] m = message.getBytes();
 			InetAddress aHost = InetAddress.getByName("192.168.0.107");
 
 			System.out.println("Msg in Bytes: " + m);
-			DatagramPacket request = new DatagramPacket(m, m.length, aHost, 1113);
+			DatagramPacket request = new DatagramPacket(m, m.length, aHost, 0110);
 			aSocket.send(request);
 
 			/*

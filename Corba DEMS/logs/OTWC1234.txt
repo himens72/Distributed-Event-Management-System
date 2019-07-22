@@ -1,8 +1,0 @@
-Jul 09, 2019 10:36:33 AM com.event.management.client.CustomerClient customerOption
-INFO: OTWC1234 started peforming book event operation
-Jul 09, 2019 10:39:44 AM com.event.management.client.CustomerClient customerOption
-INFO: OTWC1234 started peforming book event operation
-Jul 09, 2019 10:41:34 AM com.event.management.client.CustomerClient customerOption
-INFO: OTWC1234 started peforming book event operation
-Jul 09, 2019 10:44:37 AM com.event.management.client.CustomerClient customerOption
-INFO: OTWC1234 started peforming book event operation
