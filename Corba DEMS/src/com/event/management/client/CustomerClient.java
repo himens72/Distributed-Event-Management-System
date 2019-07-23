@@ -11,8 +11,6 @@ import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 
-import com.event.management.implementation.EventManagerClient;
-
 import EventManagement.managerInterface;
 import EventManagement.managerInterfaceHelper;
 

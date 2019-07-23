@@ -69,16 +69,17 @@ public class TorontoServer {
 				String[] receiveData = new String(data).split(",");
 				logger.info("Receive Data : " + new String(data));
 				logger.info("Operation Performed " + receiveData[receiveData.length - 1].trim());
-				if (receiveData[receiveData.length - 1].trim().equals("listOperation")) {
+				if (receiveData[receiveData.length - 1].trim().equals(Constants.LIST_OPERATION)) {
 					String temp = torObject.torontoData.retrieveEvent(receiveData[2]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
-					String temp = torObject.torontoData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
-					logger.info("Reply send to customer : " + temp);
-					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
+					boolean temp = torObject.torontoData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
+					String newTemp = temp == false ? "Denies" : "Approves";
+					logger.info("Reply send to customer : " + newTemp);
+					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("bookOperation")) {

@@ -30,9 +30,9 @@ public class TorontoData {
 		serverData.put("Trade Shows", new HashMap<>());
 	}
 
-	synchronized public String addEvent(String eventId, String eventtype, String eventCapacity) {
+	synchronized public boolean addEvent(String eventId, String eventtype, String eventCapacity) {
 		if (!serverData.containsKey(eventtype)) {
-			return "Event Type Doesn't Exist. Please Enter proper Event Type";
+			return false;
 		}
 		HashMap<String, HashMap<String, String>> newValue = serverData.get(eventtype);
 		if (newValue.containsKey(eventId)) {
@@ -42,7 +42,7 @@ public class TorontoData {
 			newList.replace("customerId", newList.get("customerId"), newList.get("customerId"));
 			newValue.replace(eventId, serverData.get(eventtype).get(eventId), newList);
 			serverData.replace(eventtype, serverData.get(eventtype), newValue);
-			return eventId + "event Capacity is updated to " + eventCapacity + " of type " + eventtype;
+			return true;
 		} else {
 			HashMap<String, String> temp = new HashMap<>();
 			temp.put("capacity", eventCapacity);
@@ -50,20 +50,20 @@ public class TorontoData {
 			temp.put("customerId", "");
 			newValue.put(eventId, temp);
 			serverData.replace(eventtype, serverData.get(eventtype), newValue);
-			return eventId + " is created with capacity " + eventCapacity + " of type " + eventtype;
+			return true;
 		}
 	}
 
-	public synchronized String removeEvent(String eventId, String eventType) {
+	public synchronized boolean removeEvent(String eventId, String eventType) {
 		if (!serverData.containsKey(eventType)) {
-			return "Event Type Doesn't Exist. Please Enter proper Event Type";
+			return false;
 		}
 		HashMap<String, HashMap<String, String>> newValue = serverData.get(eventType);
 		if (newValue.containsKey(eventId)) {
 			serverData.get(eventType).remove(eventId);
-			return eventId + " is removed for event type" + eventType;
+			return true;
 		} else {
-			return eventId + " is doesn't exist for event type" + eventType;
+			return false;
 		}
 	}
 
@@ -73,7 +73,7 @@ public class TorontoData {
 			HashMap<String, HashMap<String, String>> temp = serverData.get(eventType);
 			if (temp.size() == 0) {
 				System.out.println("No Events Found");
-				return "";
+				return "No Events Found";
 			} else {
 				StringBuilder str = new StringBuilder();
 				for (Entry<String, HashMap<String, String>> entry : temp.entrySet()) {
@@ -86,7 +86,7 @@ public class TorontoData {
 			}
 		} else {
 			System.out.println("No Event Type Found");
-			return "No Event Type Found";
+			return "No Events Found";
 		}
 	}
 

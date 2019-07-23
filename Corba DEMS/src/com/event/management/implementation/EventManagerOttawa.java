@@ -10,6 +10,9 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.json.simple.JSONObject;
+
+import com.event.management.constants.Constants;
 import com.event.management.model.MontrealData;
 import com.event.management.model.OttawaData;
 import com.event.management.model.TorontoData;
@@ -36,12 +39,10 @@ public class EventManagerOttawa {
 		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
-				if (eventId.substring(0, 3).trim().equals("TOR"))
-					output = torontoData.addEvent(eventId, eventType, eventCapacity);
-				else if (eventId.substring(0, 3).trim().equals("MTL"))
-					output = montrealData.addEvent(eventId, eventType, eventCapacity);
-				else if (eventId.substring(0, 3).trim().equals("OTW"))
-					output = ottawaData.addEvent(eventId, eventType, eventCapacity);
+				 if (eventId.substring(0, 3).trim().equals("OTW"))
+						output = generateJSONObject(managerId, eventId, eventType, eventCapacity, "None", "None", Constants.ADD_OPERATION, ottawaData.addEvent(eventId, eventType, eventCapacity));
+				else 
+					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, "None", "None", Constants.ADD_OPERATION, false);
 				logger.info("Add Event Operation Output : " + output);
 				return output;
 			} else {
@@ -50,7 +51,7 @@ public class EventManagerOttawa {
 			}
 		} else {
 			logger.info("Please Enter proper event type");
-			return "Please Enter proper event type";
+			return generateJSONObject(managerId, eventId, eventType, eventCapacity, "None", "None", Constants.ADD_OPERATION, false);
 		}
 	}
 
@@ -60,57 +61,37 @@ public class EventManagerOttawa {
 		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
-				if (eventId.substring(0, 3).trim().equals("TOR"))
-					output = torontoData.removeEvent(eventId, eventType);
-				else if (eventId.substring(0, 3).trim().equals("MTL"))
-					output = montrealData.removeEvent(eventId, eventType);
-				else if (eventId.substring(0, 3).trim().equals("OTW"))
-					output = ottawaData.removeEvent(eventId, eventType);
+				if (eventId.substring(0, 3).trim().equals("OTW"))
+					output = generateJSONObject(managerId, eventId, eventType, "None", "None", "None", Constants.REMOVE_OPERATION, ottawaData.removeEvent(eventId, eventType));
+				else 
+					output = generateJSONObject(managerId, eventId, eventType, "None", "None", "None", Constants.REMOVE_OPERATION, false);
 				logger.info("Add Remove Operation Output : " + output);
 				return output.trim();
 			} else {
 				logger.info("Please Enter proper Event Id");
-				return "Please Enter Proper Event Id";
+				return generateJSONObject(managerId, eventId, eventType, "None", "None", "None", Constants.REMOVE_OPERATION, false);
 			}
 		} else {
 			logger.info("Please Enter Proper Event Type");
-			return "Please Enter proper event type";
+			return generateJSONObject(managerId, eventId, eventType, "None", "None", "None", Constants.REMOVE_OPERATION, false);
 		}
 	}
-
 	public String listEventAvailability(String managerId, String eventType) {
 		logger.info("List  Event Operation :  " + managerId + " want to see All available list of type " + eventType);
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = "";
-			if (managerId.substring(0, 3).trim().equals("TOR")) {
-				temp = torontoData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8991, "listOperation")
-						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8992,
-						"listOperation").trim();
-				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-				return temp.trim().equals("") ? "No Events Available" : temp.trim();			 
-			} else if (managerId.substring(0, 3).trim().equals("MTL")) {
-				temp = montrealData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8990, "listOperation")
-						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8992,
-						"listOperation").trim();
-				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-				return temp.trim().equals("") ? "No Events Available" : temp.trim();
-			} else if (managerId.substring(0, 3).trim().equals("OTW")) {
+			if (managerId.substring(0, 3).trim().equals("OTW")) {
 				temp = ottawaData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8990, "listOperation")
+				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8990, Constants.LIST_OPERATION)
 						.trim();
 				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8991,
-						"listOperation").trim();
+						Constants.LIST_OPERATION).trim();
 				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-				return temp.trim().equals("") ? "No Events Available" : temp.trim();
-			}
+				return temp.trim().equals("") || temp.trim().equals("No Events Found") ? "No Events Found" : temp.trim();
+			} 
 			logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-			return temp.trim().equals("") ? "No Events Available" : temp.trim();
-
+			return temp.trim().equals("") || temp.trim().equals("No Events Found") ? "No Events Found" : temp.trim();
 		} else {
 			logger.info("Please enter Event type properly");
 			return "Please enter Event type properly";
@@ -495,6 +476,19 @@ public class EventManagerOttawa {
 		} else {
 			return false;
 		}
+	}
+	static String generateJSONObject(String id, String eventId, String eventType, String eventCapacity,
+			String oldEventId, String oldEventType, String operation, boolean status) {
+		JSONObject obj = new JSONObject();
+		obj.put(Constants.ID, id.trim());
+		obj.put(Constants.EVENT_ID, eventId.trim());
+		obj.put(Constants.EVENT_TYPE, eventType.trim());
+		obj.put(Constants.EVENT_CAPACITY, eventCapacity.trim());
+		obj.put(Constants.OLD_EVENT_ID, oldEventId.trim());
+		obj.put(Constants.OLD_EVENT_TYPE, oldEventType.trim());
+		obj.put(Constants.OPERATION, operation.trim());
+		obj.put("status", status);
+		return obj.toString();
 	}
 	static void setLogger(String location, String id) {
 		try {
