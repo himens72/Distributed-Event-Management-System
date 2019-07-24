@@ -244,7 +244,7 @@ public class MontrealServer {
 			InetAddress aHost = InetAddress.getByName(Constants.FRONTEND_IP);
 
 			System.out.println("Msg in Bytes: " + m);
-			DatagramPacket request = new DatagramPacket(m, m.length, aHost, Constants.RM_PORT);
+			DatagramPacket request = new DatagramPacket(m, m.length, aHost, Constants.RM_FRONTEND_PORT);
 			aSocket.send(request);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -287,7 +287,7 @@ public class MontrealServer {
 		obj.put(Constants.OLD_EVENT_ID, oldEventId.trim());
 		obj.put(Constants.OLD_EVENT_TYPE, oldEventType.trim());
 		obj.put(Constants.OPERATION, operation.trim());
-		obj.put("status", status);
+		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
 	}
 	private void setLogger(String location, String id) {

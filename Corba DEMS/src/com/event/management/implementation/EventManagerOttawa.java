@@ -77,20 +77,17 @@ public class EventManagerOttawa {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = "";
-			if (managerId.substring(0, 3).trim().equals("OTW")) {
 				temp = ottawaData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8990, Constants.LIST_OPERATION)
+				temp += requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE, Constants.LOCAL_TORONTO_PORT, Constants.LIST_OPERATION)
 						.trim();
-				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8991,
+				temp = temp + requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE, Constants.LOCAL_MONTREAL_PORT,
 						Constants.LIST_OPERATION).trim();
 				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-				return temp.trim().equals("") || temp.trim().equals("No Events Found") ? "No Events Found" : temp.trim();
-			} 
-			logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-			return temp.trim().equals("") || temp.trim().equals("No Events Found") ? "No Events Found" : temp.trim();
+				boolean status = temp.trim().isEmpty() ? false : true;
+				return eventAvailableJSONObject(managerId, eventType,temp, Constants.LIST_OPERATION, status);
 		} else {
 			logger.info("Please enter Event type properly");
-			return "Please enter Event type properly";
+			return 	eventAvailableJSONObject(managerId, eventType,"", Constants.LIST_OPERATION, false);
 		}
 	}
 	
@@ -420,10 +417,18 @@ public class EventManagerOttawa {
 		obj.put(Constants.OLD_EVENT_ID, oldEventId.trim());
 		obj.put(Constants.OLD_EVENT_TYPE, oldEventType.trim());
 		obj.put(Constants.OPERATION, operation.trim());
-		obj.put("status", status);
+		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
 	}
-	
+	static String eventAvailableJSONObject(String id,String eventType,String events, String operation, boolean status) {
+		JSONObject obj = new JSONObject();
+		obj.put(Constants.ID, id.trim());
+		obj.put(Constants.EVENT_TYPE, eventType.trim());
+		obj.put(Constants.LIST_EVENT_AVAILABLE, events.trim());
+		obj.put(Constants.OPERATION, operation.trim());
+		obj.put(Constants.OPERATION_STATUS, status);
+		return obj.toString();
+	}
 	static boolean unpackJSON(String jsonString) {
 		Object obj = null;
 		try {
@@ -433,6 +438,6 @@ public class EventManagerOttawa {
 			e.printStackTrace();
 		}
 		JSONObject jsonObject = (JSONObject) obj;
-		return Boolean.parseBoolean(jsonObject.get("status").toString().trim());
+		return Boolean.parseBoolean(jsonObject.get(Constants.OPERATION_STATUS).toString().trim());
 	}
 }

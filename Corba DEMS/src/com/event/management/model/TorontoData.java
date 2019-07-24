@@ -73,7 +73,7 @@ public class TorontoData {
 			HashMap<String, HashMap<String, String>> temp = serverData.get(eventType);
 			if (temp.size() == 0) {
 				System.out.println("No Events Found");
-				return "No Events Found";
+				return "";
 			} else {
 				StringBuilder str = new StringBuilder();
 				for (Entry<String, HashMap<String, String>> entry : temp.entrySet()) {
@@ -86,7 +86,7 @@ public class TorontoData {
 			}
 		} else {
 			System.out.println("No Event Type Found");
-			return "No Events Found";
+			return "";
 		}
 	}
 
