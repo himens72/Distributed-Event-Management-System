@@ -90,22 +90,22 @@ public class TorontoData {
 		}
 	}
 
-	public synchronized String bookEvent(String customerID, String eventId, String eventType) {
+	public synchronized boolean bookEvent(String customerID, String eventId, String eventType) {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
 				System.out.println("No Events Found");
-				return "";
+				return false;
 			} else {
 				if (typeData.containsKey(eventId)) {
 					HashMap<String, String> currentEvent = typeData.get(eventId);
 					if (Integer.parseInt(currentEvent.get("capacity")) == Integer
 							.parseInt(currentEvent.get("totalBooking"))) {
-						return eventId + " is not Available for booking of type " + eventType;
+						return false;
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
 						if (currentEvent.get("customerId").contains(customerID)) {
-							return customerID + " has already book event " + eventId + "of event type " + eventType;
+							return false;
 						}
 						customers.append(customerID.trim());
 						currentEvent.replace("customerId", customers.toString().trim() + ",");
@@ -115,34 +115,34 @@ public class TorontoData {
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) + 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
-						return customerID + " has book event " + eventId + " of event  type " + eventType;
+						return true;
 					}
 				} else {
-					return "No Event Found;";
+					return false;
 				}
 			}
 		} else {
 			System.out.println("No Event Type Found");
-			return "No Event Type Found";
+			return false;
 		}
 	}
 
-	public synchronized String removeEvent(String customerID, String eventId, String eventType) {
+	public synchronized boolean removeEvent(String customerID, String eventId, String eventType) {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
 				System.out.println("No Events Found");
-				return "No Events Found";
+				return false;
 			} else {
 				if (typeData.containsKey(eventId)) {
 					HashMap<String, String> currentEvent = typeData.get(eventId);
 					if (Integer.parseInt(currentEvent.get("totalBooking")) == 0) {
-						return eventId + " is not booked by anyone";
+						return false;
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
 						if (!currentEvent.get("customerId").contains(customerID)) {
 
-							return customerID + " has not book event " + eventId + "of event type " + eventType;
+							return false;
 						}
 						currentEvent.replace("customerId", customers.toString().replace(customerID.trim() + ",", ""));
 						currentEvent.replace("capacity", currentEvent.get("capacity"),
@@ -151,15 +151,15 @@ public class TorontoData {
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) - 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
-						return customerID + " has cancel book event " + eventId + " of event  type " + eventType;
+						return true;
 					}
 				} else {
-					return "No Event Found;";
+					return false;
 				}
 			}
 		} else {
 			System.out.println("No Event Type Found");
-			return "No Event Type Found";
+			return false;
 		}
 	}
 

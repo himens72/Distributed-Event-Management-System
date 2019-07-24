@@ -11,25 +11,21 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
-import com.event.management.model.MontrealData;
-import com.event.management.model.OttawaData;
 import com.event.management.model.TorontoData;
 
 public class EventManagerToronto {
 //	public String location;
 	public String response;
 	public TorontoData torontoData;
-	public MontrealData montrealData;
-	public OttawaData ottawaData;
 	private static Logger logger;
 
 	public EventManagerToronto() {
 		super();
 		torontoData = new TorontoData();
-		montrealData = new MontrealData();
-		ottawaData = new OttawaData();
 		setLogger("logs/TOR.txt", "TOR");		
 	}
 	
@@ -82,7 +78,7 @@ public class EventManagerToronto {
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = "";
 			if (managerId.substring(0, 3).trim().equals("TOR")) {
-				temp = montrealData.retrieveEvent(eventType).trim();
+				temp = torontoData.retrieveEvent(eventType).trim();
 				temp += requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8991, Constants.LIST_OPERATION)
 						.trim();
 				temp = temp + requestOnOtherServer(managerId, "No Event Id", eventType, "No Capacity", 8992,
@@ -162,35 +158,26 @@ public class EventManagerToronto {
 			}
 
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				String temp = "";
-				if (eventId.trim().substring(0, 3).equals("TOR")) {
-					temp = torontoData.bookEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-					temp = montrealData.bookEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-					temp = ottawaData.bookEvent(customerId, eventId, eventType);
-				}
-				return temp == "" ? "Unable to Book  Event" : temp.trim();
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.BOOK_OPERATION, torontoData.bookEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
-						"bookOperation");
-				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
+						Constants.BOOK_OPERATION);
+				return !temp.trim().isEmpty()? temp.trim() : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.BOOK_OPERATION, false);// + " -- > " + count;
 			} 
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
-						"bookOperation");
-				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
+						Constants.BOOK_OPERATION);
+				return !temp.trim().isEmpty()? temp.trim() : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.BOOK_OPERATION, false);// + " -- > " + count;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
-						"bookOperation");
-				return temp == "" ? "Unable to Book  Event" : temp.trim();// + " -- > " + count;
+						Constants.BOOK_OPERATION);
+				return !temp.trim().isEmpty()? temp.trim() : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.BOOK_OPERATION, false);// + " -- > " + count;
 			}
 			else {
-				return "Please Enter Event ID Properly";
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.BOOK_OPERATION, false);
 			}
-
 		} else {
-			return "Please enter Event type properly";
+			return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.BOOK_OPERATION, false);
 		}
 	}
 
@@ -198,36 +185,26 @@ public class EventManagerToronto {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				String temp = "";
-				if (eventId.trim().substring(0, 3).equals("TOR")) {
-					temp = torontoData.removeEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-					temp = montrealData.removeEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-					temp = ottawaData.removeEvent(customerId, eventId, eventType);
-				}
-				return temp == "" ? "Unable to Cancel  Event" : temp;
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.CANCEL_OPERATION, torontoData.removeEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
-						"cancelOperation");
-				return temp == "" ? "Unable to Cancel  Event" : temp;
+						Constants.CANCEL_OPERATION);
+				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.CANCEL_OPERATION, false);
 			} 
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
-						"cancelOperation");
-				return temp == "" ? "Unable to Cancel  Event" : temp;
+						Constants.CANCEL_OPERATION);
+				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.CANCEL_OPERATION, false);
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
-						"cancelOperation");
-				return temp == "" ? "Unable to Cancel  Event" : temp;
-
+						Constants.CANCEL_OPERATION);
+				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.CANCEL_OPERATION, false);
 			}
 			else {
-				return "Please Enter Event ID Properly";
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.CANCEL_OPERATION, false);
 			}
-
 		} else {
-			return "Please enter Event type properly";
+			return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.CANCEL_OPERATION, false);
 		}
 }
 
@@ -235,31 +212,13 @@ public class EventManagerToronto {
 		logger.info("Booking Schedule Operation :  " + customerId);
 
 		StringBuilder temp = new StringBuilder();
-		if (customerId.substring(0, 3).trim().equals("TOR")) {
-			temp.append(torontoData.getBookingSchedule(customerId.trim()));
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991,
-					"scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8992,
-					"scheduleOperation").trim());
-			logger.info("Booking Schedule for " + customerId + " : " + temp);
-			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
-		} else if (customerId.substring(0, 3).trim().equals("MTL")) {
-			temp.append(montrealData.getBookingSchedule(customerId.trim()));
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8990,
-					"scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8992,
-					"scheduleOperation").trim());
-			logger.info("Booking Schedule for " + customerId + " : " + temp);
-			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
-		} else if (customerId.substring(0, 3).trim().equals("OTW")) {
-			temp.append(ottawaData.getBookingSchedule(customerId.trim()));
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8990,
-					"scheduleOperation").trim());
-			temp.append(requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991,
-					"scheduleOperation").trim());
-			logger.info("Booking Schedule for " + customerId + " : " + temp);
-			return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
-		}
+		temp.append(torontoData.getBookingSchedule(customerId.trim()));
+		temp.append(
+				requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991, "scheduleOperation")
+				.trim());
+		temp.append(
+				requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8992, "scheduleOperation")
+				.trim());
 		logger.info("Booking Schedule for " + customerId + " : " + temp);
 		return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
 	}
@@ -269,19 +228,19 @@ public class EventManagerToronto {
 		boolean existanceFlag = checkEventExistance(customerID, oldEventID, oldEventType);
 		System.out.println("Existance Flag : " + existanceFlag);
 		if(existanceFlag == false)
-			return "Some error might occur. Please check Data and Try again";
+			return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 		if (customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
 		/*
 		 * && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0,
 		 * 3))
 		 */) {
-			boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
+			boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
 			if (bookFlag) {
-				boolean cancelFlag = swapCancelBooking(customerID, oldEventID, oldEventType);
-				return cancelFlag ? customerID + " : Swap Event Operation Successful. "
-						: customerID + " : Swap Event Operation Failure.";
+				boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+				return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
+						: generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 			} else {
-				return "Swap Operation : Unable to Book New Event ID";
+				return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 			}
 		} /*
 			 * else if
@@ -297,44 +256,44 @@ public class EventManagerToronto {
 				&& customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
 			boolean flag = checkMaximumLimt(customerID, newEventID);
 			if (flag)
-				return "you have already reached maximum limit of Current Month Outside city registration ";
-			boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
+				return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
+			boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
 			if (bookFlag) {
-				boolean cancelFlag = swapCancelBooking(customerID, oldEventID, oldEventType);
-				return cancelFlag ? customerID + " : Swap Event Operation Successful. "
-						: customerID + " : Swap Event Operation Failure.";
+				boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+				return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
+						: generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 			} else {
-				return "Swap Operation : Unable to Book New Event ID";
+				return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 			}
 		} else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
 				&& !customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
 			if (newEventID.trim().substring(6, newEventID.length()).equals(oldEventID.trim().substring(6, oldEventID.trim().length()))) {
-				boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
+				boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
 				if (bookFlag) {
-					boolean cancelFlag = swapCancelBooking(customerID, oldEventID, oldEventType);
-					return cancelFlag ? customerID + " : Swap Event Operation Successful. "
-							: customerID + " : Swap Event Operation Failure.";
+					boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+					return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
+							: generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 				} else {
-					return "Swap Operation : Unable to Book New Event ID";
+					return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 				}
 			} else {
 				boolean flag = checkMaximumLimt(customerID, newEventID);
 				if (flag) {
-					return "you have already reached maximum limit of Current Month Outside city registration ";
+					return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 				}
 				else {
-					boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
+					boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
 					if (bookFlag) {
-						boolean cancelFlag = swapCancelBooking(customerID, oldEventID, oldEventType);
-						return cancelFlag ? customerID + " : Swap Event Operation Successful. "
-								: customerID + " : Swap Event Operation Failure.";
+						boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+						return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
+								: generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 					} else {
-						return "Swap Operation : Unable to Book New Event ID";
+						return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 					}	
 				}
 			}
 		}
-		return "Some error might occur. Please check Data and Try again";
+		return generateJSONObject(customerID, newEventID, newEventType, "None", oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
 	}
 
 	public boolean checkMaximumLimt(String customerId, String eventId) {
@@ -378,13 +337,7 @@ public class EventManagerToronto {
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerID.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				boolean temp = false;
-				if (eventId.trim().substring(0, 3).equals("TOR")) {
-					temp = torontoData.getEvent(customerID, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-					temp = montrealData.getEvent(customerID, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-					temp = ottawaData.getEvent(customerID, eventId, eventType);
-				}
+				temp = torontoData.getEvent(customerID, eventId, eventType);
 				return temp == false ? temp : true;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerID, eventId, eventType, "No Capacity", 8990,
@@ -406,75 +359,60 @@ public class EventManagerToronto {
 			return false;
 		}
 	}
-	public boolean swapEventBooking(String customerId, String eventId, String eventType) {
+	
+	public String swapEventBooking(String customerId, String eventId, String eventType) {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				String temp = "";
-				if (eventId.trim().substring(0, 3).equals("TOR")) {
-					temp = torontoData.bookEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-					temp = montrealData.bookEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-					temp = ottawaData.bookEvent(customerId, eventId, eventType);
-				}
-				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, torontoData.bookEvent(customerId, eventId, eventType));
+				//return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
-						"bookOperation");
-				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
+						Constants.BOOK_OPERATION);
+				return !temp.trim().isEmpty() ? temp.trim() : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			}
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
-						"bookOperation");
-				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
+						Constants.BOOK_OPERATION);
+				return !temp.trim().isEmpty() ? temp.trim() : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
-						"bookOperation");
-				return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
+						Constants.BOOK_OPERATION);
+				return !temp.trim().isEmpty() ? temp.trim() : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			} 
 			else {
-				return false;
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			}
 		} else {
-			return false;
+			return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 		}
 	}
 
-	public boolean swapCancelBooking(String customerId, String eventId, String eventType){
+	public String swapCancelBooking(String customerId, String eventId, String eventType){
 
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				String temp = "";
-				if (eventId.trim().substring(0, 3).equals("TOR")) {
-					temp = torontoData.removeEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("MTL")) {
-					temp = montrealData.removeEvent(customerId, eventId, eventType);
-				} else if (eventId.trim().substring(0, 3).equals("OTW")) {
-					temp = ottawaData.removeEvent(customerId, eventId, eventType);
-				}
-				return temp.trim().isEmpty() ? false : true;
+				return generateJSONObject(customerId, eventId, eventType, "None","None", "None", Constants.SWAP_OPERATION, torontoData.removeEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8990,
-						"cancelOperation");
-				return temp.trim().isEmpty() ? false : true;
+						Constants.CANCEL_OPERATION);
+				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			} 
 			else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8991,
-						"cancelOperation");
-				return temp.trim().isEmpty() ? false : true;
+						Constants.CANCEL_OPERATION);
+				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, "No Capacity", 8992,
-						"cancelOperation");
-				return temp.trim().isEmpty() ? false : true;
+						Constants.CANCEL_OPERATION);
+				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			} 
 			else {
-				return false;
+				return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 			}
-
 		} else {
-			return false;
+			return generateJSONObject(customerId, eventId, eventType, "None", "None", "None", Constants.SWAP_OPERATION, false);
 		}
 	}
 	static void setLogger(String location, String id) {
@@ -500,5 +438,17 @@ public class EventManagerToronto {
 		obj.put(Constants.OPERATION, operation.trim());
 		obj.put("status", status);
 		return obj.toString();
+	}
+	
+	static boolean unpackJSON(String jsonString) {
+		Object obj = null;
+		try {
+			obj = new JSONParser().parse(jsonString.trim());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = (JSONObject) obj;
+		return Boolean.parseBoolean(jsonObject.get("status").toString().trim());
 	}
 }

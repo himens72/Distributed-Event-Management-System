@@ -2,6 +2,11 @@ package com.event.management.constants;
 
 
 public class Constants {
+	public static final String FRONTEND_IP = "192.168.0.156";
+	public static final int RM_PORT = 1110;
+	public static final int RM1_PORT = 1110;
+	public static final int RM2_PORT = 1111;
+	public static final int RM3_PORT = 1112;
     public static final String ADD_OPERATION = "addEventOperation";
     public static final String REMOVE_OPERATION = "removeEventOperation";
     public static final String LIST_OPERATION = "listEventOperation";

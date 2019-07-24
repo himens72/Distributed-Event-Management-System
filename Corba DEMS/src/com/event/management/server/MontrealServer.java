@@ -83,14 +83,14 @@ public class MontrealServer {
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
-				} else if (receiveData[receiveData.length - 1].trim().equals("bookOperation")) {
-					String temp = mtlObject.montrealData.bookEvent(receiveData[0], receiveData[1], receiveData[2]);
+				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.BOOK_OPERATION)) {
+					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None", "None", Constants.BOOK_OPERATION, mtlObject.montrealData.bookEvent(receiveData[0], receiveData[1], receiveData[2]));
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
-				} else if (receiveData[receiveData.length - 1].trim().equals("cancelOperation")) {
-					String temp = mtlObject.montrealData.removeEvent(receiveData[0], receiveData[1], receiveData[2]);
+				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.CANCEL_OPERATION)) {
+					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None", "None", Constants.CANCEL_OPERATION, mtlObject.montrealData.removeEvent(receiveData[0], receiveData[1], receiveData[2]));
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
@@ -133,6 +133,7 @@ public class MontrealServer {
 
 		}
 	}
+
 
 	private void receiveMulticastRequest() {
 
@@ -236,22 +237,15 @@ public class MontrealServer {
 
 	private void sendRequestToFrontEnd(String message) {
 		DatagramSocket aSocket = null;
-		byte[] buffer = new byte[1000];
 		try {
 			System.out.println("Request from MTL Server sent to Front End!");
 			aSocket = new DatagramSocket();
 			byte[] m = message.getBytes();
-			InetAddress aHost = InetAddress.getByName("192.168.0.156");
+			InetAddress aHost = InetAddress.getByName(Constants.FRONTEND_IP);
 
 			System.out.println("Msg in Bytes: " + m);
-			DatagramPacket request = new DatagramPacket(m, m.length, aHost, 1110);
+			DatagramPacket request = new DatagramPacket(m, m.length, aHost, Constants.RM_PORT);
 			aSocket.send(request);
-
-			/*
-			 * DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-			 * aSocket.receive(response);
-			 */
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -283,6 +277,19 @@ public class MontrealServer {
 		}
 	}
 
+	static String generateJSONObject(String id, String eventId, String eventType, String eventCapacity,
+			String oldEventId, String oldEventType, String operation, boolean status) {
+		JSONObject obj = new JSONObject();
+		obj.put(Constants.ID, id.trim());
+		obj.put(Constants.EVENT_ID, eventId.trim());
+		obj.put(Constants.EVENT_TYPE, eventType.trim());
+		obj.put(Constants.EVENT_CAPACITY, eventCapacity.trim());
+		obj.put(Constants.OLD_EVENT_ID, oldEventId.trim());
+		obj.put(Constants.OLD_EVENT_TYPE, oldEventType.trim());
+		obj.put(Constants.OPERATION, operation.trim());
+		obj.put("status", status);
+		return obj.toString();
+	}
 	private void setLogger(String location, String id) {
 		try {
 			logger = Logger.getLogger(id);
