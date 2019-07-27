@@ -27,8 +27,8 @@ public class Sequencer {
 	public static void main(String args[]) {
 		DatagramSocket aSocket = null;
 		try {
-			aSocket = new DatagramSocket(5555);
-			byte[] buffer = new byte[1000];
+			aSocket = new DatagramSocket(Constants.SEQUENCER_PORT);
+			byte[] buffer = new byte[Constants.BYTE_LENGTH];
 			System.out.println("Sequencer Started");
 			while (true) {
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
@@ -41,21 +41,19 @@ public class Sequencer {
 				System.out.println("Sequencer Data : " + jsonObject.toString());
 				counter++;
 
-				InetAddress aHost = InetAddress.getByName("230.0.0.0");
-				System.out.println("Inet Addess " + aHost.getHostName() + " " +aHost.getHostAddress());
+				InetAddress aHost = InetAddress.getByName(Constants.MULTICAST_IP);
+				System.out.println("Inet Addess " + aHost.getHostName() + " " + aHost.getHostAddress());
 				byte[] msg = jsonObject.toString().getBytes();
-				if(jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("TOR")) {
-					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9990);	
+				if (jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("TOR")) {
+					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, Constants.RM_TORONTO_PORT);
 					aSocket.send(packet);
-				} else if(jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("MTL")) {
-					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9991);	
+				} else if (jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("MTL")) {
+					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, Constants.RM_MONTREAL_PORT);
 					aSocket.send(packet);
-				} else if(jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("OTW")) {
-					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, 9992);	
+				} else if (jsonObject.get(Constants.ID).toString().subSequence(0, 3).equals("OTW")) {
+					DatagramPacket packet = new DatagramPacket(msg, msg.length, aHost, Constants.RM_OTTAWA_PORT);
 					aSocket.send(packet);
 				}
-				
-				
 
 			}
 		} catch (SocketException e) {
@@ -73,5 +71,5 @@ public class Sequencer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}	
+	}
 }

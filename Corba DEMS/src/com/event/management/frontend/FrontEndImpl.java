@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.omg.CORBA.ORB;
 
 import com.event.management.constants.Constants;
@@ -43,11 +45,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 				Constants.NONE, Constants.ADD_OPERATION);
 		udpRequest(requestMessage);
 		System.out.println("waiting for response...");
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -58,10 +60,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 				Constants.NONE, Constants.REMOVE_OPERATION);
 		udpRequest(requestMessage);
 		try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -72,10 +74,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 				Constants.NONE, Constants.LIST_OPERATION);
 		udpRequest(requestMessage);
 		try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -86,10 +88,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 				Constants.NONE, Constants.BOOK_OPERATION);
 		udpRequest(requestMessage);
 		try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -100,10 +102,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 				Constants.NONE, Constants.CANCEL_OPERATION);
 		udpRequest(requestMessage);
 		try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -114,10 +116,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 				Constants.NONE, Constants.NONE, Constants.SCHEDULE_OPERATION);
 		udpRequest(requestMessage);
 		try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -129,10 +131,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 				oldEventType, Constants.SWAP_OPERATION);
 		udpRequest(requestMessage);
 		try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String replyMessage = udpReply();
 		return replyMessage;
 	}
@@ -156,8 +158,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 			datagramSocket = new DatagramSocket();
 			byte[] msg = message.getBytes();
 			InetAddress aHost = InetAddress.getByName(Constants.LOCALHOST);
-			int serverPort = 5555;
-			DatagramPacket request = new DatagramPacket(msg, msg.length, aHost, serverPort);
+			DatagramPacket request = new DatagramPacket(msg, msg.length, aHost, Constants.SEQUENCER_PORT);
 			datagramSocket.send(request);
 		} catch (SocketException e) {
 			System.out.println(e.getMessage());
@@ -171,28 +172,20 @@ public class FrontEndImpl extends managerInterfacePOA {
 	}
 
 	public void ReplicaOneReply() {
-		String message = "";
 		DatagramSocket aSocket = null;
 		try {
-			aSocket = new DatagramSocket(1110);
-			while (true) {
-				byte[] buffer = new byte[1000];
+			aSocket = new DatagramSocket(Constants.RM1_FRONTEND_PORT);
 
+			while (true) {
+				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
-				replicaOneResponse = new String(request.getData(), 0, request.getLength());
-				System.out.println("ReplicaOneReply " +replicaOneResponse);
+				replicaOneResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
+				System.out.println("replicaOneResponse " + replicaOneResponse);
 				if (!replicaOneResponse.isEmpty()) {
 					System.out.println("response received from RM 1" + replicaOneResponse);
 				}
-
-				/*
-				 * byte[] msg = message.getBytes(); DatagramPacket reply = new
-				 * DatagramPacket(msg, msg.length, request.getAddress(), request.getPort());
-				 * aSocket.send(reply);
-				 */
 			}
-
 		} catch (SocketException e) {
 			System.out.println(e.getMessage());
 		} catch (UnknownHostException e) {
@@ -205,30 +198,20 @@ public class FrontEndImpl extends managerInterfacePOA {
 	}
 
 	public void ReplicaTwoReply() {
-		String message = "";
 		DatagramSocket aSocket = null;
 		try {
-			aSocket = new DatagramSocket(1111);
+			aSocket = new DatagramSocket(Constants.RM2_FRONTEND_PORT);
 
 			while (true) {
-				byte[] buffer = new byte[1000];
-
+				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
-				replicaTwoResponse = new String(request.getData(), 0, request.getLength());
-				System.out.println("replicaTwoResponse " +replicaTwoResponse);
-
+				replicaTwoResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
+				System.out.println("replicaTwoResponse " + replicaTwoResponse);
 				if (!replicaTwoResponse.isEmpty()) {
 					System.out.println("response received from RM 2" + replicaTwoResponse);
 				}
-
-				/*
-				 * byte[] msg = message.getBytes(); DatagramPacket reply = new
-				 * DatagramPacket(msg, msg.length, request.getAddress(), request.getPort());
-				 * aSocket.send(reply);
-				 */
 			}
-
 		} catch (SocketException e) {
 			System.out.println(e.getMessage());
 		} catch (UnknownHostException e) {
@@ -238,33 +221,22 @@ public class FrontEndImpl extends managerInterfacePOA {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-
 	}
 
 	public void ReplicaThreeReply() {
-		String message = "";
 		DatagramSocket aSocket = null;
 		try {
-			aSocket = new DatagramSocket(1112);
-
+			aSocket = new DatagramSocket(Constants.RM3_FRONTEND_PORT);
 			while (true) {
-				byte[] buffer = new byte[1000];
+				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
-				replicaThreeResponse = new String(request.getData(), 0, request.getLength());
-				System.out.println("replicaThreeResponse " +replicaThreeResponse);
-
+				replicaThreeResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
+				System.out.println("replicaThreeResponse " + replicaThreeResponse);
 				if (!replicaThreeResponse.isEmpty()) {
 					System.out.println("response received from RM 3" + replicaThreeResponse);
 				}
-				/*
-				 * byte[] msg = message.getBytes(); DatagramPacket reply = new
-				 * DatagramPacket(msg, msg.length, request.getAddress(), request.getPort());
-				 * aSocket.send(reply)
-				 */
-				;
 			}
-
 		} catch (SocketException e) {
 			System.out.println(e.getMessage());
 		} catch (UnknownHostException e) {
@@ -290,5 +262,97 @@ public class FrontEndImpl extends managerInterfacePOA {
 		} catch (Exception err) {
 			logger.info("Couldn't Initiate Logger. Please check file permission");
 		}
+	}
+
+	static String unpackJSON(String jsonString) {
+		Object obj = null;
+		try {
+			obj = new JSONParser().parse(jsonString.trim());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = (JSONObject) obj;
+		boolean operationFlag = Boolean.parseBoolean(jsonObject.get(Constants.OPERATION_STATUS).toString().trim());
+		String id = jsonObject.get(Constants.ID).toString().trim();
+		String operation = jsonObject.get(Constants.ID).toString().trim();
+		if (operation.equals(Constants.ADD_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " Unable to perform Add Event Operation for  " + eventId;
+		} else if (operation.equals(Constants.REMOVE_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " Unable to perform Remove Event Operation for  " + eventId;
+		} else if (operation.equals(Constants.LIST_OPERATION)) {
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " : No Data Found or Might be data issue. " + eventType;
+		} else if (operation.equals(Constants.BOOK_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " Unable to book  event " + eventId;
+		} else if (operation.equals(Constants.CANCEL_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " Unable to cancel  event " + eventId;
+
+		} else if (operation.equals(Constants.SCHEDULE_OPERATION)) {
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " No Data Found or Might be data issue.";
+		} else if (operation.equals(Constants.SWAP_OPERATION)) {
+			return operationFlag ? operationWiseJSONString(jsonString.trim())
+					: id + " No Data Found or Might be data issue.";
+		}
+		return operationFlag ? operationWiseJSONString(jsonString.trim())
+				: "No Data Found or Might be Data Issue. Please try again";
+	}
+
+	static String operationWiseJSONString(String jsonString) {
+		Object obj = null;
+		try {
+			obj = new JSONParser().parse(jsonString.trim());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = (JSONObject) obj;
+		String operation = jsonObject.get(Constants.OPERATION).toString().trim();
+		String flag = "";
+		String id = jsonObject.get(Constants.ID).toString().trim();
+		if (operation.equals(Constants.ADD_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			String eventCapacity = jsonObject.get(Constants.EVENT_CAPACITY).toString().trim();
+			flag = id + " has create " + eventId + " of type " + eventType + " with capacity " + eventCapacity;
+		} else if (operation.equals(Constants.REMOVE_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			flag = id + " has remove " + eventId + " of type " + eventType;
+		} else if (operation.equals(Constants.LIST_OPERATION)) {
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			String listEvents = jsonObject.get(Constants.LIST_EVENT_AVAILABLE).toString().trim();
+			flag = listEvents.trim().isEmpty() ? id + " : No data found for " + eventType
+					: id + "  :  " + eventType + " = " + listEvents;
+		} else if (operation.equals(Constants.BOOK_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			flag = id + " has book " + eventId + " of type " + eventType;
+		} else if (operation.equals(Constants.CANCEL_OPERATION)) {
+			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			flag = id + " has cancel " + eventId + " of type " + eventType;
+		} else if (operation.equals(Constants.SCHEDULE_OPERATION)) {
+			String listEvents = jsonObject.get(Constants.LIST_EVENT_SCHEDULE).toString().trim();
+			flag = listEvents.trim().isEmpty() ? id + " : No data found." : id + "  :  " + listEvents;
+		} else if (operation.equals(Constants.SWAP_OPERATION)) {
+			String newEventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
+			String newEventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
+			String oldEventId = jsonObject.get(Constants.OLD_EVENT_ID).toString().trim();
+			String oldEventType = jsonObject.get(Constants.OLD_EVENT_TYPE).toString().trim();
+			flag = id + " has swap " + oldEventId + " of type " + oldEventType + " with " + newEventId + " of type "
+					+ newEventType;
+		}
+		return flag.trim().equals("") ? id + " : No Data Found. Please try again" : flag;
 	}
 }

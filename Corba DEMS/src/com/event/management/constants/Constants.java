@@ -2,6 +2,9 @@ package com.event.management.constants;
 
 public class Constants {
 	public static final String FRONTEND_IP = "192.168.0.156";
+	public static final String MULTICAST_IP = "230.0.0.0";
+	public static final int BYTE_LENGTH = 65535;
+	public static final int SEQUENCER_PORT = 5555;
 	public static final int RM_FRONTEND_PORT = 1110;
 	public static final int RM1_FRONTEND_PORT = 1110;
 	public static final int RM2_FRONTEND_PORT = 1111;
@@ -29,7 +32,7 @@ public class Constants {
 	public static final String OLD_EVENT_ID = "oldEventId";
 	public static final String OLD_EVENT_TYPE = "oldEventType";
 	public static final String OPERATION = "operation";
-	public static final String LIST_EVENT_AVAILABLE= "listAllEventAvailable";
-	public static final String LIST_EVENT_SCHEDULE= "listAllEventSchedule";
+	public static final String LIST_EVENT_AVAILABLE = "listAllEventAvailable";
+	public static final String LIST_EVENT_SCHEDULE = "listAllEventSchedule";
 
 }

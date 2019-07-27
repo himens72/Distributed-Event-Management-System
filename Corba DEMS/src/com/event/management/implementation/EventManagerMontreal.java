@@ -20,7 +20,7 @@ import com.event.management.constants.Constants;
 import com.event.management.model.MontrealData;
 
 public class EventManagerMontreal {
-	//	public String location;
+	// public String location;
 	public String response;
 	public MontrealData montrealData;
 	private static Logger logger;
