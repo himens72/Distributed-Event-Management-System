@@ -6,6 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -18,7 +21,7 @@ import com.event.management.constants.Constants;
 import com.event.management.model.TorontoData;
 
 public class EventManagerToronto {
-//	public String location;
+	//	public String location;
 	public String response;
 	public TorontoData torontoData;
 	private static Logger logger;
@@ -26,9 +29,9 @@ public class EventManagerToronto {
 	public EventManagerToronto() {
 		super();
 		torontoData = new TorontoData();
-		setLogger("logs/TOR.txt", "TOR");		
+		setLogger("logs/TOR.txt", "TOR");
 	}
-	
+
 	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) {
 		logger.info("Add Event Operation :  " + managerId + " has started creating event with id " + eventId
 				+ " of type " + eventType + " with capacity " + eventCapacity);
@@ -36,17 +39,22 @@ public class EventManagerToronto {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
 				if (eventId.substring(0, 3).trim().equals("TOR"))
-					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE, Constants.ADD_OPERATION, torontoData.addEvent(eventId, eventType, eventCapacity));
+					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE,
+							Constants.NONE, Constants.ADD_OPERATION,
+							torontoData.addEvent(eventId, eventType, eventCapacity));
 				else
-					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE, Constants.ADD_OPERATION, false);
-					return output;
+					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE,
+							Constants.NONE, Constants.ADD_OPERATION, false);
+				return output;
 			} else {
 				logger.info("Please Enter Proper Event Id");
-				return generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE, Constants.ADD_OPERATION, false);
+				return generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE,
+						Constants.ADD_OPERATION, false);
 			}
 		} else {
 			logger.info("Please Enter proper event type");
-			return generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE, Constants.ADD_OPERATION, false);
+			return generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE,
+					Constants.ADD_OPERATION, false);
 		}
 	}
 
@@ -57,40 +65,44 @@ public class EventManagerToronto {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
 				if (eventId.substring(0, 3).trim().equals("TOR"))
-					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.REMOVE_OPERATION, torontoData.removeEvent(eventId, eventType));
-				else 
-					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.REMOVE_OPERATION, false);
+					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
+							Constants.NONE, Constants.REMOVE_OPERATION, torontoData.removeEvent(eventId, eventType));
+				else
+					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
+							Constants.NONE, Constants.REMOVE_OPERATION, false);
 				logger.info("Add Remove Operation Output : " + output);
 				return output.trim();
 			} else {
 				logger.info("Please Enter proper Event Id");
-				return generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.REMOVE_OPERATION, false);
+				return generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
+						Constants.REMOVE_OPERATION, false);
 			}
 		} else {
 			logger.info("Please Enter Proper Event Type");
-			return generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.REMOVE_OPERATION, false);
+			return generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
+					Constants.REMOVE_OPERATION, false);
 		}
 	}
-	
+
 	public String listEventAvailability(String managerId, String eventType) {
 		logger.info("List  Event Operation :  " + managerId + " want to see All available list of type " + eventType);
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = "";
-				temp = torontoData.retrieveEvent(eventType).trim();
-				temp += requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE, Constants.LOCAL_MONTREAL_PORT, Constants.LIST_OPERATION)
-						.trim();
-				temp = temp + requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE, Constants.LOCAL_OTTAWA_PORT,
-						Constants.LIST_OPERATION).trim();
-				logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
-				boolean status = temp.trim().isEmpty() ? false : true;
-				return eventAvailableJSONObject(managerId, eventType,temp, Constants.LIST_OPERATION, status);
+			temp = torontoData.retrieveEvent(eventType).trim();
+			temp += requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE,
+					Constants.LOCAL_MONTREAL_PORT, Constants.LIST_OPERATION).trim();
+			temp = temp + requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE,
+					Constants.LOCAL_OTTAWA_PORT, Constants.LIST_OPERATION).trim();
+			logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
+			boolean status = temp.trim().isEmpty() ? false : true;
+			return eventAvailableJSONObject(managerId, eventType, temp, Constants.LIST_OPERATION, status);
 		} else {
 			logger.info("Please enter Event type properly");
-			return 	eventAvailableJSONObject(managerId, eventType,"", Constants.LIST_OPERATION, false);
+			return eventAvailableJSONObject(managerId, eventType, "", Constants.LIST_OPERATION, false);
 		}
 	}
-	
+
 	public String requestOnOtherServer(String managerId, String eventId, String eventType, String eventCapacity,
 			int port, String operation) {
 		DatagramSocket datagramSocket = null;
@@ -114,7 +126,7 @@ public class EventManagerToronto {
 		} finally {
 			datagramSocket.close();
 		}
-		return "";		
+		return "";
 	}
 
 	public String eventBooking(String customerId, String eventId, String eventType) {
@@ -123,26 +135,20 @@ public class EventManagerToronto {
 			StringBuilder count = new StringBuilder();
 			if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				if (customerId.trim().substring(0, 3).equals("TOR")) {
-					count.append(
-							requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991, "countOperation")
-							+ ",");
-					count.append(
-							requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992, "countOperation")
-							+ ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991,
+							"countOperation") + ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992,
+							"countOperation") + ",");
 				} else if (customerId.trim().substring(0, 3).equals("MTL")) {
-					count.append(
-							requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990, "countOperation")
-							+ ",");
-					count.append(
-							requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992, "countOperation")
-							+ ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990,
+							"countOperation") + ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992,
+							"countOperation") + ",");
 				} else if (customerId.trim().substring(0, 3).equals("OTW")) {
-					count.append(
-							requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990, "countOperation")
-							+ ",");
-					count.append(
-							requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991, "countOperation")
-							+ ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990,
+							"countOperation") + ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991,
+							"countOperation") + ",");
 				}
 				String[] split = count.toString().trim().split(",");
 				int totalEve = 0;
@@ -155,26 +161,34 @@ public class EventManagerToronto {
 			}
 
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.BOOK_OPERATION, torontoData.bookEvent(customerId, eventId, eventType));
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.BOOK_OPERATION,
+						torontoData.bookEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8990,
 						Constants.BOOK_OPERATION);
-				return !temp.trim().isEmpty()? temp.trim() : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.BOOK_OPERATION, false);// + " -- > " + count;
-			} 
-			else if (eventId.trim().substring(0, 3).equals("MTL")) {
+				return !temp.trim().isEmpty() ? temp.trim()
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.BOOK_OPERATION, false);// + " -- > " + count;
+			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8991,
 						Constants.BOOK_OPERATION);
-				return !temp.trim().isEmpty()? temp.trim() : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.BOOK_OPERATION, false);// + " -- > " + count;
+				return !temp.trim().isEmpty() ? temp.trim()
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.BOOK_OPERATION, false);// + " -- > " + count;
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8992,
 						Constants.BOOK_OPERATION);
-				return !temp.trim().isEmpty()? temp.trim() : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.BOOK_OPERATION, false);// + " -- > " + count;
-			}
-			else {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.BOOK_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp.trim()
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.BOOK_OPERATION, false);// + " -- > " + count;
+			} else {
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.BOOK_OPERATION, false);
 			}
 		} else {
-			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.BOOK_OPERATION, false);
+			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
+					Constants.BOOK_OPERATION, false);
 		}
 	}
 
@@ -182,141 +196,162 @@ public class EventManagerToronto {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.CANCEL_OPERATION, torontoData.removeEvent(customerId, eventId, eventType));
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.CANCEL_OPERATION,
+						torontoData.removeEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8990,
 						Constants.CANCEL_OPERATION);
-				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.CANCEL_OPERATION, false);
-			} 
-			else if (eventId.trim().substring(0, 3).equals("MTL")) {
+				return !temp.trim().isEmpty() ? temp
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.CANCEL_OPERATION, false);
+			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8991,
 						Constants.CANCEL_OPERATION);
-				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.CANCEL_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.CANCEL_OPERATION, false);
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8992,
 						Constants.CANCEL_OPERATION);
-				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.CANCEL_OPERATION, false);
-			}
-			else {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.CANCEL_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.CANCEL_OPERATION, false);
+			} else {
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.CANCEL_OPERATION, false);
 			}
 		} else {
-			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.CANCEL_OPERATION, false);
+			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
+					Constants.CANCEL_OPERATION, false);
 		}
-}
+	}
 
 	public String getBookingSchedule(String customerId) {
 		logger.info("Booking Schedule Operation :  " + customerId);
 
 		StringBuilder temp = new StringBuilder();
 		temp.append(torontoData.getBookingSchedule(customerId.trim()));
-		temp.append(
-				requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE, 8991, "scheduleOperation")
-				.trim());
-		temp.append(
-				requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE, 8992, "scheduleOperation")
-				.trim());
+		temp.append(requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE, 8991,
+				"scheduleOperation").trim());
+		temp.append(requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE, 8992,
+				"scheduleOperation").trim());
 		logger.info("Booking Schedule for " + customerId + " : " + temp);
-		return temp.toString().length() == 0 ? "No Events Schedule" : temp.toString().trim();
+		return temp.toString().trim().length() == 0 ? eventScheduleJSONObject(customerId, "", false)
+				: eventScheduleJSONObject(customerId, temp.toString().trim(), true);
 	}
 
 	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
 			String oldEventType) {
 		boolean existanceFlag = checkEventExistance(customerID, oldEventID, oldEventType);
 		System.out.println("Existance Flag : " + existanceFlag);
-		if(existanceFlag == false)
-			return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
+		if (existanceFlag == false)
+			return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType,
+					Constants.SWAP_OPERATION, false);
 		if (customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
-		/*
-		 * && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0,
-		 * 3))
-		 */) {
+				/*
+				 * && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0,
+				 * 3))
+				 */) {
 			boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
 			if (bookFlag) {
 				boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
-				return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
-						: generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
+				return cancelFlag
+						? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+								oldEventType, Constants.SWAP_OPERATION, true)
+								: generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+										oldEventType, Constants.SWAP_OPERATION, false);
 			} else {
-				return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
+				return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+						oldEventType, Constants.SWAP_OPERATION, false);
 			}
 		} /*
-			 * else if
-			 * (customerID.trim().substring(0,3).equals(newEventID.trim().substring(0,3)) &&
-			 * !customerID.trim().substring(0,3).equals(oldEventID.trim().substring(0,3))) {
-			 * boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
-			 * if(bookFlag) { boolean cancelFlag = swapCancelBooking(customerID, oldEventID,
-			 * oldEventType); return cancelFlag ? customerID+
-			 * " : Swap Event Operation Successful. " : customerID+
-			 * " : Swap Event Operation Failure."; } else { return
-			 * "Swap Operation : Unable to Book New Event ID"; } }
-			 */ else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
-				&& customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
-			boolean flag = checkMaximumLimt(customerID, newEventID);
-			if (flag)
-				return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-			boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
-			if (bookFlag) {
-				boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
-				return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
-						: generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-			} else {
-				return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-			}
-		} else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
-				&& !customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
-			if (newEventID.trim().substring(6, newEventID.length()).equals(oldEventID.trim().substring(6, oldEventID.trim().length()))) {
-				boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
-				if (bookFlag) {
-					boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
-					return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
-							: generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-				} else {
-					return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-				}
-			} else {
-				boolean flag = checkMaximumLimt(customerID, newEventID);
-				if (flag) {
-					return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-				}
-				else {
-					boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
-					if (bookFlag) {
-						boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
-						return cancelFlag ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, true)
-								: generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-					} else {
-						return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
-					}	
-				}
-			}
-		}
-		return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType, Constants.SWAP_OPERATION, false);
+		 * else if
+		 * (customerID.trim().substring(0,3).equals(newEventID.trim().substring(0,3)) &&
+		 * !customerID.trim().substring(0,3).equals(oldEventID.trim().substring(0,3))) {
+		 * boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
+		 * if(bookFlag) { boolean cancelFlag = swapCancelBooking(customerID, oldEventID,
+		 * oldEventType); return cancelFlag ? customerID+
+		 * " : Swap Event Operation Successful. " : customerID+
+		 * " : Swap Event Operation Failure."; } else { return
+		 * "Swap Operation : Unable to Book New Event ID"; } }
+		 */ else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
+				 && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
+			 boolean flag = checkMaximumLimt(customerID, newEventID);
+			 if (flag)
+				 return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+						 oldEventType, Constants.SWAP_OPERATION, false);
+			 boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
+			 if (bookFlag) {
+				 boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+				 return cancelFlag
+						 ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+								 oldEventType, Constants.SWAP_OPERATION, true)
+								 : generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+										 oldEventType, Constants.SWAP_OPERATION, false);
+			 } else {
+				 return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+						 oldEventType, Constants.SWAP_OPERATION, false);
+			 }
+		 } else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
+				 && !customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
+			 if (newEventID.trim().substring(6, newEventID.length())
+					 .equals(oldEventID.trim().substring(6, oldEventID.trim().length()))) {
+				 boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
+				 if (bookFlag) {
+					 boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+					 return cancelFlag
+							 ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+									 oldEventType, Constants.SWAP_OPERATION, true)
+									 : generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+											 oldEventType, Constants.SWAP_OPERATION, false);
+				 } else {
+					 return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+							 oldEventType, Constants.SWAP_OPERATION, false);
+				 }
+			 } else {
+				 boolean flag = checkMaximumLimt(customerID, newEventID);
+				 if (flag) {
+					 return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+							 oldEventType, Constants.SWAP_OPERATION, false);
+				 } else {
+					 boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
+					 if (bookFlag) {
+						 boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
+						 return cancelFlag
+								 ? generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+										 oldEventType, Constants.SWAP_OPERATION, true)
+										 : generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+												 oldEventType, Constants.SWAP_OPERATION, false);
+					 } else {
+						 return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
+								 oldEventType, Constants.SWAP_OPERATION, false);
+					 }
+				 }
+			 }
+		 }
+		return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType,
+				Constants.SWAP_OPERATION, false);
 	}
 
 	public boolean checkMaximumLimt(String customerId, String eventId) {
 		StringBuilder count = new StringBuilder();
 		if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 			if (customerId.trim().substring(0, 3).equals("TOR")) {
-				count.append(
-						requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991, "countOperation")
-								+ ",");
-				count.append(
-						requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992, "countOperation")
-								+ ",");
+				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991,
+						"countOperation") + ",");
+				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992,
+						"countOperation") + ",");
 			} else if (customerId.trim().substring(0, 3).equals("MTL")) {
-				count.append(
-						requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990, "countOperation")
-								+ ",");
-				count.append(
-						requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992, "countOperation")
-								+ ",");
+				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990,
+						"countOperation") + ",");
+				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8992,
+						"countOperation") + ",");
 			} else if (customerId.trim().substring(0, 3).equals("OTW")) {
-				count.append(
-						requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990, "countOperation")
-								+ ",");
-				count.append(
-						requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991, "countOperation")
-								+ ",");
+				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8990,
+						"countOperation") + ",");
+				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE, 8991,
+						"countOperation") + ",");
 			}
 			String[] split = count.toString().trim().split(",");
 			int totalEve = 0;
@@ -329,6 +364,7 @@ public class EventManagerToronto {
 		}
 		return false;
 	}
+
 	public boolean checkEventExistance(String customerID, String eventId, String eventType) {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
@@ -356,62 +392,80 @@ public class EventManagerToronto {
 			return false;
 		}
 	}
-	
+
 	public String swapEventBooking(String customerId, String eventId, String eventType) {
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, torontoData.bookEvent(customerId, eventId, eventType));
-				//return !temp.trim().isEmpty() && temp.contains("has book event") ? true : false;
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.SWAP_OPERATION,
+						torontoData.bookEvent(customerId, eventId, eventType));
+				// return !temp.trim().isEmpty() && temp.contains("has book event") ? true :
+				// false;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8990,
 						Constants.BOOK_OPERATION);
-				return !temp.trim().isEmpty() ? temp.trim() : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
-			}
-			else if (eventId.trim().substring(0, 3).equals("MTL")) {
+				return !temp.trim().isEmpty() ? temp.trim()
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.SWAP_OPERATION, false);
+			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8991,
 						Constants.BOOK_OPERATION);
-				return !temp.trim().isEmpty() ? temp.trim() : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp.trim()
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.SWAP_OPERATION, false);
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8992,
 						Constants.BOOK_OPERATION);
-				return !temp.trim().isEmpty() ? temp.trim() : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
-			} 
-			else {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp.trim()
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.SWAP_OPERATION, false);
+			} else {
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.SWAP_OPERATION, false);
 			}
 		} else {
-			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
+			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
+					Constants.SWAP_OPERATION, false);
 		}
 	}
 
-	public String swapCancelBooking(String customerId, String eventId, String eventType){
+	public String swapCancelBooking(String customerId, String eventId, String eventType) {
 
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE,Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, torontoData.removeEvent(customerId, eventId, eventType));
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.SWAP_OPERATION,
+						torontoData.removeEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8990,
 						Constants.CANCEL_OPERATION);
-				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
-			} 
-			else if (eventId.trim().substring(0, 3).equals("MTL")) {
+				return !temp.trim().isEmpty() ? temp
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.SWAP_OPERATION, false);
+			} else if (eventId.trim().substring(0, 3).equals("MTL")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8991,
 						Constants.CANCEL_OPERATION);
-				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.SWAP_OPERATION, false);
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE, 8992,
 						Constants.CANCEL_OPERATION);
-				return !temp.trim().isEmpty() ? temp : generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
-			} 
-			else {
-				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
+				return !temp.trim().isEmpty() ? temp
+						: generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+								Constants.NONE, Constants.SWAP_OPERATION, false);
+			} else {
+				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
+						Constants.NONE, Constants.SWAP_OPERATION, false);
 			}
 		} else {
-			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE, Constants.SWAP_OPERATION, false);
+			return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
+					Constants.SWAP_OPERATION, false);
 		}
 	}
+
 	static void setLogger(String location, String id) {
 		try {
 			logger = Logger.getLogger(id);
@@ -423,6 +477,7 @@ public class EventManagerToronto {
 			logger.info("Couldn't Initiate Logger. Please check file permission");
 		}
 	}
+
 	static String generateJSONObject(String id, String eventId, String eventType, String eventCapacity,
 			String oldEventId, String oldEventType, String operation, boolean status) {
 		JSONObject obj = new JSONObject();
@@ -436,7 +491,9 @@ public class EventManagerToronto {
 		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
 	}
-	static String eventAvailableJSONObject(String id,String eventType,String events, String operation, boolean status) {
+
+	static String eventAvailableJSONObject(String id, String eventType, String events, String operation,
+			boolean status) {
 		JSONObject obj = new JSONObject();
 		obj.put(Constants.ID, id.trim());
 		obj.put(Constants.EVENT_TYPE, eventType.trim());
@@ -445,6 +502,21 @@ public class EventManagerToronto {
 		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
 	}
+
+	static String eventScheduleJSONObject(String id, String events, boolean status) {
+		JSONObject obj = new JSONObject();
+		obj.put(Constants.ID, id.trim());
+		String[] splitEvents = events.trim().split(",");
+		ArrayList<String> temp = new ArrayList<String>();
+		for (int i = 0; i < splitEvents.length; i++) {
+			temp.add(splitEvents[i].replaceAll("\\s+", "").trim());
+		}
+		Collections.sort(temp);
+		obj.put(Constants.LIST_EVENT_SCHEDULE, temp.toString().trim());
+		obj.put(Constants.OPERATION_STATUS, status);
+		return obj.toString();
+	}
+
 	static boolean unpackJSON(String jsonString) {
 		Object obj = null;
 		try {

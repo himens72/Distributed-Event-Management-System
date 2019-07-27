@@ -30,4 +30,6 @@ public class Constants {
 	public static final String OLD_EVENT_TYPE = "oldEventType";
 	public static final String OPERATION = "operation";
 	public static final String LIST_EVENT_AVAILABLE= "listAllEventAvailable";
+	public static final String LIST_EVENT_SCHEDULE= "listAllEventSchedule";
+
 }
