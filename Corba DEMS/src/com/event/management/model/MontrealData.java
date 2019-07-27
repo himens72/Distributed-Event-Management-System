@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MontrealData {
 	HashMap<String, HashMap<String, HashMap<String, String>>> serverData;
 	String serverName;
-	public static ReentrantLock  lockMontrealServerData;
+	public static ReentrantLock lockMontrealServerData;
 
 	public HashMap<String, HashMap<String, HashMap<String, String>>> getServerData() {
 		return serverData;
@@ -36,6 +36,7 @@ public class MontrealData {
 	public boolean addEvent(String eventId, String eventtype, String eventCapacity) {
 		lockMontrealServerData.lock();
 		if (!serverData.containsKey(eventtype)) {
+			lockMontrealServerData.unlock();
 			return false;
 		}
 		HashMap<String, HashMap<String, String>> newValue = serverData.get(eventtype);
@@ -46,6 +47,7 @@ public class MontrealData {
 			newList.replace("customerId", newList.get("customerId"), newList.get("customerId"));
 			newValue.replace(eventId, serverData.get(eventtype).get(eventId), newList);
 			serverData.replace(eventtype, serverData.get(eventtype), newValue);
+			lockMontrealServerData.unlock();
 			return true;
 		} else {
 			HashMap<String, String> temp = new HashMap<>();
@@ -60,24 +62,30 @@ public class MontrealData {
 	}
 
 	public synchronized boolean removeEvent(String eventId, String eventType) {
+		lockMontrealServerData.lock();
 		if (!serverData.containsKey(eventType)) {
+			lockMontrealServerData.unlock();
 			return false;
 		}
 		HashMap<String, HashMap<String, String>> newValue = serverData.get(eventType);
 		if (newValue.containsKey(eventId)) {
 			serverData.get(eventType).remove(eventId);
+			lockMontrealServerData.unlock();
 			return true;
 		} else {
+			lockMontrealServerData.unlock();
 			return false;
 		}
 	}
 
 	public synchronized String retrieveEvent(String eventType) {
+		lockMontrealServerData.lock();
 		System.out.println("Event Type : " + eventType);
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> temp = serverData.get(eventType);
 			if (temp.size() == 0) {
 				System.out.println("No Events Found");
+				lockMontrealServerData.unlock();
 				return "";
 			} else {
 				StringBuilder str = new StringBuilder();
@@ -87,10 +95,12 @@ public class MontrealData {
 						str.append(entry.getKey() + " " + (Integer.parseInt(entry.getValue().get("capacity"))
 								- Integer.parseInt(entry.getValue().get("totalBooking"))) + ",");
 				}
+				lockMontrealServerData.unlock();
 				return str.toString().trim();
 			}
 		} else {
 			System.out.println("No Event Type Found");
+			lockMontrealServerData.unlock();
 			return "";
 		}
 	}
@@ -140,20 +150,23 @@ public class MontrealData {
 	}
 
 	public synchronized boolean removeEvent(String customerID, String eventId, String eventType) {
+		lockMontrealServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
 				System.out.println("No Events Found");
+				lockMontrealServerData.unlock();
 				return false;
 			} else {
 				if (typeData.containsKey(eventId)) {
 					HashMap<String, String> currentEvent = typeData.get(eventId);
 					if (Integer.parseInt(currentEvent.get("totalBooking")) == 0) {
+						lockMontrealServerData.unlock();
 						return false;
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
 						if (!currentEvent.get("customerId").contains(customerID)) {
-
+							lockMontrealServerData.unlock();
 							return false;
 						}
 						currentEvent.replace("customerId", customers.toString().replace(customerID.trim() + ",", ""));
@@ -163,19 +176,23 @@ public class MontrealData {
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) - 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
+						lockMontrealServerData.unlock();
 						return true;
 					}
 				} else {
+					lockMontrealServerData.unlock();
 					return false;
 				}
 			}
 		} else {
 			System.out.println("No Event Type Found");
+			lockMontrealServerData.unlock();
 			return false;
 		}
 	}
 
 	public synchronized String getBookingSchedule(String customerId) {
+		lockMontrealServerData.lock();
 		StringBuilder customers = new StringBuilder();
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
 			for (Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
@@ -184,10 +201,12 @@ public class MontrealData {
 				}
 			}
 		}
+		lockMontrealServerData.unlock();
 		return customers.length() == 0 ? "" : customers.toString();
 	}
 
 	public synchronized String getBookingCount(String customerId, String eventType) {
+		lockMontrealServerData.lock();
 		int count = 0;
 		String month = eventType.trim().substring(6, eventType.trim().length());
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
@@ -198,25 +217,31 @@ public class MontrealData {
 				}
 			}
 		}
+		lockMontrealServerData.unlock();
 		return Integer.toString(count);
 	}
-	
+
 	public synchronized boolean getEvent(String customerId, String eventId, String eventType) {
+		lockMontrealServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
 				System.out.println("No Events Found");
+				lockMontrealServerData.unlock();
 				return false;
 			} else {
 				if (typeData.containsKey(eventId)) {
 					HashMap<String, String> currentEvent = typeData.get(eventId);
+					lockMontrealServerData.unlock();
 					return currentEvent.get("customerId").contains(customerId.trim());
 				} else {
+					lockMontrealServerData.unlock();
 					return false;
 				}
 			}
 		} else {
 			System.out.println("No Event Type Found");
+			lockMontrealServerData.unlock();
 			return false;
 		}
 	}
