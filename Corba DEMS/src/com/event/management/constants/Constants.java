@@ -3,6 +3,8 @@ package com.event.management.constants;
 public class Constants {
 	public static final String FRONTEND_IP = "localhost";//"192.168.0.156";
 	public static final String MULTICAST_IP = "230.0.0.0";
+	public static final String FAULT_MULTICAST_IP = "230.2.2.5";
+	public static final int FAULT_PORT = 6467;
 	public static final int BYTE_LENGTH = 65535;
 	public static final int SEQUENCER_PORT = 5555;
 	public static final int RM_FRONTEND_PORT = 1110;
@@ -34,5 +36,8 @@ public class Constants {
 	public static final String OPERATION = "operation";
 	public static final String LIST_EVENT_AVAILABLE = "listAllEventAvailable";
 	public static final String LIST_EVENT_SCHEDULE = "listAllEventSchedule";
-
+	public static final String RM1_ID = "RM1";
+	public static final String RM2_ID = "RM2";
+	public static final String RM3_ID = "RM3";
+	
 }

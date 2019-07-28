@@ -38,8 +38,6 @@ public class FrontEnd {
 			ncRefTor.rebind(pathTor, hrefTor);
 
 
-			// get object reference from the servant
-
 			System.out.println("FrontEnd Started");
 			Runnable task1 = frontEndImpl::ReplicaOneReply;
             Runnable task2 = frontEndImpl::ReplicaTwoReply;

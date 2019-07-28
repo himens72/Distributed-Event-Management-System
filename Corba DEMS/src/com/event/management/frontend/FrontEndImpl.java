@@ -26,6 +26,9 @@ public class FrontEndImpl extends managerInterfacePOA {
 	String replicaOneResponse = "";
 	String replicaTwoResponse = "";
 	String replicaThreeResponse = "";
+	String replicaOneFailureResponse = "";
+	String replicaTwoFailureResponse = "";
+	String replicaThreeFailureResponse = "";
 
 	public FrontEndImpl() {
 		// TODO Auto-generated constructor stub
@@ -183,7 +186,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 				replicaOneResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
 				System.out.println("replicaOneResponse " + replicaOneResponse);
 				if (!replicaOneResponse.isEmpty()) {
-					System.out.println("response received from RM 1" + replicaOneResponse);
+					System.out.println("RM 1 : " + replicaOneResponse);
 				}
 			}
 		} catch (SocketException e) {
@@ -209,7 +212,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 				replicaTwoResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
 				System.out.println("replicaTwoResponse " + replicaTwoResponse);
 				if (!replicaTwoResponse.isEmpty()) {
-					System.out.println("response received from RM 2" + replicaTwoResponse);
+					System.out.println("RM 2 : " + replicaTwoResponse);
 				}
 			}
 		} catch (SocketException e) {
@@ -234,7 +237,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 				replicaThreeResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
 				System.out.println("replicaThreeResponse " + replicaThreeResponse);
 				if (!replicaThreeResponse.isEmpty()) {
-					System.out.println("response received from RM 3" + replicaThreeResponse);
+					System.out.println("RM 3 : " + replicaThreeResponse);
 				}
 			}
 		} catch (SocketException e) {
@@ -249,7 +252,52 @@ public class FrontEndImpl extends managerInterfacePOA {
 	}
 
 	public String udpReply() {
+		if (replicaOneResponse.trim().equals(replicaTwoResponse.trim())
+				&& replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
+			return replicaOneResponse;
+		} else if (replicaOneResponse.trim().equals(replicaTwoResponse.trim())) {
+			if (replicaThreeResponse.trim().isEmpty()) {
+				multicastFailResponse("Server Crash", Constants.RM3_ID);
+			} else {
+				multicastFailResponse("Server Bug", Constants.RM3_ID);
+			}
+			return replicaOneResponse;
+		} else if (replicaOneResponse.trim().equals(replicaThreeResponse.trim())) {
+			if (replicaTwoResponse.trim().isEmpty()) {
+				multicastFailResponse("Server Crash", Constants.RM2_ID);
+			} else {
+				multicastFailResponse("Server Bug", Constants.RM2_ID);
+			}
+			return replicaOneResponse;
+		} else if (replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
+			if (replicaOneResponse.trim().isEmpty()) {
+				multicastFailResponse("Server Crash", Constants.RM1_ID);
+			} else {
+				multicastFailResponse("Server Bug", Constants.RM1_ID);
+			}
+			return replicaTwoResponse;
+		}
 		return replicaOneResponse;
+	}
+
+	private void multicastFailResponse(String message, String serverID) {
+		DatagramSocket aSocket = null;
+		try {
+			aSocket = new DatagramSocket();
+			String temp = serverID+"="+message;
+			byte[] data = temp.getBytes();
+			InetAddress aHost = InetAddress.getByName(Constants.MULTICAST_IP);
+			DatagramPacket request = new DatagramPacket(data, data.length, aHost, Constants.FAULT_PORT);
+			aSocket.send(request);
+		} catch (SocketException e) {
+			System.out.println(e.getMessage());
+		} catch (UnknownHostException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	static void setLogger(String location, String id) {
@@ -282,7 +330,6 @@ public class FrontEndImpl extends managerInterfacePOA {
 					: id + " Unable to perform Add Event Operation for  " + eventId;
 		} else if (operation.equals(Constants.REMOVE_OPERATION)) {
 			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
-			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
 			return operationFlag ? operationWiseJSONString(jsonString.trim())
 					: id + " Unable to perform Remove Event Operation for  " + eventId;
 		} else if (operation.equals(Constants.LIST_OPERATION)) {
@@ -306,7 +353,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 					: id + " No Data Found or Might be data issue.";
 		}
 		return operationFlag ? operationWiseJSONString(jsonString.trim())
-				: "No Data Found or Might be Data Issue. Please try again";
+				: "Might be Data Issue or Please Check Data Again. Please try again";
 	}
 
 	static String operationWiseJSONString(String jsonString) {
@@ -324,11 +371,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
 			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
 			String eventCapacity = jsonObject.get(Constants.EVENT_CAPACITY).toString().trim();
-			flag = id + " has create " + eventId + " of type " + eventType + " with capacity " + eventCapacity;
+			flag = id + " has create event " + eventId + " of type " + eventType + " with capacity " + eventCapacity;
 		} else if (operation.equals(Constants.REMOVE_OPERATION)) {
 			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
 			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
-			flag = id + " has remove " + eventId + " of type " + eventType;
+			flag = id + " has remove event " + eventId + " of type " + eventType;
 		} else if (operation.equals(Constants.LIST_OPERATION)) {
 			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
 			String listEvents = jsonObject.get(Constants.LIST_EVENT_AVAILABLE).toString().trim();
@@ -337,11 +384,11 @@ public class FrontEndImpl extends managerInterfacePOA {
 		} else if (operation.equals(Constants.BOOK_OPERATION)) {
 			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
 			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
-			flag = id + " has book " + eventId + " of type " + eventType;
+			flag = id + " has book event " + eventId + " of type " + eventType;
 		} else if (operation.equals(Constants.CANCEL_OPERATION)) {
 			String eventId = jsonObject.get(Constants.EVENT_ID).toString().trim();
 			String eventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
-			flag = id + " has cancel " + eventId + " of type " + eventType;
+			flag = id + " has cancel event " + eventId + " of type " + eventType;
 		} else if (operation.equals(Constants.SCHEDULE_OPERATION)) {
 			String listEvents = jsonObject.get(Constants.LIST_EVENT_SCHEDULE).toString().trim();
 			flag = listEvents.trim().isEmpty() ? id + " : No data found." : id + "  :  " + listEvents;
@@ -350,9 +397,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 			String newEventType = jsonObject.get(Constants.EVENT_TYPE).toString().trim();
 			String oldEventId = jsonObject.get(Constants.OLD_EVENT_ID).toString().trim();
 			String oldEventType = jsonObject.get(Constants.OLD_EVENT_TYPE).toString().trim();
-			flag = id + " has swap " + oldEventId + " of type " + oldEventType + " with " + newEventId + " of type "
-					+ newEventType;
+			flag = id + " has swap event " + oldEventId + " of type " + oldEventType + " with " + newEventId
+					+ " of type " + newEventType;
 		}
-		return flag.trim().equals("") ? id + " : No Data Found. Please try again" : flag;
+		return flag.trim().equals("") ? id + " : Might be Data Issue or Please Check Data Again. Please try again"
+				: flag;
 	}
 }

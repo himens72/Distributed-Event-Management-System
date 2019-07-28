@@ -227,8 +227,8 @@ public class MontrealServer {
 	private static void receiveFailedResponse() {
 		MulticastSocket aSocket = null;
 		try {
-			aSocket = new MulticastSocket(6467);
-			aSocket.joinGroup(InetAddress.getByName("230.2.2.5"));
+			aSocket = new MulticastSocket(Constants.FAULT_PORT);
+			aSocket.joinGroup(InetAddress.getByName(Constants.FAULT_MULTICAST_IP));
 			while (true) {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
