@@ -21,7 +21,7 @@ import com.event.management.constants.Constants;
 import com.event.management.model.TorontoData;
 
 public class EventManagerToronto {
-	//	public String location;
+	// public String location;
 	public String response;
 	public TorontoData torontoData;
 	private static Logger logger;
@@ -156,7 +156,8 @@ public class EventManagerToronto {
 					totalEve += Integer.parseInt(split[i].trim());
 				}
 				if (totalEve >= 3) {
-					return "you have already reached maximum limit of Current Month Outside city registration ";
+					return generateJSONObject(customerId, eventId, eventType, "None", "None", "None",
+							Constants.BOOK_OPERATION, false);
 				}
 			}
 
@@ -233,12 +234,12 @@ public class EventManagerToronto {
 		StringBuilder temp = new StringBuilder();
 		temp.append(torontoData.getBookingSchedule(customerId.trim()));
 		temp.append(requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE, 8991,
-				"scheduleOperation").trim());
+				Constants.SCHEDULE_OPERATION).trim());
 		temp.append(requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE, 8992,
-				"scheduleOperation").trim());
+				Constants.SCHEDULE_OPERATION).trim());
 		logger.info("Booking Schedule for " + customerId + " : " + temp);
-		return temp.toString().trim().length() == 0 ? eventScheduleJSONObject(customerId, "", false)
-				: eventScheduleJSONObject(customerId, temp.toString().trim(), true);
+		return temp.toString().trim().length() == 0 ? eventScheduleJSONObject(customerId, "", Constants.SCHEDULE_OPERATION,false)
+				: eventScheduleJSONObject(customerId, temp.toString().trim(), Constants.SCHEDULE_OPERATION,true);
 	}
 
 	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
@@ -503,7 +504,7 @@ public class EventManagerToronto {
 		return obj.toString();
 	}
 
-	static String eventScheduleJSONObject(String id, String events, boolean status) {
+	static String eventScheduleJSONObject(String id, String events, String operation, boolean status) {
 		JSONObject obj = new JSONObject();
 		obj.put(Constants.ID, id.trim());
 		String[] splitEvents = events.trim().split(",");
@@ -513,6 +514,7 @@ public class EventManagerToronto {
 		}
 		Collections.sort(temp);
 		obj.put(Constants.LIST_EVENT_SCHEDULE, temp.toString().trim());
+		obj.put(Constants.OPERATION, operation.trim());
 		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
 	}

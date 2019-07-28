@@ -219,14 +219,14 @@ public class EventManagerOttawa {
 		StringBuilder temp = new StringBuilder();
 		temp.append(ottawaData.getBookingSchedule(customerId.trim()));
 		temp.append(
-				requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8990, "scheduleOperation")
+				requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8990, Constants.SCHEDULE_OPERATION)
 				.trim());
 		temp.append(
-				requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991, "scheduleOperation")
+				requestOnOtherServer(customerId, "No Event Id", "No Types", "No Capacity", 8991, Constants.SCHEDULE_OPERATION)
 				.trim());
 		logger.info("Booking Schedule for " + customerId + " : " + temp);
-		return temp.toString().trim().length() == 0 ? eventScheduleJSONObject(customerId, "", false)
-				: eventScheduleJSONObject(customerId, temp.toString().trim(), true);
+		return temp.toString().trim().length() == 0 ? eventScheduleJSONObject(customerId, "",Constants.SCHEDULE_OPERATION, false)
+				: eventScheduleJSONObject(customerId, temp.toString().trim(),Constants.SCHEDULE_OPERATION, true);
 	}
 
 	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
@@ -495,7 +495,7 @@ public class EventManagerOttawa {
 		return obj.toString();
 	}
 
-	static String eventScheduleJSONObject(String id, String events, boolean status) {
+	static String eventScheduleJSONObject(String id, String events, String operation, boolean status) {
 		JSONObject obj = new JSONObject();
 		obj.put(Constants.ID, id.trim());
 		String[] splitEvents = events.trim().split(",");
@@ -505,6 +505,7 @@ public class EventManagerOttawa {
 		}
 		Collections.sort(temp);
 		obj.put(Constants.LIST_EVENT_SCHEDULE, temp.toString().trim());
+		obj.put(Constants.OPERATION, operation.trim());
 		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
 	}

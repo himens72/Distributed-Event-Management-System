@@ -94,7 +94,7 @@ public class OttawaServer {
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
-				} else if (receiveData[receiveData.length - 1].trim().equals("scheduleOperation")) {
+				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String temp = otwObject.ottawaData.getBookingSchedule(receiveData[0]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
@@ -177,7 +177,7 @@ public class OttawaServer {
 					response = otwObject.cancelBooking(customerId, eventId, eventType);
 					break;
 				}
-				case "bookingScheduleOperation": {
+				case Constants.SCHEDULE_OPERATION: {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					response = otwObject.getBookingSchedule(customerId);
 					break;

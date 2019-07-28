@@ -96,7 +96,7 @@ public class MontrealServer {
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
-				} else if (receiveData[receiveData.length - 1].trim().equals("scheduleOperation")) {
+				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String temp = mtlObject.montrealData.getBookingSchedule(receiveData[0]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
@@ -179,7 +179,7 @@ public class MontrealServer {
 					break;
 				}
 
-				case "bookingScheduleOperation": {
+				case Constants.SCHEDULE_OPERATION: {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					response = mtlObject.getBookingSchedule(customerId);
 					break;

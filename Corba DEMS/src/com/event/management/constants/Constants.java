@@ -1,7 +1,7 @@
 package com.event.management.constants;
 
 public class Constants {
-	public static final String FRONTEND_IP = "192.168.0.156";
+	public static final String FRONTEND_IP = "localhost";//"192.168.0.156";
 	public static final String MULTICAST_IP = "230.0.0.0";
 	public static final int BYTE_LENGTH = 65535;
 	public static final int SEQUENCER_PORT = 5555;
