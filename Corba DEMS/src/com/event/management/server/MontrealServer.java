@@ -5,6 +5,7 @@
  */
 package com.event.management.server;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,6 +23,8 @@ import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
 import com.event.management.implementation.EventManagerMontreal;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  *
@@ -72,6 +75,7 @@ public class MontrealServer {
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
 					boolean temp = mtlObject.montrealData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
@@ -79,6 +83,7 @@ public class MontrealServer {
 					logger.info("Reply send to customer : " + newTemp);
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.BOOK_OPERATION)) {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
@@ -87,6 +92,7 @@ public class MontrealServer {
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.CANCEL_OPERATION)) {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
@@ -95,18 +101,21 @@ public class MontrealServer {
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String temp = mtlObject.montrealData.getBookingSchedule(receiveData[0]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
 					String temp = mtlObject.montrealData.getBookingCount(receiveData[0], receiveData[1]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("existanceOperation")) {
 					boolean temp = mtlObject.montrealData.getEvent(receiveData[0], receiveData[1], receiveData[2]);
@@ -114,6 +123,7 @@ public class MontrealServer {
 					String newTemp = temp == false ? "Denies" : "Approves";
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else {
 					logger.info("Some problem in Server");
@@ -127,7 +137,6 @@ public class MontrealServer {
 			}
 		}
 	}
-
 	private void receiveMulticastRequest() {
 
 		MulticastSocket aSocket = null;
@@ -194,6 +203,7 @@ public class MontrealServer {
 					break;
 				}
 				}
+				updateJSONFile();
 				System.out.println("MTL Response: " + response);
 				sendRequestToFrontEnd(response);
 			}
@@ -269,6 +279,22 @@ public class MontrealServer {
 			logger.addHandler(fileTxt);
 		} catch (Exception err) {
 			logger.info("Couldn't Initiate Logger. Please check file permission");
+		}
+	}
+	public static void updateJSONFile(){
+		JSONObject game = new JSONObject();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String playerString = gson.toJson(mtlObject.montrealData);
+
+		game.put("player", playerString);
+		String gameString = gson.toJson(game);
+
+		try {
+			FileWriter fileWriter = new FileWriter("montreal.json");
+			fileWriter.write(gameString);
+			fileWriter.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

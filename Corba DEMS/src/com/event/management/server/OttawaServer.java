@@ -5,6 +5,7 @@
  */
 package com.event.management.server;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,6 +23,8 @@ import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
 import com.event.management.implementation.EventManagerOttawa;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  *
@@ -71,12 +74,14 @@ public class OttawaServer {
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
+					updateJSONFile();
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
 					boolean temp = otwObject.ottawaData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
 					String newTemp = temp == false ? "Denies" : "Approves";
 					logger.info("Reply send to customer : " + newTemp);
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.BOOK_OPERATION)) {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
@@ -85,6 +90,7 @@ public class OttawaServer {
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.CANCEL_OPERATION)) {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
@@ -93,18 +99,21 @@ public class OttawaServer {
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String temp = otwObject.ottawaData.getBookingSchedule(receiveData[0]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
 					String temp = otwObject.ottawaData.getBookingCount(receiveData[0], receiveData[1]);
 					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("existanceOperation")) {
 					boolean temp = otwObject.ottawaData.getEvent(receiveData[0], receiveData[1], receiveData[2]);
@@ -112,6 +121,7 @@ public class OttawaServer {
 					String newTemp = temp == false ? "Denies" : "Approves";
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
+					updateJSONFile();
 					datagramSocket.send(reply);
 				} else {
 					logger.info("Some problem in Server");
@@ -192,6 +202,7 @@ public class OttawaServer {
 					break;
 				}
 				}
+				updateJSONFile();
 				System.out.println("OTW Response: " + response);
 				sendRequestToFrontEnd(response);
 			}
@@ -258,6 +269,21 @@ public class OttawaServer {
 		obj.put(Constants.OPERATION, operation.trim());
 		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();
+	}
+
+	public static void updateJSONFile() {
+		JSONObject game = new JSONObject();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String playerString = gson.toJson(otwObject.ottawaData);
+		game.put("player", playerString);
+		String gameString = gson.toJson(game);
+		try {
+			FileWriter fileWriter = new FileWriter("ottawa.json");
+			fileWriter.write(gameString);
+			fileWriter.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void setLogger(String location, String id) {

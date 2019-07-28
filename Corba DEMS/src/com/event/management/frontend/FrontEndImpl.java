@@ -257,35 +257,34 @@ public class FrontEndImpl extends managerInterfacePOA {
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaTwoResponse.trim())) {
 			if (replicaThreeResponse.trim().isEmpty()) {
-				multicastFailResponse("Server Crash", Constants.RM3_ID);
+				multicastFailResponse("Server Crash", Constants.RM1_ID, Constants.RM3_ID);
 			} else {
-				multicastFailResponse("Server Bug", Constants.RM3_ID);
+				multicastFailResponse("Server Bug", Constants.RM1_ID,Constants.RM3_ID);
 			}
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaThreeResponse.trim())) {
 			if (replicaTwoResponse.trim().isEmpty()) {
-				multicastFailResponse("Server Crash", Constants.RM2_ID);
+				multicastFailResponse("Server Crash",Constants.RM1_ID, Constants.RM2_ID);
 			} else {
-				multicastFailResponse("Server Bug", Constants.RM2_ID);
+				multicastFailResponse("Server Bug", Constants.RM1_ID,Constants.RM2_ID);
 			}
 			return replicaOneResponse;
 		} else if (replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
 			if (replicaOneResponse.trim().isEmpty()) {
-				multicastFailResponse("Server Crash", Constants.RM1_ID);
+				multicastFailResponse("Server Crash",Constants.RM2_ID, Constants.RM1_ID);
 			} else {
-				multicastFailResponse("Server Bug", Constants.RM1_ID);
+				multicastFailResponse("Server Bug", Constants.RM2_ID,Constants.RM1_ID);
 			}
 			return replicaTwoResponse;
 		}
 		return replicaOneResponse;
 	}
 
-	private void multicastFailResponse(String message, String serverID) {
+	private void multicastFailResponse(String message, String serverID1, String serverID2) {
 		DatagramSocket aSocket = null;
 		try {
 			aSocket = new DatagramSocket();
-			String temp = serverID+"="+message;
-			byte[] data = temp.getBytes();
+			byte[] data = message.getBytes();
 			InetAddress aHost = InetAddress.getByName(Constants.MULTICAST_IP);
 			DatagramPacket request = new DatagramPacket(data, data.length, aHost, Constants.FAULT_PORT);
 			aSocket.send(request);
