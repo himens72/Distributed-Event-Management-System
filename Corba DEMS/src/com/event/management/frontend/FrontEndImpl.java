@@ -29,6 +29,9 @@ public class FrontEndImpl extends managerInterfacePOA {
 	String replicaOneFailureResponse = "";
 	String replicaTwoFailureResponse = "";
 	String replicaThreeFailureResponse = "";
+	int RM1_FAIL_COUNTER = 0;
+	int RM2_FAIL_COUNTER = 0;
+	int RM3_FAIL_COUNTER = 0;
 
 	public FrontEndImpl() {
 		// TODO Auto-generated constructor stub
@@ -184,6 +187,8 @@ public class FrontEndImpl extends managerInterfacePOA {
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
 				replicaOneResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
+				// replicaTwoResponse = unpackJSON(new String(request.getData(), 0,
+				// request.getLength()));
 				System.out.println("replicaOneResponse " + replicaOneResponse);
 				if (!replicaOneResponse.isEmpty()) {
 					System.out.println("RM 1 : " + replicaOneResponse);
@@ -257,23 +262,32 @@ public class FrontEndImpl extends managerInterfacePOA {
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaTwoResponse.trim())) {
 			if (replicaThreeResponse.trim().isEmpty()) {
+				System.out.println("FRONTEND : RM1 sending to RM3");
 				multicastFailResponse("Server Crash", Constants.RM1_ID, Constants.RM3_ID);
 			} else {
-				multicastFailResponse("Server Bug", Constants.RM1_ID,Constants.RM3_ID);
+				System.out.println("FRONTEND : RM1 sending to RM3");
+				RM3_FAIL_COUNTER++;
+				multicastFailResponse("Server Bug", Constants.RM1_ID, Constants.RM3_ID);
 			}
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaThreeResponse.trim())) {
 			if (replicaTwoResponse.trim().isEmpty()) {
-				multicastFailResponse("Server Crash",Constants.RM1_ID, Constants.RM2_ID);
+				System.out.println("FRONTEND : RM1 sending to RM2");
+				RM2_FAIL_COUNTER++;
+				multicastFailResponse("Server Crash", Constants.RM1_ID, Constants.RM2_ID);
 			} else {
-				multicastFailResponse("Server Bug", Constants.RM1_ID,Constants.RM2_ID);
+				System.out.println("FRONTEND : RM1 sending to RM2");
+				multicastFailResponse("Server Bug", Constants.RM1_ID, Constants.RM2_ID);
 			}
 			return replicaOneResponse;
 		} else if (replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
 			if (replicaOneResponse.trim().isEmpty()) {
-				multicastFailResponse("Server Crash",Constants.RM2_ID, Constants.RM1_ID);
+				System.out.println("FRONTEND : RM2 sending to RM1");
+				multicastFailResponse("Server Crash", Constants.RM2_ID, Constants.RM1_ID);
 			} else {
-				multicastFailResponse("Server Bug", Constants.RM2_ID,Constants.RM1_ID);
+				System.out.println("FRONTEND : RM2 sending to RM1");
+				RM1_FAIL_COUNTER++;
+				multicastFailResponse("Server Bug", Constants.RM2_ID, Constants.RM1_ID);
 			}
 			return replicaTwoResponse;
 		}
@@ -283,9 +297,10 @@ public class FrontEndImpl extends managerInterfacePOA {
 	private void multicastFailResponse(String message, String serverID1, String serverID2) {
 		DatagramSocket aSocket = null;
 		try {
+			String temp = message + "," + serverID1 + "," + serverID2;
 			aSocket = new DatagramSocket();
-			byte[] data = message.getBytes();
-			InetAddress aHost = InetAddress.getByName(Constants.MULTICAST_IP);
+			byte[] data = temp.getBytes();
+			InetAddress aHost = InetAddress.getByName(Constants.FAULT_MULTICAST_IP);
 			DatagramPacket request = new DatagramPacket(data, data.length, aHost, Constants.FAULT_PORT);
 			aSocket.send(request);
 		} catch (SocketException e) {
