@@ -245,93 +245,96 @@ public class MontrealServer {
 				aSocket.receive(request);
 				System.out.println("FrontEnd Response for failed response: " + new String(request.getData()));
 				String[] temp = new String(request.getData()).trim().split(",");
-				if (temp[2].trim().equals(Constants.RM1_ID)) {
-					System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
-					datagramSocket = new DatagramSocket();
-					JSONParser parser = new JSONParser();
-					Object obj = parser.parse(new FileReader("toronto.json"));
-					JSONObject jsonObject = (JSONObject) obj;
-					String sendTORData = jsonObject.toString();
-					obj = parser.parse(new FileReader("montreal.json"));
-					jsonObject = (JSONObject) obj;
-					String sendMTLData = jsonObject.toString();
-					obj = parser.parse(new FileReader("ottawa.json"));
-					jsonObject = (JSONObject) obj;
-					String sendOTWData = jsonObject.toString();
-					byte[] torByte = sendTORData.getBytes();
-					byte[] mtlByte = sendMTLData.getBytes();
-					byte[] otwByte = sendOTWData.getBytes();
-					InetAddress torontoHost = InetAddress.getByName(Constants.FAIL_RM1_IP);
-					DatagramPacket torontoRequest = new DatagramPacket(torByte, torByte.length, torontoHost,
-							Constants.FAIL_TORONTO_PORT);
-					datagramSocket.send(torontoRequest);
-					InetAddress montrealHost = InetAddress.getByName(Constants.FAIL_RM1_IP);
-					DatagramPacket montrealRequest = new DatagramPacket(mtlByte, mtlByte.length, montrealHost,
-							Constants.FAIL_MONTREAL_PORT);
-					datagramSocket.send(montrealRequest);
-					InetAddress ottawaHost = InetAddress.getByName(Constants.FAIL_RM1_IP);
-					DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
-							Constants.FAIL_OTTAWA_PORT);
-					datagramSocket.send(ottawaRequest);
-				} else if (temp[2].trim().equals(Constants.RM2_ID)) {
-					System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
-					datagramSocket = new DatagramSocket();
-					JSONParser parser = new JSONParser();
-					Object obj = parser.parse(new FileReader("toronto.json"));
-					JSONObject jsonObject = (JSONObject) obj;
-					String sendTORData = jsonObject.toString();
-					obj = parser.parse(new FileReader("montreal.json"));
-					jsonObject = (JSONObject) obj;
-					String sendMTLData = jsonObject.toString();
-					obj = parser.parse(new FileReader("ottawa.json"));
-					jsonObject = (JSONObject) obj;
-					String sendOTWData = jsonObject.toString();
-					byte[] torByte = sendTORData.getBytes();
-					byte[] mtlByte = sendMTLData.getBytes();
-					byte[] otwByte = sendOTWData.getBytes();
-					InetAddress torontoHost = InetAddress.getByName(Constants.FAIL_RM2_IP);
-					DatagramPacket torontoRequest = new DatagramPacket(torByte, torByte.length, torontoHost,
-							Constants.FAIL_TORONTO_PORT);
-					datagramSocket.send(torontoRequest);
-					InetAddress montrealHost = InetAddress.getByName(Constants.FAIL_RM2_IP);
-					DatagramPacket montrealRequest = new DatagramPacket(mtlByte, mtlByte.length, montrealHost,
-							Constants.FAIL_MONTREAL_PORT);
-					datagramSocket.send(montrealRequest);
-					InetAddress ottawaHost = InetAddress.getByName(Constants.FAIL_RM2_IP);
-					DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
-							Constants.FAIL_OTTAWA_PORT);
-					datagramSocket.send(ottawaRequest);
-				} else if (temp[2].trim().equals(Constants.RM3_ID)) {
-					System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
-					datagramSocket = new DatagramSocket();
-					JSONParser parser = new JSONParser();
-					Object obj = parser.parse(new FileReader("toronto.json"));
-					JSONObject jsonObject = (JSONObject) obj;
-					String sendTORData = jsonObject.toString();
-					obj = parser.parse(new FileReader("montreal.json"));
-					jsonObject = (JSONObject) obj;
-					String sendMTLData = jsonObject.toString();
-					obj = parser.parse(new FileReader("ottawa.json"));
-					jsonObject = (JSONObject) obj;
-					String sendOTWData = jsonObject.toString();
-					System.out.println("TOR  DATA :  " + sendTORData);
-					System.out.println("MTL  DATA :  " + sendMTLData);
-					System.out.println("OTW  DATA :  " + sendOTWData);
-					byte[] torByte = sendTORData.getBytes();
-					byte[] mtlByte = sendMTLData.getBytes();
-					byte[] otwByte = sendOTWData.getBytes();
-					InetAddress torontoHost = InetAddress.getByName(Constants.FAIL_RM3_IP);
-					DatagramPacket torontoRequest = new DatagramPacket(torByte, torByte.length, torontoHost,
-							Constants.FAIL_TORONTO_PORT);
-					datagramSocket.send(torontoRequest);
-					InetAddress montrealHost = InetAddress.getByName(Constants.FAIL_RM3_IP);
-					DatagramPacket montrealRequest = new DatagramPacket(mtlByte, mtlByte.length, montrealHost,
-							Constants.FAIL_MONTREAL_PORT);
-					datagramSocket.send(montrealRequest);
-					InetAddress ottawaHost = InetAddress.getByName(Constants.FAIL_RM3_IP);
-					DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
-							Constants.FAIL_OTTAWA_PORT);
-					datagramSocket.send(ottawaRequest);
+				System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
+				if(temp[1].trim().equals(Constants.RM1_ID)) {
+					if (temp[2].trim().equals(Constants.RM1_ID)) {
+						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
+						datagramSocket = new DatagramSocket();
+						JSONParser parser = new JSONParser();
+						Object obj = parser.parse(new FileReader("toronto.json"));
+						JSONObject jsonObject = (JSONObject) obj;
+						String sendTORData = jsonObject.toString();
+						obj = parser.parse(new FileReader("montreal.json"));
+						jsonObject = (JSONObject) obj;
+						String sendMTLData = jsonObject.toString();
+						obj = parser.parse(new FileReader("ottawa.json"));
+						jsonObject = (JSONObject) obj;
+						String sendOTWData = jsonObject.toString();
+						byte[] torByte = sendTORData.getBytes();
+						byte[] mtlByte = sendMTLData.getBytes();
+						byte[] otwByte = sendOTWData.getBytes();
+						InetAddress torontoHost = InetAddress.getByName(Constants.FAIL_RM1_IP);
+						DatagramPacket torontoRequest = new DatagramPacket(torByte, torByte.length, torontoHost,
+								Constants.FAIL_TORONTO_PORT);
+						datagramSocket.send(torontoRequest);
+						InetAddress montrealHost = InetAddress.getByName(Constants.FAIL_RM1_IP);
+						DatagramPacket montrealRequest = new DatagramPacket(mtlByte, mtlByte.length, montrealHost,
+								Constants.FAIL_MONTREAL_PORT);
+						datagramSocket.send(montrealRequest);
+						InetAddress ottawaHost = InetAddress.getByName(Constants.FAIL_RM1_IP);
+						DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
+								Constants.FAIL_OTTAWA_PORT);
+						datagramSocket.send(ottawaRequest);
+					} else if (temp[2].trim().equals(Constants.RM2_ID)) {
+						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
+						datagramSocket = new DatagramSocket();
+						JSONParser parser = new JSONParser();
+						Object obj = parser.parse(new FileReader("toronto.json"));
+						JSONObject jsonObject = (JSONObject) obj;
+						String sendTORData = jsonObject.toString();
+						obj = parser.parse(new FileReader("montreal.json"));
+						jsonObject = (JSONObject) obj;
+						String sendMTLData = jsonObject.toString();
+						obj = parser.parse(new FileReader("ottawa.json"));
+						jsonObject = (JSONObject) obj;
+						String sendOTWData = jsonObject.toString();
+						byte[] torByte = sendTORData.getBytes();
+						byte[] mtlByte = sendMTLData.getBytes();
+						byte[] otwByte = sendOTWData.getBytes();
+						InetAddress torontoHost = InetAddress.getByName(Constants.FAIL_RM2_IP);
+						DatagramPacket torontoRequest = new DatagramPacket(torByte, torByte.length, torontoHost,
+								Constants.FAIL_TORONTO_PORT);
+						datagramSocket.send(torontoRequest);
+						InetAddress montrealHost = InetAddress.getByName(Constants.FAIL_RM2_IP);
+						DatagramPacket montrealRequest = new DatagramPacket(mtlByte, mtlByte.length, montrealHost,
+								Constants.FAIL_MONTREAL_PORT);
+						datagramSocket.send(montrealRequest);
+						InetAddress ottawaHost = InetAddress.getByName(Constants.FAIL_RM2_IP);
+						DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
+								Constants.FAIL_OTTAWA_PORT);
+						datagramSocket.send(ottawaRequest);
+					} else if (temp[2].trim().equals(Constants.RM3_ID)) {
+						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
+						datagramSocket = new DatagramSocket();
+						JSONParser parser = new JSONParser();
+						Object obj = parser.parse(new FileReader("toronto.json"));
+						JSONObject jsonObject = (JSONObject) obj;
+						String sendTORData = jsonObject.toString();
+						obj = parser.parse(new FileReader("montreal.json"));
+						jsonObject = (JSONObject) obj;
+						String sendMTLData = jsonObject.toString();
+						obj = parser.parse(new FileReader("ottawa.json"));
+						jsonObject = (JSONObject) obj;
+						String sendOTWData = jsonObject.toString();
+						System.out.println("TOR  DATA :  " + sendTORData);
+						System.out.println("MTL  DATA :  " + sendMTLData);
+						System.out.println("OTW  DATA :  " + sendOTWData);
+						byte[] torByte = sendTORData.getBytes();
+						byte[] mtlByte = sendMTLData.getBytes();
+						byte[] otwByte = sendOTWData.getBytes();
+						InetAddress torontoHost = InetAddress.getByName(Constants.FAIL_RM3_IP);
+						DatagramPacket torontoRequest = new DatagramPacket(torByte, torByte.length, torontoHost,
+								Constants.FAIL_TORONTO_PORT);
+						datagramSocket.send(torontoRequest);
+						InetAddress montrealHost = InetAddress.getByName(Constants.FAIL_RM3_IP);
+						DatagramPacket montrealRequest = new DatagramPacket(mtlByte, mtlByte.length, montrealHost,
+								Constants.FAIL_MONTREAL_PORT);
+						datagramSocket.send(montrealRequest);
+						InetAddress ottawaHost = InetAddress.getByName(Constants.FAIL_RM3_IP);
+						DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
+								Constants.FAIL_OTTAWA_PORT);
+						datagramSocket.send(ottawaRequest);
+					}
 				}
 			}
 		} catch (SocketException e) {
