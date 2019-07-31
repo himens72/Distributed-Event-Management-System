@@ -73,11 +73,8 @@ public class OttawaServer {
 				datagramSocket.receive(packetReceive);
 				byte[] data = packetReceive.getData();
 				String[] receiveData = new String(data).split(",");
-				logger.info("Receive Data : " + new String(data));
-				logger.info("Operation Performed " + receiveData[receiveData.length - 1].trim());
 				if (receiveData[receiveData.length - 1].trim().equals(Constants.LIST_OPERATION)) {
 					String temp = otwObject.ottawaData.retrieveEvent(receiveData[2]);
-					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					datagramSocket.send(reply);
@@ -85,7 +82,6 @@ public class OttawaServer {
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
 					boolean temp = otwObject.ottawaData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
 					String newTemp = temp == false ? "Denies" : "Approves";
-					logger.info("Reply send to customer : " + newTemp);
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
@@ -94,7 +90,6 @@ public class OttawaServer {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
 							"None", Constants.BOOK_OPERATION,
 							otwObject.ottawaData.bookEvent(receiveData[0], receiveData[1], receiveData[2]));
-					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
@@ -103,28 +98,24 @@ public class OttawaServer {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
 							"None", Constants.CANCEL_OPERATION,
 							otwObject.ottawaData.removeEvent(receiveData[0], receiveData[1], receiveData[2]));
-					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String temp = otwObject.ottawaData.getBookingSchedule(receiveData[0]);
-					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
 					String temp = otwObject.ottawaData.getBookingCount(receiveData[0], receiveData[1]);
-					logger.info("Reply send to customer : " + temp);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("existanceOperation")) {
 					boolean temp = otwObject.ottawaData.getEvent(receiveData[0], receiveData[1], receiveData[2]);
-					logger.info("Reply send to customer : " + temp);
 					String newTemp = temp == false ? "Denies" : "Approves";
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
@@ -157,7 +148,6 @@ public class OttawaServer {
 				String requestMessage = new String(request.getData());
 				Object obj = new JSONParser().parse(requestMessage.trim());
 				JSONObject jsonObject = (JSONObject) obj;
-				logger.info("Request:" + jsonObject);
 				switch (jsonObject.get(Constants.OPERATION).toString()) {
 				case "addEventOperation": {
 					String managerId = jsonObject.get(Constants.ID).toString();

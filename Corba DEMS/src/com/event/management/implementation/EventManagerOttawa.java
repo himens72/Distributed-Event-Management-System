@@ -32,8 +32,6 @@ public class EventManagerOttawa {
 	}
 
 	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) {
-		logger.info("Add Event Operation :  " + managerId + " has started creating event with id " + eventId
-				+ " of type " + eventType + " with capacity " + eventCapacity);
 		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
@@ -46,20 +44,16 @@ public class EventManagerOttawa {
 							Constants.NONE, Constants.ADD_OPERATION, false);
 				return output;
 			} else {
-				logger.info("Please Enter Proper Event Id");
 				return generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE,
 						Constants.ADD_OPERATION, false);
 			}
 		} else {
-			logger.info("Please Enter proper event type");
 			return generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE, Constants.NONE,
 					Constants.ADD_OPERATION, false);
 		}
 	}
 
 	public String removeEvent(String managerId, String eventId, String eventType) {
-		logger.info("Remove Event Operation :  " + managerId + " has delete event with id " + eventId + " of type "
-				+ eventType);
 		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
@@ -69,22 +63,18 @@ public class EventManagerOttawa {
 				else
 					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
 							Constants.NONE, Constants.REMOVE_OPERATION, false);
-				logger.info("Add Remove Operation Output : " + output);
 				return output.trim();
 			} else {
-				logger.info("Please Enter proper Event Id");
 				return generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
 						Constants.REMOVE_OPERATION, false);
 			}
 		} else {
-			logger.info("Please Enter Proper Event Type");
 			return generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE, Constants.NONE,
 					Constants.REMOVE_OPERATION, false);
 		}
 	}
 
 	public String listEventAvailability(String managerId, String eventType) {
-		logger.info("List  Event Operation :  " + managerId + " want to see All available list of type " + eventType);
 		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
 				|| eventType.trim().equals("Trade Shows")) {
 			String temp = "";
@@ -93,11 +83,9 @@ public class EventManagerOttawa {
 					Constants.LOCAL_TORONTO_PORT, Constants.LIST_OPERATION).trim();
 			temp = temp + requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE,
 					Constants.LOCAL_MONTREAL_PORT, Constants.LIST_OPERATION).trim();
-			logger.info(temp.trim().equals("") ? "No Events Available" : temp.trim());
 			boolean status = temp.trim().isEmpty() ? false : true;
 			return eventAvailableJSONObject(managerId, eventType, temp, Constants.LIST_OPERATION, status);
 		} else {
-			logger.info("Please enter Event type properly");
 			return eventAvailableJSONObject(managerId, eventType, "", Constants.LIST_OPERATION, false);
 		}
 	}
@@ -214,15 +202,12 @@ public class EventManagerOttawa {
 	}
 
 	public String getBookingSchedule(String customerId) {
-		logger.info("Booking Schedule Operation :  " + customerId);
-
 		StringBuilder temp = new StringBuilder();
 		temp.append(ottawaData.getBookingSchedule(customerId.trim()));
 		temp.append(requestOnOtherServer(customerId, "No Event Id", Constants.NONE, Constants.NONE,
 				Constants.LOCAL_TORONTO_PORT, Constants.SCHEDULE_OPERATION).trim());
 		temp.append(requestOnOtherServer(customerId, "No Event Id", Constants.NONE, Constants.NONE,
 				Constants.LOCAL_MONTREAL_PORT, Constants.SCHEDULE_OPERATION).trim());
-		logger.info("Booking Schedule for " + customerId + " : " + temp);
 		return temp.toString().trim().length() == 0
 				? eventScheduleJSONObject(customerId, "", Constants.SCHEDULE_OPERATION, false)
 						: eventScheduleJSONObject(customerId, temp.toString().trim(), Constants.SCHEDULE_OPERATION, true);
