@@ -80,11 +80,11 @@ public class MontrealData {
 
 	public synchronized String retrieveEvent(String eventType) {
 		lockMontrealServerData.lock();
-		System.out.println("Event Type : " + eventType);
+		// System.out.println("Event Type : " + eventType);
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> temp = serverData.get(eventType);
 			if (temp.size() == 0) {
-				System.out.println("No Events Found");
+				// System.out.println("No Events Found");
 				lockMontrealServerData.unlock();
 				return "";
 			} else {
@@ -99,7 +99,7 @@ public class MontrealData {
 				return str.toString().trim();
 			}
 		} else {
-			System.out.println("No Event Type Found");
+			// System.out.println("No Event Type Found");
 			lockMontrealServerData.unlock();
 			return "";
 		}
@@ -110,7 +110,7 @@ public class MontrealData {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
-				System.out.println("No Events Found");
+				// System.out.println("No Events Found");
 				lockMontrealServerData.unlock();
 				return false;
 			} else {
@@ -143,7 +143,7 @@ public class MontrealData {
 				}
 			}
 		} else {
-			System.out.println("No Event Type Found");
+			// System.out.println("No Event Type Found");
 			lockMontrealServerData.unlock();
 			return false;
 		}
@@ -154,7 +154,7 @@ public class MontrealData {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
-				System.out.println("No Events Found");
+				// System.out.println("No Events Found");
 				lockMontrealServerData.unlock();
 				return false;
 			} else {
@@ -185,7 +185,7 @@ public class MontrealData {
 				}
 			}
 		} else {
-			System.out.println("No Event Type Found");
+			// System.out.println("No Event Type Found");
 			lockMontrealServerData.unlock();
 			return false;
 		}
@@ -226,7 +226,7 @@ public class MontrealData {
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
-				System.out.println("No Events Found");
+				// System.out.println("No Events Found");
 				lockMontrealServerData.unlock();
 				return false;
 			} else {
@@ -240,7 +240,7 @@ public class MontrealData {
 				}
 			}
 		} else {
-			System.out.println("No Event Type Found");
+			// System.out.println("No Event Type Found");
 			lockMontrealServerData.unlock();
 			return false;
 		}

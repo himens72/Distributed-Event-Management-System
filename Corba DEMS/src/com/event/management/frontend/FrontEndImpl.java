@@ -21,20 +21,18 @@ import EventManagement.managerInterfacePOA;
 
 public class FrontEndImpl extends managerInterfacePOA {
 
-	private static Logger logger;
 	private ORB orb;
 	String replicaOneResponse = "";
 	String replicaTwoResponse = "";
 	String replicaThreeResponse = "";
-	String replicaOneFailureResponse = "";
-	String replicaTwoFailureResponse = "";
-	String replicaThreeFailureResponse = "";
 	int RM1_FAIL_COUNTER = 0;
 	int RM2_FAIL_COUNTER = 0;
 	int RM3_FAIL_COUNTER = 0;
+	static Logger logger;
 
 	public FrontEndImpl() {
 		// TODO Auto-generated constructor stub
+		setLogger("logs/FrontEnd.txt", "FrontEnd");
 	}
 
 	public void setORB(ORB orb_val) {
@@ -50,7 +48,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE,
 				Constants.NONE, Constants.ADD_OPERATION);
 		udpRequest(requestMessage);
-		System.out.println("waiting for response...");
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -65,6 +63,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.REMOVE_OPERATION);
 		udpRequest(requestMessage);
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -79,6 +78,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(managerId, Constants.NONE, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.LIST_OPERATION);
 		udpRequest(requestMessage);
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -93,6 +93,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.BOOK_OPERATION);
 		udpRequest(requestMessage);
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -107,6 +108,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.CANCEL_OPERATION);
 		udpRequest(requestMessage);
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -121,6 +123,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, Constants.NONE, Constants.NONE, Constants.NONE,
 				Constants.NONE, Constants.NONE, Constants.SCHEDULE_OPERATION);
 		udpRequest(requestMessage);
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -136,6 +139,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 		String requestMessage = generateJSONObject(customerId, newEventId, newEventType, Constants.NONE, oldEventId,
 				oldEventType, Constants.SWAP_OPERATION);
 		udpRequest(requestMessage);
+		logger.info("waiting for response...");
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -167,12 +171,12 @@ public class FrontEndImpl extends managerInterfacePOA {
 			DatagramPacket request = new DatagramPacket(msg, msg.length, aHost, Constants.SEQUENCER_PORT);
 			datagramSocket.send(request);
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -181,26 +185,22 @@ public class FrontEndImpl extends managerInterfacePOA {
 		DatagramSocket aSocket = null;
 		try {
 			aSocket = new DatagramSocket(Constants.RM1_FRONTEND_PORT);
-
 			while (true) {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
 				replicaOneResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
-				// replicaTwoResponse = unpackJSON(new String(request.getData(), 0,
-				// request.getLength()));
-				System.out.println("replicaOneResponse " + replicaOneResponse);
 				if (!replicaOneResponse.isEmpty()) {
-					System.out.println("RM 1 : " + replicaOneResponse);
+					logger.info("RM 1 : " + replicaOneResponse);
 				}
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -209,24 +209,22 @@ public class FrontEndImpl extends managerInterfacePOA {
 		DatagramSocket aSocket = null;
 		try {
 			aSocket = new DatagramSocket(Constants.RM2_FRONTEND_PORT);
-
 			while (true) {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
 				replicaTwoResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
-				System.out.println("replicaTwoResponse " + replicaTwoResponse);
 				if (!replicaTwoResponse.isEmpty()) {
-					System.out.println("RM 2 : " + replicaTwoResponse);
+					logger.info("RM 2 : " + replicaTwoResponse);
 				}
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -239,19 +237,23 @@ public class FrontEndImpl extends managerInterfacePOA {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
-				replicaThreeResponse = unpackJSON(new String(request.getData(), 0, request.getLength()));
-				System.out.println("replicaThreeResponse " + replicaThreeResponse);
+				String responseData = new String(request.getData(), 0, request.getLength());
+				if (responseData.equals("Server Crash")) {
+					replicaThreeResponse = "Server Crash";
+				} else {
+					replicaThreeResponse = unpackJSON(responseData);
+				}
 				if (!replicaThreeResponse.isEmpty()) {
-					System.out.println("RM 3 : " + replicaThreeResponse);
+					logger.info("RM 3 : " + replicaThreeResponse);
 				}
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -261,33 +263,29 @@ public class FrontEndImpl extends managerInterfacePOA {
 				&& replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaTwoResponse.trim())) {
-			if (replicaThreeResponse.trim().isEmpty()) {
-				System.out.println("FRONTEND : RM1 sending to RM3");
-				multicastFailResponse("Server Crash", Constants.RM1_ID, Constants.RM3_ID);
-			} else {
-				System.out.println("FRONTEND : RM1 sending to RM3");
+			if(!replicaThreeResponse.equals("Server Crash")) {
 				RM3_FAIL_COUNTER++;
-				multicastFailResponse("Server Bug", Constants.RM1_ID, Constants.RM3_ID);
+				if (RM3_FAIL_COUNTER == 3) {
+					logger.info("FRONTEND : RM1 sending to RM3");
+					multicastFailResponse("Server Bug", Constants.RM1_ID, Constants.RM3_ID);
+					RM3_FAIL_COUNTER = 0;
+				}
 			}
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaThreeResponse.trim())) {
-			if (replicaTwoResponse.trim().isEmpty()) {
-				System.out.println("FRONTEND : RM1 sending to RM2");
-				RM2_FAIL_COUNTER++;
-				multicastFailResponse("Server Crash", Constants.RM1_ID, Constants.RM2_ID);
-			} else {
-				System.out.println("FRONTEND : RM1 sending to RM2");
+			RM2_FAIL_COUNTER++;
+			if (RM2_FAIL_COUNTER == 3) {
+				logger.info("FRONTEND : RM1 sending to RM2");
 				multicastFailResponse("Server Bug", Constants.RM1_ID, Constants.RM2_ID);
+				RM2_FAIL_COUNTER = 0;
 			}
 			return replicaOneResponse;
 		} else if (replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
-			if (replicaOneResponse.trim().isEmpty()) {
-				System.out.println("FRONTEND : RM2 sending to RM1");
-				multicastFailResponse("Server Crash", Constants.RM2_ID, Constants.RM1_ID);
-			} else {
-				System.out.println("FRONTEND : RM2 sending to RM1");
-				RM1_FAIL_COUNTER++;
+			RM1_FAIL_COUNTER++;
+			if (RM1_FAIL_COUNTER == 3) {
+				logger.info("RM2 sending to RM1");
 				multicastFailResponse("Server Bug", Constants.RM2_ID, Constants.RM1_ID);
+				RM1_FAIL_COUNTER = 0;
 			}
 			return replicaTwoResponse;
 		}
@@ -304,12 +302,12 @@ public class FrontEndImpl extends managerInterfacePOA {
 			DatagramPacket request = new DatagramPacket(data, data.length, aHost, Constants.FAULT_PORT);
 			aSocket.send(request);
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		}
 	}

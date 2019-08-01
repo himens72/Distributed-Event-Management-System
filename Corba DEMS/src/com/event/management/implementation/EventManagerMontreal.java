@@ -217,7 +217,7 @@ public class EventManagerMontreal {
 	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
 			String oldEventType) {
 		boolean existanceFlag = checkEventExistance(customerID, oldEventID, oldEventType);
-		System.out.println("Existance Flag : " + existanceFlag);
+		// System.out.println("Existance Flag : " + existanceFlag);
 		if (existanceFlag == false)
 			return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType,
 					Constants.SWAP_OPERATION, false);
@@ -342,7 +342,7 @@ public class EventManagerMontreal {
 			} else if (eventId.trim().substring(0, 3).equals("OTW")) {
 				String temp = requestOnOtherServer(customerID, eventId, eventType, Constants.NONE,
 						Constants.LOCAL_OTTAWA_PORT, "existanceOperation");
-				System.out.println(temp);
+				// System.out.println(temp);
 				return temp.trim().equals("Denies") ? false : true;
 			} else {
 				return false;

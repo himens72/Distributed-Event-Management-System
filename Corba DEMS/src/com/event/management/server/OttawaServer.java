@@ -148,6 +148,7 @@ public class OttawaServer {
 				String requestMessage = new String(request.getData());
 				Object obj = new JSONParser().parse(requestMessage.trim());
 				JSONObject jsonObject = (JSONObject) obj;
+				logger.info("Data Received : " + jsonObject.toString());
 				switch (jsonObject.get(Constants.OPERATION).toString()) {
 				case "addEventOperation": {
 					String managerId = jsonObject.get(Constants.ID).toString();
@@ -200,13 +201,12 @@ public class OttawaServer {
 				}
 				}
 				updateJSONFile();
-				System.out.println("OTW Response: " + response);
 				sendRequestToFrontEnd(response);
 			}
 		} catch (SocketException e) {
-			System.out.println("Socket: " + e.getMessage());
+			logger.info("Socket: " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("IO: " + e.getMessage());
+			logger.info("IO: " + e.getMessage());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -220,11 +220,10 @@ public class OttawaServer {
 	private void sendRequestToFrontEnd(String message) {
 		DatagramSocket aSocket = null;
 		try {
-			System.out.println("Request from OTW Server sent to Front End!");
+			logger.info("Data  sent to Front End : " + message);
 			aSocket = new DatagramSocket();
 			byte[] m = message.getBytes();
 			InetAddress aHost = InetAddress.getByName(Constants.FRONTEND_IP);
-			System.out.println("Msg in Bytes: " + m);
 			DatagramPacket request = new DatagramPacket(m, m.length, aHost, Constants.RM_FRONTEND_PORT);
 			aSocket.send(request);
 		} catch (IOException e) {
@@ -242,10 +241,9 @@ public class OttawaServer {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
-				System.out.println("FrontEnd Response for failed response: " + new String(request.getData()));
 				String[] temp = new String(request.getData()).trim().split(",");
-				System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
-				if(temp[1].trim().equals(Constants.RM1_ID)) {
+				logger.info(temp[1].trim() + " is sending data to " + temp[2].trim());
+				if (temp[1].trim().equals(Constants.RM1_ID)) {
 					if (temp[2].trim().equals(Constants.RM1_ID)) {
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
@@ -274,7 +272,6 @@ public class OttawaServer {
 								Constants.FAIL_OTTAWA_PORT);
 						datagramSocket.send(ottawaRequest);
 					} else if (temp[2].trim().equals(Constants.RM2_ID)) {
-						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
 						Object obj = parser.parse(new FileReader("toronto.json"));
@@ -302,7 +299,6 @@ public class OttawaServer {
 								Constants.FAIL_OTTAWA_PORT);
 						datagramSocket.send(ottawaRequest);
 					} else if (temp[2].trim().equals(Constants.RM3_ID)) {
-						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
 						Object obj = parser.parse(new FileReader("toronto.json"));
@@ -314,9 +310,6 @@ public class OttawaServer {
 						obj = parser.parse(new FileReader("ottawa.json"));
 						jsonObject = (JSONObject) obj;
 						String sendOTWData = jsonObject.toString();
-						System.out.println("TOR  DATA :  " + sendTORData);
-						System.out.println("MTL  DATA :  " + sendMTLData);
-						System.out.println("OTW  DATA :  " + sendOTWData);
 						byte[] torByte = sendTORData.getBytes();
 						byte[] mtlByte = sendMTLData.getBytes();
 						byte[] otwByte = sendOTWData.getBytes();
@@ -332,17 +325,17 @@ public class OttawaServer {
 						DatagramPacket ottawaRequest = new DatagramPacket(otwByte, otwByte.length, ottawaHost,
 								Constants.FAIL_OTTAWA_PORT);
 						datagramSocket.send(ottawaRequest);
-					}	
+					}
 				}
-				
+
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -365,15 +358,14 @@ public class OttawaServer {
 				Object obj = parser.parse(data.trim());
 				JSONObject jsonObject = (JSONObject) obj;
 				otwObject.ottawaData = gson.fromJson(String.valueOf(jsonObject.get("player")), OttawaData.class);
-				System.out.println("Data Issue Resolved");
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

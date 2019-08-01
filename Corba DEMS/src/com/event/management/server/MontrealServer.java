@@ -25,7 +25,6 @@ import org.json.simple.parser.ParseException;
 import com.event.management.constants.Constants;
 import com.event.management.implementation.EventManagerMontreal;
 import com.event.management.model.MontrealData;
-import com.event.management.model.OttawaData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -203,13 +202,12 @@ public class MontrealServer {
 				}
 				}
 				updateJSONFile();
-				System.out.println("MTL Response: " + response);
 				sendRequestToFrontEnd(response);
 			}
 		} catch (SocketException e) {
-			System.out.println("Socket: " + e.getMessage());
+			logger.info("Socket: " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("IO: " + e.getMessage());
+			logger.info("IO: " + e.getMessage());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} finally {
@@ -221,11 +219,10 @@ public class MontrealServer {
 	private void sendRequestToFrontEnd(String message) {
 		DatagramSocket aSocket = null;
 		try {
-			System.out.println("Request from MTL Server sent to Front End!");
+			logger.info("Data sent to Front End : " + message);
 			aSocket = new DatagramSocket();
 			byte[] m = message.getBytes();
 			InetAddress aHost = InetAddress.getByName(Constants.FRONTEND_IP);
-			System.out.println("Msg in Bytes: " + m);
 			DatagramPacket request = new DatagramPacket(m, m.length, aHost, Constants.RM_FRONTEND_PORT);
 			aSocket.send(request);
 		} catch (IOException e) {
@@ -243,12 +240,10 @@ public class MontrealServer {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
-				System.out.println("FrontEnd Response for failed response: " + new String(request.getData()));
 				String[] temp = new String(request.getData()).trim().split(",");
-				System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
-				if(temp[1].trim().equals(Constants.RM1_ID)) {
+				logger.info(temp[1].trim() + " is sending data to " + temp[2].trim());
+				if (temp[1].trim().equals(Constants.RM1_ID)) {
 					if (temp[2].trim().equals(Constants.RM1_ID)) {
-						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
 						Object obj = parser.parse(new FileReader("toronto.json"));
@@ -276,7 +271,6 @@ public class MontrealServer {
 								Constants.FAIL_OTTAWA_PORT);
 						datagramSocket.send(ottawaRequest);
 					} else if (temp[2].trim().equals(Constants.RM2_ID)) {
-						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
 						Object obj = parser.parse(new FileReader("toronto.json"));
@@ -304,7 +298,6 @@ public class MontrealServer {
 								Constants.FAIL_OTTAWA_PORT);
 						datagramSocket.send(ottawaRequest);
 					} else if (temp[2].trim().equals(Constants.RM3_ID)) {
-						System.out.println(temp[1].trim() + " is sending data to " + temp[2].trim());
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
 						Object obj = parser.parse(new FileReader("toronto.json"));
@@ -316,9 +309,6 @@ public class MontrealServer {
 						obj = parser.parse(new FileReader("ottawa.json"));
 						jsonObject = (JSONObject) obj;
 						String sendOTWData = jsonObject.toString();
-						System.out.println("TOR  DATA :  " + sendTORData);
-						System.out.println("MTL  DATA :  " + sendMTLData);
-						System.out.println("OTW  DATA :  " + sendOTWData);
 						byte[] torByte = sendTORData.getBytes();
 						byte[] mtlByte = sendMTLData.getBytes();
 						byte[] otwByte = sendOTWData.getBytes();
@@ -338,12 +328,12 @@ public class MontrealServer {
 				}
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -355,7 +345,6 @@ public class MontrealServer {
 		DatagramSocket aSocket = null;
 		try {
 			aSocket = new DatagramSocket(Constants.FAIL_MONTREAL_PORT);
-
 			while (true) {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
@@ -366,15 +355,14 @@ public class MontrealServer {
 				Object obj = parser.parse(data.trim());
 				JSONObject jsonObject = (JSONObject) obj;
 				mtlObject.montrealData = gson.fromJson(String.valueOf(jsonObject.get("player")), MontrealData.class);
-				System.out.println("Data Issue Resolved");
 			}
 		} catch (SocketException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 		} catch (UnknownHostException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.info(e.getMessage());
 			e.printStackTrace();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
