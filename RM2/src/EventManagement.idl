@@ -1,0 +1,19 @@
+module EventManagement{
+
+interface managerInterface {
+
+	string addEvent(in string managerId, in string eventId, in string eventType,in string eventCapacity);
+	
+	string removeEvent(in string managerId, in string eventId, in string eventType);
+	
+	string listEventAvailability(in string managerId, in string eventType);
+	
+	string eventBooking(in string customerId, in string eventId, in string eventType);
+	
+	string cancelBooking(in string customerId, in string eventId, in string eventType);
+	
+	string getBookingSchedule(in string customerId);
+	
+	string swapEvent(in string customerId, in string newEventId, in string newEventType, in string oldEventId, in string oldEventType);
+};
+};
