@@ -149,6 +149,8 @@ public class MontrealServer {
 				String requestMessage = new String(request.getData());
 				Object obj = new JSONParser().parse(requestMessage.trim());
 				JSONObject jsonObject = (JSONObject) obj;
+				if (!jsonObject.get("Sequence").toString().equals("5"))
+					logger.info("Data Received : " + jsonObject.toString());
 				switch (jsonObject.get(Constants.OPERATION).toString()) {
 				case "addEventOperation": {
 					String managerId = jsonObject.get(Constants.ID).toString();
@@ -202,7 +204,11 @@ public class MontrealServer {
 				}
 				}
 				updateJSONFile();
-				sendRequestToFrontEnd(response);
+				if (jsonObject.get("Sequence").toString().equals("5")) {
+					sendRequestToFrontEnd("Server Crash");
+				} else {
+					sendRequestToFrontEnd(response);
+				}
 			}
 		} catch (SocketException e) {
 			logger.info("Socket: " + e.getMessage());
@@ -219,7 +225,8 @@ public class MontrealServer {
 	private void sendRequestToFrontEnd(String message) {
 		DatagramSocket aSocket = null;
 		try {
-			logger.info("Data sent to Front End : " + message);
+			if (!message.equals("Server Crash"))
+				logger.info("Data sent to Front End : " + message);
 			aSocket = new DatagramSocket();
 			byte[] m = message.getBytes();
 			InetAddress aHost = InetAddress.getByName(Constants.FRONTEND_IP);

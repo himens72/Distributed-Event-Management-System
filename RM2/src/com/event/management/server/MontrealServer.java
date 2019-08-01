@@ -149,6 +149,7 @@ public class MontrealServer {
 				String requestMessage = new String(request.getData());
 				Object obj = new JSONParser().parse(requestMessage.trim());
 				JSONObject jsonObject = (JSONObject) obj;
+				logger.info("Data Received : " + jsonObject.toString());
 				switch (jsonObject.get(Constants.OPERATION).toString()) {
 				case "addEventOperation": {
 					String managerId = jsonObject.get(Constants.ID).toString();
