@@ -1,0 +1,2 @@
+Jul 16, 2019 3:13:56 AM com.event.management.client.CustomerClient customerOption
+INFO: TORC123456 started peforming book event operation

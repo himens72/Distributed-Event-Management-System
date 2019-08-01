@@ -1,0 +1,4 @@
+Jul 22, 2019 7:12:52 PM com.event.management.client.CustomerClient managerOption
+INFO: OTWM123456 started peforming add event operation
+Jul 22, 2019 7:13:02 PM com.event.management.client.CustomerClient addEventOption
+INFO: 

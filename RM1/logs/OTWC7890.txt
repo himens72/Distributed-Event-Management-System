@@ -1,0 +1,8 @@
+Jul 23, 2019 9:40:36 PM com.event.management.client.CustomerClient customerOption
+INFO: OTWC7890 started peforming book event operation
+Jul 23, 2019 9:40:43 PM com.event.management.client.CustomerClient bookEventOption
+INFO: {"eventId":"MTLA090619","oldEventId":"None","oldEventType":"None","eventCapacity":"None","id":"TORC1234","eventType":"Conferences","operation":"cancelBookingOperation","status":true}
+Jul 23, 2019 9:41:56 PM com.event.management.client.CustomerClient customerOption
+INFO: OTWC7890 started peforming schedule event operation
+Jul 23, 2019 9:41:59 PM com.event.management.client.CustomerClient customerOption
+INFO: {"eventId":"MTLA080619","oldEventId":"None","oldEventType":"None","eventCapacity":"None","id":"MTLM9087","eventType":"Trade Shows","operation":"removeEventOperation","status":true}

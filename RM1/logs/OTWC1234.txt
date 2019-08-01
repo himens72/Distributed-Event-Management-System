@@ -1,0 +1,12 @@
+Jul 22, 2019 8:52:01 PM com.event.management.client.CustomerClient customerOption
+INFO: OTWC1234 started peforming book event operation
+Jul 22, 2019 8:52:07 PM com.event.management.client.CustomerClient bookEventOption
+INFO: TORM123455 is created with capacity 6 of type Seminars
+Jul 29, 2019 7:51:23 PM com.event.management.client.CustomerClient customerOption
+INFO: OTWC1234 started peforming book event operation
+Jul 29, 2019 7:51:31 PM com.event.management.client.CustomerClient bookEventOption
+INFO: TORM1234 has create event TORM123456 of type Seminars with capacity 5
+Jul 29, 2019 8:00:57 PM com.event.management.client.CustomerClient customerOption
+INFO: OTWC1234 started peforming book event operation
+Jul 29, 2019 8:01:05 PM com.event.management.client.CustomerClient bookEventOption
+INFO: TORM1234 has create event TORM123456 of type Seminars with capacity 5

@@ -1,0 +1,16 @@
+Jul 23, 2019 9:29:58 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM9087 started peforming add event operation
+Jul 23, 2019 9:30:17 PM com.event.management.client.CustomerClient addEventOption
+INFO: {"eventId":"TORE050619","oldEventId":"None","oldEventType":"None","eventCapacity":"1","id":"OTWM4560","eventType":"Conferences","operation":"addEventOperation","status":false}
+Jul 23, 2019 9:30:53 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM9087 started peforming add event operation
+Jul 23, 2019 9:31:21 PM com.event.management.client.CustomerClient addEventOption
+INFO: {"eventId":"MTLA090619","oldEventId":"None","oldEventType":"None","eventCapacity":"2","id":"MTLM9087","eventType":"Conferences","operation":"addEventOperation","status":true}
+Jul 23, 2019 9:31:49 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM9087 started peforming add event operation
+Jul 23, 2019 9:31:56 PM com.event.management.client.CustomerClient addEventOption
+INFO: {"eventId":"MTLA080619","oldEventId":"None","oldEventType":"None","eventCapacity":"2","id":"MTLM9087","eventType":"Trade Shows","operation":"addEventOperation","status":true}
+Jul 23, 2019 9:41:07 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM9087 started peforming remove event operation
+Jul 23, 2019 9:41:32 PM com.event.management.client.CustomerClient removeEventOption
+INFO: {"eventId":"OTWE080619","oldEventId":"None","oldEventType":"None","eventCapacity":"None","id":"OTWC7890","eventType":"Conferences","operation":"eventBookingOperation","status":false}

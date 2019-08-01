@@ -1,0 +1,4 @@
+Jul 14, 2019 8:37:13 PM com.event.management.client.CustomerClient managerOption
+INFO: TORM12345 started peforming add event operation
+Jul 22, 2019 5:57:42 PM com.event.management.client.CustomerClient managerOption
+INFO: TORM12345 started peforming add event operation

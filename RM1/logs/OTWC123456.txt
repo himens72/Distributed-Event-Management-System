@@ -1,0 +1,4 @@
+Jul 23, 2019 6:06:14 AM com.event.management.client.CustomerClient customerOption
+INFO: OTWC123456 started peforming book event operation
+Jul 23, 2019 6:06:23 AM com.event.management.client.CustomerClient bookEventOption
+INFO: {"eventId":"TORM123456","oldEventId":"None","oldEventType":"None","eventCapacity":"5","id":"TORM1234","eventType":"Seminars","operation":"addEventOperation","status":true}

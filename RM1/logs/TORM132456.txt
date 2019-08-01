@@ -1,0 +1,2 @@
+Jul 16, 2019 2:53:16 AM com.event.management.client.CustomerClient managerOption
+INFO: TORM132456 started peforming add event operation

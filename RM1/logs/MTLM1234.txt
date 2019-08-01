@@ -1,0 +1,28 @@
+Jul 23, 2019 6:07:20 AM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming add event operation
+Jul 23, 2019 6:07:32 AM com.event.management.client.CustomerClient addEventOption
+INFO: {"eventId":"OTWA123456","oldEventId":"None","oldEventType":"None","eventCapacity":"6","id":"OTWM1234","eventType":"Trade Shows","operation":"addEventOperation","status":true}
+Jul 23, 2019 6:07:50 AM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming list all available  event operation
+Jul 23, 2019 6:08:00 AM com.event.management.client.CustomerClient listEventAvailabilityOption
+INFO: {"eventId":"TORM123456","oldEventId":"None","oldEventType":"None","eventCapacity":"6","id":"MTLM1234","eventType":"Semimars","operation":"addEventOperation","status":false}
+Jul 23, 2019 10:35:36 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming list all available  event operation
+Jul 23, 2019 10:35:41 PM com.event.management.client.CustomerClient listEventAvailabilityOption
+INFO: {"eventId":"OTWM123456","oldEventId":"None","oldEventType":"None","eventCapacity":"5","id":"OTWM1234","eventType":"Seminars","operation":"addEventOperation","status":true}
+Jul 27, 2019 3:17:45 AM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming list all available  event operation
+Jul 27, 2019 3:17:50 AM com.event.management.client.CustomerClient listEventAvailabilityOption
+INFO: {"eventId":"TORM123456","oldEventId":"None","oldEventType":"None","eventCapacity":"None","id":"TORC1234","eventType":"Trade Shows","operation":"eventBookingOperation","status":true}
+Jul 27, 2019 3:18:59 AM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming list all available  event operation
+Jul 27, 2019 3:19:08 AM com.event.management.client.CustomerClient listEventAvailabilityOption
+INFO: {"listAllEventSchedule":"[TradeShows=TORM123456]","id":"TORC1234","status":true}
+Jul 28, 2019 12:15:23 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming add event operation
+Jul 28, 2019 12:15:33 PM com.event.management.client.CustomerClient addEventOption
+INFO: OTWM1234 has create OTWM123456 of type Seminars with capacity 1
+Jul 28, 2019 4:14:49 PM com.event.management.client.CustomerClient managerOption
+INFO: MTLM1234 started peforming add event operation
+Jul 28, 2019 4:15:00 PM com.event.management.client.CustomerClient addEventOption
+INFO: 
