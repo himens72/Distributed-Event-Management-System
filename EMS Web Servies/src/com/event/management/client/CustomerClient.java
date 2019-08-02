@@ -162,7 +162,12 @@ class CustomerClient {
 		String eventType = br.readLine().trim();
 		System.out.println("3. Booking Capacity");
 		String eventCapacity = br.readLine().trim();
-		logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));
+		if(Integer.parseInt(eventCapacity.trim()) >=0) {
+			logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));	
+		}  else {
+			logger.info("Please Enter Proper Capacity");
+		}
+		
 	}
 
 	public static void listEventAvailabilityOption(String managerId) throws IOException, InterruptedException {
