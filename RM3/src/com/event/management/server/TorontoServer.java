@@ -146,7 +146,7 @@ public class TorontoServer {
 				String requestMessage = new String(request.getData());
 				Object obj = new JSONParser().parse(requestMessage.trim());
 				JSONObject jsonObject = (JSONObject) obj;
-				if (!jsonObject.get("Sequence").toString().equals("5"))
+				if (!jsonObject.get("Sequence").toString().equals("6"))
 					logger.info("Data Received : " + jsonObject.toString());
 				switch (jsonObject.get(Constants.OPERATION).toString()) {
 				case "addEventOperation": {
@@ -200,11 +200,12 @@ public class TorontoServer {
 				}
 				}
 				updateJSONFile();
-				if (jsonObject.get("Sequence").toString().equals("5")) {
+				if (jsonObject.get("Sequence").toString().equals("6")) {
 					sendRequestToFrontEnd("Server Crash");
 				} else {
 					sendRequestToFrontEnd(response);
-				}			}
+				}
+			}
 
 		} catch (SocketException e) {
 			logger.info("Socket: " + e.getMessage());
@@ -245,7 +246,7 @@ public class TorontoServer {
 				aSocket.receive(request);
 				String[] temp = new String(request.getData()).trim().split(",");
 				logger.info(temp[1].trim() + " is sending data to " + temp[2].trim());
-				if (temp[1].trim().equals(Constants.RM1_ID)) {
+				if (temp[1].trim().equals(Constants.RM3_ID)) {
 					if (temp[2].trim().equals(Constants.RM1_ID)) {
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();
@@ -353,6 +354,7 @@ public class TorontoServer {
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
 				String data = new String(request.getData()).trim();
+				System.out.println(request.getAddress() + " : " + data);
 				JSONParser parser = new JSONParser();
 				Gson gson = new Gson();
 				Object obj = parser.parse(data.trim());

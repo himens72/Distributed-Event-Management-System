@@ -240,7 +240,7 @@ public class TorontoServer {
 				aSocket.receive(request);
 				String[] temp = new String(request.getData()).trim().split(",");
 				logger.info(temp[1].trim() + " is sending data to " + temp[2].trim());
-				if (temp[1].trim().equals(Constants.RM1_ID)) {
+				if (temp[1].trim().equals(Constants.RM2_ID)) {
 					if (temp[2].trim().equals(Constants.RM1_ID)) {
 						datagramSocket = new DatagramSocket();
 						JSONParser parser = new JSONParser();

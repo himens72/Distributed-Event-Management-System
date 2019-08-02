@@ -28,6 +28,7 @@ public class EventManagerMontreal {
 	public EventManagerMontreal() {
 		super();
 		montrealData = new MontrealData();
+		montrealData.addEvent("MTLM010819", "Conferences", "1");
 		setLogger("logs/MTL.txt", "MTL");
 	}
 

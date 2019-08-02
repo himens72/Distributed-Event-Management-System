@@ -263,8 +263,9 @@ public class FrontEndImpl extends managerInterfacePOA {
 				&& replicaTwoResponse.trim().equals(replicaThreeResponse.trim())) {
 			return replicaOneResponse;
 		} else if (replicaOneResponse.trim().equals(replicaTwoResponse.trim())) {
-			if(!replicaThreeResponse.equals("Server Crash")) {
+			if (!replicaThreeResponse.equals("Server Crash")) {
 				RM3_FAIL_COUNTER++;
+				System.out.println(" RM3_FAIL_COUNTER " + RM3_FAIL_COUNTER);
 				if (RM3_FAIL_COUNTER == 3) {
 					logger.info("FRONTEND : RM1 sending to RM3");
 					multicastFailResponse("Server Bug", Constants.RM1_ID, Constants.RM3_ID);
@@ -365,7 +366,7 @@ public class FrontEndImpl extends managerInterfacePOA {
 					: id + " No Data Found or Might be data issue.";
 		}
 		return operationFlag ? operationWiseJSONString(jsonString.trim())
-				: "Might be Data Issue or Please Check Data Again. Please try again";
+				: "No Data Found or Might be data issue. Please try again";
 	}
 
 	static String operationWiseJSONString(String jsonString) {
@@ -412,7 +413,6 @@ public class FrontEndImpl extends managerInterfacePOA {
 			flag = id + " has swap event " + oldEventId + " of type " + oldEventType + " with " + newEventId
 					+ " of type " + newEventType;
 		}
-		return flag.trim().equals("") ? id + " : Might be Data Issue or Please Check Data Again. Please try again"
-				: flag;
+		return flag.trim().equals("") ? id + " : No Data Found or Might be data issue. Please try again" : flag;
 	}
 }

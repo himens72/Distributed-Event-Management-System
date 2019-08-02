@@ -2,10 +2,10 @@ package com.event.management.constants;
 
 public class Constants {
 
-	public static final String FRONTEND_IP = "localhost"; // "192.168.0.156";
-	public static final String FAIL_RM1_IP = "localhost"; // "192.168.0.156";
-	public static final String FAIL_RM2_IP = "localhost"; // "192.168.0.156";
-	public static final String FAIL_RM3_IP = "localhost"; // "192.168.0.156";
+	public static final String FRONTEND_IP = "132.205.95.131"; // "192.168.0.156";
+	public static final String FAIL_RM1_IP = "132.205.95.131"; // "192.168.0.156";
+	public static final String FAIL_RM2_IP = "132.205.95.132"; // "192.168.0.156";
+	public static final String FAIL_RM3_IP = "132.205.95.133"; // "192.168.0.156";
 	public static final String MULTICAST_IP = "230.0.0.0";
 	public static final String FAULT_MULTICAST_IP = "230.2.2.5";
 	public static final int FAULT_PORT = 6467;

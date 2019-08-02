@@ -60,6 +60,7 @@ class CustomerClient {
 		System.out.println("4. Book Event ");
 		System.out.println("5. List all event schedule");
 		System.out.println("6. Cancel Event");
+		System.out.println("7. Swap Event");
 		System.out.println("Select Any above option");
 		String option = br.readLine().trim();
 		if (option.equals("1")) {
@@ -86,6 +87,11 @@ class CustomerClient {
 			String customerId = br.readLine().trim();
 			logger.info(id + " started peforming cancel event operation for " + customerId);
 			cancelEventOption(customerId);
+		} else if (option.trim().equals("7")) {
+			System.out.println("Enter Customer ID");
+			String customerId = br.readLine().trim();
+			logger.info(id + " started peforming Swap event operation for " + customerId);
+			swapEventOption(customerId);
 		}
 
 	}
@@ -164,7 +170,11 @@ class CustomerClient {
 		String eventType = br.readLine().trim();
 		System.out.println("3. Booking Capacity");
 		String eventCapacity = br.readLine().trim();
-		logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));
+		if (Integer.parseInt(eventCapacity.trim()) >= 0) {
+			logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));
+		} else {
+			logger.info("Please Enter Proper Capacity");
+		}
 	}
 
 	public static void listEventAvailabilityOption(String managerId) throws IOException, InterruptedException {
