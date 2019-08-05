@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.event.management.server;
+package com.event.management.montreal;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -23,8 +23,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
-import com.event.management.implementation.EventManagerOttawa;
-import com.event.management.model.OttawaData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -32,31 +30,33 @@ import com.google.gson.GsonBuilder;
  *
  * @author Jenny
  */
-public class OttawaServer {
+public class MTLServer {
 	private static Logger logger;
 	String response = "";
-	static EventManagerOttawa otwObject = new EventManagerOttawa();
+	static MTLManager mtlObject = new MTLManager();
 
 	public static void main(String args[]) throws Exception {
-		OttawaServer ottawaServer = new OttawaServer();
-		ottawaServer.setLogger("logs/OTW.txt", "OTW");
-		logger.info("Ottawa Server Started");
-		Runnable torontoTask = () -> {
-			ottawaServer.receive();
+		MTLServer montrealServer = new MTLServer();
+		montrealServer.setLogger("logs/MTL.txt", "MTL");
+		logger.info("Montreal Server Started");
+		Runnable montrealTask = () -> {
+			montrealServer.receive();
 		};
-		Thread thread = new Thread(torontoTask);
+		Thread thread = new Thread(montrealTask);
 		thread.start();
-		Runnable ottawaRequestTask = () -> {
-			ottawaServer.receiveMulticastRequest();
+
+		Runnable montrealRequestTask = () -> {
+			montrealServer.receiveMulticastRequest();
 		};
-		Runnable ottawaResponseTask = () -> {
+
+		Runnable montrealResponseTask = () -> {
 			receiveFailedResponse();
 		};
 		Runnable RMResponseTask = () -> {
 			updateServerData();
 		};
-		Thread thread1 = new Thread(ottawaRequestTask);
-		Thread thread2 = new Thread(ottawaResponseTask);
+		Thread thread1 = new Thread(montrealRequestTask);
+		Thread thread2 = new Thread(montrealResponseTask);
 		Thread thread3 = new Thread(RMResponseTask);
 		thread1.start();
 		thread2.start();
@@ -67,20 +67,20 @@ public class OttawaServer {
 		DatagramSocket datagramSocket = null;
 		while (true) {
 			try {
-				datagramSocket = new DatagramSocket(Constants.LOCAL_OTTAWA_PORT);
+				datagramSocket = new DatagramSocket(Constants.LOCAL_MONTREAL_PORT);
 				byte[] receive = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket packetReceive = new DatagramPacket(receive, receive.length);
 				datagramSocket.receive(packetReceive);
 				byte[] data = packetReceive.getData();
 				String[] receiveData = new String(data).split(",");
 				if (receiveData[receiveData.length - 1].trim().equals(Constants.LIST_OPERATION)) {
-					String temp = otwObject.ottawaData.retrieveEvent(receiveData[2]);
+					String temp = mtlObject.montrealData.retrieveEvent(receiveData[2]);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
-					datagramSocket.send(reply);
 					updateJSONFile();
+					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("addOperation")) {
-					boolean temp = otwObject.ottawaData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
+					boolean temp = mtlObject.montrealData.addEvent(receiveData[1], receiveData[2], receiveData[3]);
 					String newTemp = temp == false ? "Denies" : "Approves";
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
@@ -89,7 +89,7 @@ public class OttawaServer {
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.BOOK_OPERATION)) {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
 							"None", Constants.BOOK_OPERATION,
-							otwObject.ottawaData.bookEvent(receiveData[0], receiveData[1], receiveData[2]));
+							mtlObject.montrealData.bookEvent(receiveData[0], receiveData[1], receiveData[2]));
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
@@ -97,25 +97,25 @@ public class OttawaServer {
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.CANCEL_OPERATION)) {
 					String temp = generateJSONObject(receiveData[0], receiveData[1], receiveData[2], "None", "None",
 							"None", Constants.CANCEL_OPERATION,
-							otwObject.ottawaData.removeEvent(receiveData[0], receiveData[1], receiveData[2]));
+							mtlObject.montrealData.removeEvent(receiveData[0], receiveData[1], receiveData[2]));
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals(Constants.SCHEDULE_OPERATION)) {
-					String temp = otwObject.ottawaData.getBookingSchedule(receiveData[0]);
+					String temp = mtlObject.montrealData.getBookingSchedule(receiveData[0]);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("countOperation")) {
-					String temp = otwObject.ottawaData.getBookingCount(receiveData[0], receiveData[1]);
+					String temp = mtlObject.montrealData.getBookingCount(receiveData[0], receiveData[1]);
 					DatagramPacket reply = new DatagramPacket(temp.getBytes(), temp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
 					updateJSONFile();
 					datagramSocket.send(reply);
 				} else if (receiveData[receiveData.length - 1].trim().equals("existanceOperation")) {
-					boolean temp = otwObject.ottawaData.getEvent(receiveData[0], receiveData[1], receiveData[2]);
+					boolean temp = mtlObject.montrealData.getEvent(receiveData[0], receiveData[1], receiveData[2]);
 					String newTemp = temp == false ? "Denies" : "Approves";
 					DatagramPacket reply = new DatagramPacket(newTemp.getBytes(), newTemp.length(),
 							packetReceive.getAddress(), packetReceive.getPort());
@@ -125,10 +125,8 @@ public class OttawaServer {
 					logger.info("Some problem in Server");
 				}
 			} catch (SocketException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
 				datagramSocket.close();
@@ -137,9 +135,10 @@ public class OttawaServer {
 	}
 
 	private void receiveMulticastRequest() {
+
 		MulticastSocket aSocket = null;
 		try {
-			aSocket = new MulticastSocket(Constants.RM_OTTAWA_PORT);
+			aSocket = new MulticastSocket(Constants.RM_MONTREAL_PORT);
 			aSocket.joinGroup(InetAddress.getByName(Constants.MULTICAST_IP));
 			while (true) {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
@@ -150,56 +149,41 @@ public class OttawaServer {
 				JSONObject jsonObject = (JSONObject) obj;
 				if (!jsonObject.get("Sequence").toString().equals("6"))
 					logger.info("Data Received : " + jsonObject.toString());
-				switch (jsonObject.get(Constants.OPERATION).toString()) {
-				case "addEventOperation": {
+				if (jsonObject.get(Constants.OPERATION).toString().trim().equals("addEventOperation")) {
 					String managerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					String eventCapacity = jsonObject.get(Constants.EVENT_CAPACITY).toString();
-					response = otwObject.addEvent(managerId, eventId, eventType, eventCapacity);
-					break;
-				}
-				case "removeEventOperation": {
+					response = mtlObject.addEvent(managerId, eventId, eventType, eventCapacity);
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("removeEventOperation")) {
 					String managerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
-					response = otwObject.removeEvent(managerId, eventId, eventType);
-					break;
-				}
-				case "listEventOperation": {
+					response = mtlObject.removeEvent(managerId, eventId, eventType);
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("listEventOperation")) {
 					String managerId = jsonObject.get(Constants.ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
-					response = otwObject.listEventAvailability(managerId, eventType);
-					break;
-				}
-				case "eventBookingOperation": {
+					response = mtlObject.listEventAvailability(managerId, eventType);
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("eventBookingOperation")) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
-					response = otwObject.eventBooking(customerId, eventId, eventType);
-					break;
-				}
-				case "cancelBookingOperation": {
+					response = mtlObject.eventBooking(customerId, eventId, eventType);
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("cancelBookingOperation")) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
-					response = otwObject.cancelBooking(customerId, eventId, eventType);
-					break;
-				}
-				case Constants.SCHEDULE_OPERATION: {
+					response = mtlObject.cancelBooking(customerId, eventId, eventType);
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String customerId = jsonObject.get(Constants.ID).toString();
-					response = otwObject.getBookingSchedule(customerId);
-					break;
-				}
-				case "swapEventOperation": {
+					response = mtlObject.getBookingSchedule(customerId);
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("swapEventOperation")) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					String newEventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String newEventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					String oldEventId = jsonObject.get(Constants.OLD_EVENT_ID).toString();
 					String oldEventType = jsonObject.get(Constants.OLD_EVENT_TYPE).toString();
-					response = otwObject.swapEvent(customerId, newEventId, newEventType, oldEventId, oldEventType);
-					break;
-				}
+					response = mtlObject.swapEvent(customerId, newEventId, newEventType, oldEventId, oldEventType);
 				}
 				updateJSONFile();
 				if (jsonObject.get("Sequence").toString().equals("6")) {
@@ -213,13 +197,11 @@ public class OttawaServer {
 		} catch (IOException e) {
 			logger.info("IO: " + e.getMessage());
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			if (aSocket != null)
 				aSocket.close();
 		}
-
 	}
 
 	private void sendRequestToFrontEnd(String message) {
@@ -333,7 +315,6 @@ public class OttawaServer {
 						datagramSocket.send(ottawaRequest);
 					}
 				}
-
 			}
 		} catch (SocketException e) {
 			logger.info(e.getMessage());
@@ -352,20 +333,18 @@ public class OttawaServer {
 	private static void updateServerData() {
 		DatagramSocket aSocket = null;
 		try {
-			aSocket = new DatagramSocket(Constants.FAIL_OTTAWA_PORT);
-
+			aSocket = new DatagramSocket(Constants.FAIL_MONTREAL_PORT);
 			while (true) {
 				byte[] buffer = new byte[Constants.BYTE_LENGTH];
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				aSocket.receive(request);
 				String data = new String(request.getData()).trim();
 				System.out.println(request.getAddress() + " : " + data);
-
 				JSONParser parser = new JSONParser();
 				Gson gson = new Gson();
 				Object obj = parser.parse(data.trim());
 				JSONObject jsonObject = (JSONObject) obj;
-				otwObject.ottawaData = gson.fromJson(String.valueOf(jsonObject.get("player")), OttawaData.class);
+				mtlObject.montrealData = gson.fromJson(String.valueOf(jsonObject.get("player")), MTLDB.class);
 			}
 		} catch (SocketException e) {
 			logger.info(e.getMessage());
@@ -395,21 +374,6 @@ public class OttawaServer {
 		return obj.toString();
 	}
 
-	public static void updateJSONFile() {
-		JSONObject game = new JSONObject();
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String playerString = gson.toJson(otwObject.ottawaData);
-		game.put("player", playerString);
-		String gameString = gson.toJson(game);
-		try {
-			FileWriter fileWriter = new FileWriter("ottawa.json");
-			fileWriter.write(gameString);
-			fileWriter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void setLogger(String location, String id) {
 		try {
 			logger = Logger.getLogger(id);
@@ -419,6 +383,23 @@ public class OttawaServer {
 			logger.addHandler(fileTxt);
 		} catch (Exception err) {
 			logger.info("Couldn't Initiate Logger. Please check file permission");
+		}
+	}
+
+	public static void updateJSONFile() {
+		JSONObject game = new JSONObject();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String playerString = gson.toJson(mtlObject.montrealData);
+
+		game.put("player", playerString);
+		String gameString = gson.toJson(game);
+
+		try {
+			FileWriter fileWriter = new FileWriter("montreal.json");
+			fileWriter.write(gameString);
+			fileWriter.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

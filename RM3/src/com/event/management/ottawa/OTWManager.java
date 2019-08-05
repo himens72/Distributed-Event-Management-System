@@ -1,4 +1,4 @@
-package com.event.management.implementation;
+package com.event.management.ottawa;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -17,22 +17,20 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
-import com.event.management.model.OttawaData;
 
-public class EventManagerOttawa {
-	// public String location;
+public class OTWManager {
 	public String response;
-	public OttawaData ottawaData;
+	public OTWDB ottawaData;
 	private static Logger logger;
 
-	public EventManagerOttawa() {
+	public OTWManager() {
 		super();
-		ottawaData = new OttawaData();
+		ottawaData = new OTWDB();
 		setLogger("logs/OTW.txt", "OTW");
 	}
 
 	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) {
-		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
+		if (eventType.equals(Constants.SEMINARS) || eventType.equals(Constants.CONFERENCES) || eventType.equals(Constants.TRADE_SHOWS)) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
 				if (eventId.substring(0, 3).trim().equals("OTW"))
@@ -54,7 +52,7 @@ public class EventManagerOttawa {
 	}
 
 	public String removeEvent(String managerId, String eventId, String eventType) {
-		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
+		if (eventType.equals(Constants.SEMINARS) || eventType.equals(Constants.CONFERENCES) || eventType.equals(Constants.TRADE_SHOWS)) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
 				if (eventId.substring(0, 3).trim().equals("OTW"))
@@ -75,8 +73,8 @@ public class EventManagerOttawa {
 	}
 
 	public String listEventAvailability(String managerId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			String temp = "";
 			temp = ottawaData.retrieveEvent(eventType).trim();
 			temp += requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE,
@@ -117,8 +115,8 @@ public class EventManagerOttawa {
 	}
 
 	public String eventBooking(String customerId, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			StringBuilder count = new StringBuilder();
 			if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
@@ -167,8 +165,8 @@ public class EventManagerOttawa {
 	}
 
 	public String cancelBooking(String customerId, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.CANCEL_OPERATION,
@@ -220,11 +218,7 @@ public class EventManagerOttawa {
 		if (existanceFlag == false)
 			return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType,
 					Constants.SWAP_OPERATION, false);
-		if (customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
-				/*
-				 * && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0,
-				 * 3))
-				 */) {
+		if (customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))) {
 			boolean bookFlag = unpackJSON(swapEventBooking(customerID, newEventID, newEventType));
 			if (bookFlag) {
 				boolean cancelFlag = unpackJSON(swapCancelBooking(customerID, oldEventID, oldEventType));
@@ -237,17 +231,7 @@ public class EventManagerOttawa {
 				return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID,
 						oldEventType, Constants.SWAP_OPERATION, false);
 			}
-		} /*
-		 * else if
-		 * (customerID.trim().substring(0,3).equals(newEventID.trim().substring(0,3)) &&
-		 * !customerID.trim().substring(0,3).equals(oldEventID.trim().substring(0,3))) {
-		 * boolean bookFlag = swapEventBooking(customerID, newEventID, newEventType);
-		 * if(bookFlag) { boolean cancelFlag = swapCancelBooking(customerID, oldEventID,
-		 * oldEventType); return cancelFlag ? customerID+
-		 * " : Swap Event Operation Successful. " : customerID+
-		 * " : Swap Event Operation Failure."; } else { return
-		 * "Swap Operation : Unable to Book New Event ID"; } }
-		 */ else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
+		} else if (!customerID.trim().substring(0, 3).equals(newEventID.trim().substring(0, 3))
 				 && customerID.trim().substring(0, 3).equals(oldEventID.trim().substring(0, 3))) {
 			 boolean flag = checkMaximumLimt(customerID, newEventID);
 			 if (flag)
@@ -338,8 +322,8 @@ public class EventManagerOttawa {
 	}
 
 	public boolean checkEventExistance(String customerID, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerID.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				boolean temp = false;
 				temp = ottawaData.getEvent(customerID, eventId, eventType);
@@ -366,8 +350,8 @@ public class EventManagerOttawa {
 	}
 
 	public String swapEventBooking(String customerId, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.SWAP_OPERATION, ottawaData.bookEvent(customerId, eventId, eventType));
@@ -403,8 +387,8 @@ public class EventManagerOttawa {
 
 	public String swapCancelBooking(String customerId, String eventId, String eventType) {
 
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.SWAP_OPERATION,

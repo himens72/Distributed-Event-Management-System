@@ -46,5 +46,7 @@ public class Constants {
 	public static final String RM1_ID = "RM1";
 	public static final String RM2_ID = "RM2";
 	public static final String RM3_ID = "RM3";
-
+	public static final String SEMINARS = "Seminars";
+	public static final String CONFERENCES = "Conferences";
+	public static final String TRADE_SHOWS = "Trade Shows";
 }

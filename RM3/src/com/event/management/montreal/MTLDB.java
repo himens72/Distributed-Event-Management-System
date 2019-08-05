@@ -1,13 +1,14 @@
-package com.event.management.model;
+package com.event.management.montreal;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class OttawaData {
+import com.event.management.constants.Constants;
+
+public class MTLDB {
 	HashMap<String, HashMap<String, HashMap<String, String>>> serverData;
 	String serverName;
-	public static ReentrantLock lockOttawaServerData;
 
 	public HashMap<String, HashMap<String, HashMap<String, String>>> getServerData() {
 		return serverData;
@@ -25,18 +26,18 @@ public class OttawaData {
 		this.serverName = serverName;
 	}
 
-	public OttawaData() {
+	public MTLDB() {
 		serverData = new HashMap<>();
-		serverData.put("Conferences", new HashMap<>());
-		serverData.put("Seminars", new HashMap<>());
-		serverData.put("Trade Shows", new HashMap<>());
-		lockOttawaServerData = new ReentrantLock();
+		serverData.put(Constants.CONFERENCES, new HashMap<>());
+		serverData.put(Constants.SEMINARS, new HashMap<>());
+		serverData.put(Constants.TRADE_SHOWS, new HashMap<>());
+		// //lockMontrealServerData = new ReentrantLock();
 	}
 
-	public boolean addEvent(String eventId, String eventtype, String eventCapacity) {
-		lockOttawaServerData.lock();
+	public synchronized boolean addEvent(String eventId, String eventtype, String eventCapacity) {
+		//// lockMontrealServerData.lock();
 		if (!serverData.containsKey(eventtype)) {
-			lockOttawaServerData.unlock();
+			//// lockMontrealServerData.unlock();
 			return false;
 		}
 		HashMap<String, HashMap<String, String>> newValue = serverData.get(eventtype);
@@ -47,7 +48,7 @@ public class OttawaData {
 			newList.replace("customerId", newList.get("customerId"), newList.get("customerId"));
 			newValue.replace(eventId, serverData.get(eventtype).get(eventId), newList);
 			serverData.replace(eventtype, serverData.get(eventtype), newValue);
-			lockOttawaServerData.unlock();
+			// //lockMontrealServerData.unlock();
 			return true;
 		} else {
 			HashMap<String, String> temp = new HashMap<>();
@@ -56,36 +57,57 @@ public class OttawaData {
 			temp.put("customerId", "");
 			newValue.put(eventId, temp);
 			serverData.replace(eventtype, serverData.get(eventtype), newValue);
-			lockOttawaServerData.unlock();
+			// //lockMontrealServerData.unlock();
 			return true;
 		}
 	}
 
 	public synchronized boolean removeEvent(String eventId, String eventType) {
-		lockOttawaServerData.lock();
+		//// lockMontrealServerData.lock();
 		if (!serverData.containsKey(eventType)) {
-			lockOttawaServerData.unlock();
+			//// lockMontrealServerData.unlock();
 			return false;
 		}
 		HashMap<String, HashMap<String, String>> newValue = serverData.get(eventType);
 		if (newValue.containsKey(eventId)) {
 			serverData.get(eventType).remove(eventId);
-			lockOttawaServerData.unlock();
+			//// lockMontrealServerData.unlock();
 			return true;
 		} else {
-			lockOttawaServerData.unlock();
+			//// lockMontrealServerData.unlock();
+			return false;
+		}
+	}
+
+	public synchronized boolean getEvent(String customerId, String eventId, String eventType) {
+		//// lockMontrealServerData.lock();
+		if (serverData.containsKey(eventType)) {
+			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
+			if (typeData.size() == 0) {
+				// //lockMontrealServerData.unlock();
+				return false;
+			} else {
+				if (typeData.containsKey(eventId)) {
+					HashMap<String, String> currentEvent = typeData.get(eventId);
+					// //lockMontrealServerData.unlock();
+					return currentEvent.get("customerId").contains(customerId.trim());
+				} else {
+					//// lockMontrealServerData.unlock();
+					return false;
+				}
+			}
+		} else {
+			//// lockMontrealServerData.unlock();
 			return false;
 		}
 	}
 
 	public synchronized String retrieveEvent(String eventType) {
-		lockOttawaServerData.lock();
-		// System.out.println("Event Type : " + eventType);
+		//// lockMontrealServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> temp = serverData.get(eventType);
 			if (temp.size() == 0) {
-				// System.out.println("No Events Found");
-				lockOttawaServerData.unlock();
+				// //lockMontrealServerData.unlock();
 				return "";
 			} else {
 				StringBuilder str = new StringBuilder();
@@ -95,35 +117,33 @@ public class OttawaData {
 						str.append(entry.getKey() + " " + (Integer.parseInt(entry.getValue().get("capacity"))
 								- Integer.parseInt(entry.getValue().get("totalBooking"))) + ",");
 				}
-				lockOttawaServerData.unlock();
+				// lockMontrealServerData.unlock();
 				return str.toString().trim();
 			}
 		} else {
-			// System.out.println("No Event Type Found");
-			lockOttawaServerData.unlock();
+			// lockMontrealServerData.unlock();
 			return "";
 		}
 	}
 
 	public synchronized boolean bookEvent(String customerID, String eventId, String eventType) {
-		lockOttawaServerData.lock();
+		// lockMontrealServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
-				// System.out.println("No Events Found");
-				lockOttawaServerData.unlock();
+				// lockMontrealServerData.unlock();
 				return false;
 			} else {
 				if (typeData.containsKey(eventId)) {
 					HashMap<String, String> currentEvent = typeData.get(eventId);
 					if (Integer.parseInt(currentEvent.get("capacity")) == Integer
 							.parseInt(currentEvent.get("totalBooking"))) {
-						lockOttawaServerData.unlock();
+						// lockMontrealServerData.unlock();
 						return false;
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
 						if (currentEvent.get("customerId").contains(customerID)) {
-							lockOttawaServerData.unlock();
+							// lockMontrealServerData.unlock();
 							return false;
 						}
 						customers.append(customerID.trim());
@@ -134,39 +154,37 @@ public class OttawaData {
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) + 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
-						lockOttawaServerData.unlock();
+						// lockMontrealServerData.unlock();
 						return true;
 					}
 				} else {
-					lockOttawaServerData.unlock();
+					// lockMontrealServerData.unlock();
 					return false;
 				}
 			}
 		} else {
-			// System.out.println("No Event Type Found");
-			lockOttawaServerData.unlock();
+			// lockMontrealServerData.unlock();
 			return false;
 		}
 	}
 
 	public synchronized boolean removeEvent(String customerID, String eventId, String eventType) {
-		lockOttawaServerData.lock();
+		// lockMontrealServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
 			if (typeData.size() == 0) {
-				// System.out.println("No Events Found");
-				lockOttawaServerData.unlock();
+				// lockMontrealServerData.unlock();
 				return false;
 			} else {
 				if (typeData.containsKey(eventId)) {
 					HashMap<String, String> currentEvent = typeData.get(eventId);
 					if (Integer.parseInt(currentEvent.get("totalBooking")) == 0) {
-						lockOttawaServerData.unlock();
+						// lockMontrealServerData.unlock();
 						return false;
 					} else {
 						StringBuilder customers = new StringBuilder(currentEvent.get("customerId"));
 						if (!currentEvent.get("customerId").contains(customerID)) {
-							lockOttawaServerData.unlock();
+							// lockMontrealServerData.unlock();
 							return false;
 						}
 						currentEvent.replace("customerId", customers.toString().replace(customerID.trim() + ",", ""));
@@ -176,23 +194,22 @@ public class OttawaData {
 								Integer.toString(Integer.parseInt(currentEvent.get("totalBooking")) - 1));
 						typeData.replace(eventId, typeData.get(eventId), currentEvent);
 						serverData.replace(eventType, serverData.get(eventType), typeData);
-						lockOttawaServerData.unlock();
+						// lockMontrealServerData.unlock();
 						return true;
 					}
 				} else {
-					lockOttawaServerData.unlock();
+					// lockMontrealServerData.unlock();
 					return false;
 				}
 			}
 		} else {
-			// System.out.println("No Event Type Found");
-			lockOttawaServerData.unlock();
+			// lockMontrealServerData.unlock();
 			return false;
 		}
 	}
 
 	public synchronized String getBookingSchedule(String customerId) {
-		lockOttawaServerData.lock();
+		// lockMontrealServerData.lock();
 		StringBuilder customers = new StringBuilder();
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
 			for (Entry<String, HashMap<String, String>> events : types.getValue().entrySet()) {
@@ -201,12 +218,12 @@ public class OttawaData {
 				}
 			}
 		}
-		lockOttawaServerData.unlock();
+		// lockMontrealServerData.unlock();
 		return customers.length() == 0 ? "" : customers.toString();
 	}
 
 	public synchronized String getBookingCount(String customerId, String eventType) {
-		lockOttawaServerData.lock();
+		// lockMontrealServerData.lock();
 		int count = 0;
 		String month = eventType.trim().substring(6, eventType.trim().length());
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
@@ -217,32 +234,7 @@ public class OttawaData {
 				}
 			}
 		}
-		lockOttawaServerData.unlock();
+		// lockMontrealServerData.unlock();
 		return Integer.toString(count);
-	}
-
-	public synchronized boolean getEvent(String customerId, String eventId, String eventType) {
-		lockOttawaServerData.lock();
-		if (serverData.containsKey(eventType)) {
-			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
-			if (typeData.size() == 0) {
-				// System.out.println("No Events Found");
-				lockOttawaServerData.unlock();
-				return false;
-			} else {
-				if (typeData.containsKey(eventId)) {
-					HashMap<String, String> currentEvent = typeData.get(eventId);
-					lockOttawaServerData.unlock();
-					return currentEvent.get("customerId").contains(customerId.trim());
-				} else {
-					lockOttawaServerData.unlock();
-					return false;
-				}
-			}
-		} else {
-			// System.out.println("No Event Type Found");
-			lockOttawaServerData.unlock();
-			return false;
-		}
 	}
 }

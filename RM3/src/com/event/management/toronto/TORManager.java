@@ -1,4 +1,4 @@
-package com.event.management.implementation;
+package com.event.management.toronto;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -17,29 +17,26 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
-import com.event.management.model.MontrealData;
 
-public class EventManagerMontreal {
-	// public String location;
+public class TORManager {
 	public String response;
-	public MontrealData montrealData;
+	public TORDB torontoData;
 	private static Logger logger;
 
-	public EventManagerMontreal() {
+	public TORManager() {
 		super();
-		montrealData = new MontrealData();
-		montrealData.addEvent("MTLM010819", "Conferences", "1");
-		setLogger("logs/MTL.txt", "MTL");
+		torontoData = new TORDB();
+		setLogger("logs/TOR.txt", "TOR");
 	}
 
 	public String addEvent(String managerId, String eventId, String eventType, String eventCapacity) {
-		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
+		if (eventType.equals(Constants.SEMINARS) || eventType.equals(Constants.CONFERENCES) || eventType.equals(Constants.TRADE_SHOWS)) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
-				if (eventId.substring(0, 3).trim().equals("MTL"))
+				if (eventId.substring(0, 3).trim().equals("TOR"))
 					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE,
 							Constants.NONE, Constants.ADD_OPERATION,
-							montrealData.addEvent(eventId, eventType, eventCapacity));
+							torontoData.addEvent(eventId, eventType, eventCapacity));
 				else
 					output = generateJSONObject(managerId, eventId, eventType, eventCapacity, Constants.NONE,
 							Constants.NONE, Constants.ADD_OPERATION, false);
@@ -55,12 +52,12 @@ public class EventManagerMontreal {
 	}
 
 	public String removeEvent(String managerId, String eventId, String eventType) {
-		if (eventType.equals("Seminars") || eventType.equals("Conferences") || eventType.equals("Trade Shows")) {
+		if (eventType.equals(Constants.SEMINARS) || eventType.equals(Constants.CONFERENCES) || eventType.equals(Constants.TRADE_SHOWS)) {
 			if (eventId.substring(0, 3).trim().equals(managerId.substring(0, 3).trim())) {
 				String output = "";
-				if (eventId.substring(0, 3).trim().equals("MTL"))
+				if (eventId.substring(0, 3).trim().equals("TOR"))
 					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
-							Constants.NONE, Constants.REMOVE_OPERATION, montrealData.removeEvent(eventId, eventType));
+							Constants.NONE, Constants.REMOVE_OPERATION, torontoData.removeEvent(eventId, eventType));
 				else
 					output = generateJSONObject(managerId, eventId, eventType, Constants.NONE, Constants.NONE,
 							Constants.NONE, Constants.REMOVE_OPERATION, false);
@@ -76,12 +73,12 @@ public class EventManagerMontreal {
 	}
 
 	public String listEventAvailability(String managerId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			String temp = "";
-			temp = montrealData.retrieveEvent(eventType).trim();
+			temp = torontoData.retrieveEvent(eventType).trim();
 			temp += requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE,
-					Constants.LOCAL_TORONTO_PORT, Constants.LIST_OPERATION).trim();
+					Constants.LOCAL_MONTREAL_PORT, Constants.LIST_OPERATION).trim();
 			temp = temp + requestOnOtherServer(managerId, Constants.NONE, eventType, Constants.NONE,
 					Constants.LOCAL_OTTAWA_PORT, Constants.LIST_OPERATION).trim();
 			boolean status = temp.trim().isEmpty() ? false : true;
@@ -118,14 +115,26 @@ public class EventManagerMontreal {
 	}
 
 	public String eventBooking(String customerId, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			StringBuilder count = new StringBuilder();
 			if (!customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
-				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
-						Constants.LOCAL_TORONTO_PORT, "countOperation") + ",");
-				count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
-						Constants.LOCAL_OTTAWA_PORT, "countOperation") + ",");
+				if (customerId.trim().substring(0, 3).equals("TOR")) {
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
+							Constants.LOCAL_MONTREAL_PORT, "countOperation") + ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
+							Constants.LOCAL_OTTAWA_PORT, "countOperation") + ",");
+				} else if (customerId.trim().substring(0, 3).equals("MTL")) {
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
+							Constants.LOCAL_TORONTO_PORT, "countOperation") + ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
+							Constants.LOCAL_OTTAWA_PORT, "countOperation") + ",");
+				} else if (customerId.trim().substring(0, 3).equals("OTW")) {
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
+							Constants.LOCAL_TORONTO_PORT, "countOperation") + ",");
+					count.append(requestOnOtherServer(customerId, eventId, Constants.NONE, Constants.NONE,
+							Constants.LOCAL_MONTREAL_PORT, "countOperation") + ",");
+				}
 				String[] split = count.toString().trim().split(",");
 				int totalEve = 0;
 				for (int i = 0; i < split.length; i++) {
@@ -136,10 +145,11 @@ public class EventManagerMontreal {
 							Constants.NONE, Constants.BOOK_OPERATION, false);
 				}
 			}
+
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.BOOK_OPERATION,
-						montrealData.bookEvent(customerId, eventId, eventType));
+						torontoData.bookEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE,
 						Constants.LOCAL_TORONTO_PORT, Constants.BOOK_OPERATION);
@@ -169,12 +179,12 @@ public class EventManagerMontreal {
 	}
 
 	public String cancelBooking(String customerId, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.CANCEL_OPERATION,
-						montrealData.removeEvent(customerId, eventId, eventType));
+						torontoData.removeEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE,
 						Constants.LOCAL_TORONTO_PORT, Constants.CANCEL_OPERATION);
@@ -205,10 +215,10 @@ public class EventManagerMontreal {
 
 	public String getBookingSchedule(String customerId) {
 		StringBuilder temp = new StringBuilder();
-		temp.append(montrealData.getBookingSchedule(customerId.trim()));
-		temp.append(requestOnOtherServer(customerId, "No Event Id", Constants.NONE, Constants.NONE,
-				Constants.LOCAL_TORONTO_PORT, Constants.SCHEDULE_OPERATION).trim());
-		temp.append(requestOnOtherServer(customerId, "No Event Id", Constants.NONE, Constants.NONE,
+		temp.append(torontoData.getBookingSchedule(customerId.trim()));
+		temp.append(requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE,
+				Constants.LOCAL_MONTREAL_PORT, Constants.SCHEDULE_OPERATION).trim());
+		temp.append(requestOnOtherServer(customerId, Constants.NONE, Constants.NONE, Constants.NONE,
 				Constants.LOCAL_OTTAWA_PORT, Constants.SCHEDULE_OPERATION).trim());
 		return temp.toString().trim().length() == 0
 				? eventScheduleJSONObject(customerId, "", Constants.SCHEDULE_OPERATION, false)
@@ -218,7 +228,6 @@ public class EventManagerMontreal {
 	public String swapEvent(String customerID, String newEventID, String newEventType, String oldEventID,
 			String oldEventType) {
 		boolean existanceFlag = checkEventExistance(customerID, oldEventID, oldEventType);
-		// System.out.println("Existance Flag : " + existanceFlag);
 		if (existanceFlag == false)
 			return generateJSONObject(customerID, newEventID, newEventType, Constants.NONE, oldEventID, oldEventType,
 					Constants.SWAP_OPERATION, false);
@@ -326,11 +335,11 @@ public class EventManagerMontreal {
 	}
 
 	public boolean checkEventExistance(String customerID, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerID.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				boolean temp = false;
-				temp = montrealData.getEvent(customerID, eventId, eventType);
+				temp = torontoData.getEvent(customerID, eventId, eventType);
 				return temp == false ? temp : true;
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerID, eventId, eventType, Constants.NONE,
@@ -354,14 +363,12 @@ public class EventManagerMontreal {
 	}
 
 	public String swapEventBooking(String customerId, String eventId, String eventType) {
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.SWAP_OPERATION,
-						montrealData.bookEvent(customerId, eventId, eventType));
-				// return !temp.trim().isEmpty() && temp.contains("has book event") ? true :
-				// false;
+						torontoData.bookEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE,
 						Constants.LOCAL_TORONTO_PORT, Constants.BOOK_OPERATION);
@@ -392,12 +399,12 @@ public class EventManagerMontreal {
 
 	public String swapCancelBooking(String customerId, String eventId, String eventType) {
 
-		if (eventType.trim().equals("Seminars") || eventType.trim().equals("Conferences")
-				|| eventType.trim().equals("Trade Shows")) {
+		if (eventType.trim().equals(Constants.SEMINARS) || eventType.trim().equals(Constants.CONFERENCES)
+				|| eventType.trim().equals(Constants.TRADE_SHOWS)) {
 			if (customerId.substring(0, 3).trim().equals(eventId.substring(0, 3).trim())) {
 				return generateJSONObject(customerId, eventId, eventType, Constants.NONE, Constants.NONE,
 						Constants.NONE, Constants.SWAP_OPERATION,
-						montrealData.removeEvent(customerId, eventId, eventType));
+						torontoData.removeEvent(customerId, eventId, eventType));
 			} else if (eventId.trim().substring(0, 3).equals("TOR")) {
 				String temp = requestOnOtherServer(customerId, eventId, eventType, Constants.NONE,
 						Constants.LOCAL_TORONTO_PORT, Constants.CANCEL_OPERATION);
@@ -452,6 +459,17 @@ public class EventManagerMontreal {
 		return obj.toString();
 	}
 
+	static String eventAvailableJSONObject(String id, String eventType, String events, String operation,
+			boolean status) {
+		JSONObject obj = new JSONObject();
+		obj.put(Constants.ID, id.trim());
+		obj.put(Constants.EVENT_TYPE, eventType.trim());
+		obj.put(Constants.LIST_EVENT_AVAILABLE, events.trim());
+		obj.put(Constants.OPERATION, operation.trim());
+		obj.put(Constants.OPERATION_STATUS, status);
+		return obj.toString();
+	}
+
 	static String eventScheduleJSONObject(String id, String events, String operation, boolean status) {
 		JSONObject obj = new JSONObject();
 		obj.put(Constants.ID, id.trim());
@@ -462,17 +480,6 @@ public class EventManagerMontreal {
 		}
 		Collections.sort(temp);
 		obj.put(Constants.LIST_EVENT_SCHEDULE, temp.toString().trim());
-		obj.put(Constants.OPERATION, operation.trim());
-		obj.put(Constants.OPERATION_STATUS, status);
-		return obj.toString();
-	}
-
-	static String eventAvailableJSONObject(String id, String eventType, String events, String operation,
-			boolean status) {
-		JSONObject obj = new JSONObject();
-		obj.put(Constants.ID, id.trim());
-		obj.put(Constants.EVENT_TYPE, eventType.trim());
-		obj.put(Constants.LIST_EVENT_AVAILABLE, events.trim());
 		obj.put(Constants.OPERATION, operation.trim());
 		obj.put(Constants.OPERATION_STATUS, status);
 		return obj.toString();

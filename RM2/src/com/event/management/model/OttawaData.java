@@ -61,7 +61,7 @@ public class OttawaData {
 		}
 	}
 
-	public synchronized boolean removeEvent(String eventId, String eventType) {
+	public boolean removeEvent(String eventId, String eventType) {
 		lockOttawaServerData.lock();
 		if (!serverData.containsKey(eventType)) {
 			lockOttawaServerData.unlock();
@@ -78,7 +78,7 @@ public class OttawaData {
 		}
 	}
 
-	public synchronized String retrieveEvent(String eventType) {
+	public String retrieveEvent(String eventType) {
 		lockOttawaServerData.lock();
 		// System.out.println("Event Type : " + eventType);
 		if (serverData.containsKey(eventType)) {
@@ -105,7 +105,7 @@ public class OttawaData {
 		}
 	}
 
-	public synchronized boolean bookEvent(String customerID, String eventId, String eventType) {
+	public boolean bookEvent(String customerID, String eventId, String eventType) {
 		lockOttawaServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
@@ -149,7 +149,7 @@ public class OttawaData {
 		}
 	}
 
-	public synchronized boolean removeEvent(String customerID, String eventId, String eventType) {
+	public boolean removeEvent(String customerID, String eventId, String eventType) {
 		lockOttawaServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);
@@ -191,7 +191,7 @@ public class OttawaData {
 		}
 	}
 
-	public synchronized String getBookingSchedule(String customerId) {
+	public String getBookingSchedule(String customerId) {
 		lockOttawaServerData.lock();
 		StringBuilder customers = new StringBuilder();
 		for (Entry<String, HashMap<String, HashMap<String, String>>> types : serverData.entrySet()) {
@@ -205,7 +205,7 @@ public class OttawaData {
 		return customers.length() == 0 ? "" : customers.toString();
 	}
 
-	public synchronized String getBookingCount(String customerId, String eventType) {
+	public String getBookingCount(String customerId, String eventType) {
 		lockOttawaServerData.lock();
 		int count = 0;
 		String month = eventType.trim().substring(6, eventType.trim().length());
@@ -221,7 +221,7 @@ public class OttawaData {
 		return Integer.toString(count);
 	}
 
-	public synchronized boolean getEvent(String customerId, String eventId, String eventType) {
+	public boolean getEvent(String customerId, String eventId, String eventType) {
 		lockOttawaServerData.lock();
 		if (serverData.containsKey(eventType)) {
 			HashMap<String, HashMap<String, String>> typeData = serverData.get(eventType);

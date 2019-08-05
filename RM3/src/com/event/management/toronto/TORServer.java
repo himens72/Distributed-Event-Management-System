@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.event.management.server;
+package com.event.management.toronto;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -23,8 +23,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
-import com.event.management.implementation.EventManagerToronto;
-import com.event.management.model.TorontoData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -32,22 +30,22 @@ import com.google.gson.GsonBuilder;
  *
  * @author Jenny
  */
-public class TorontoServer {
+public class TORServer {
 	private static Logger logger;
 	String response = "";
-	static EventManagerToronto torObject = new EventManagerToronto();
+	static TORManager torObject = new TORManager();
 
 	public static void main(String args[]) throws Exception {
-		TorontoServer torontoServer = new TorontoServer();
-		torontoServer.setLogger("logs/TOR.txt", "TOR");
+		TORServer torServer = new TORServer();
+		torServer.setLogger("logs/TOR.txt", "TOR");
 		logger.info("Toronto Server Started");
 		Runnable torontoTask = () -> {
-			torontoServer.receive();
+			torServer.receive();
 		};
 		Thread thread = new Thread(torontoTask);
 		thread.start();
 		Runnable torontoRequestTask = () -> {
-			torontoServer.receiveMulticastRequest();
+			torServer.receiveMulticastRequest();
 		};
 		Runnable torontoResponseTask = () -> {
 			receiveFailedResponse();
@@ -148,56 +146,43 @@ public class TorontoServer {
 				JSONObject jsonObject = (JSONObject) obj;
 				if (!jsonObject.get("Sequence").toString().equals("6"))
 					logger.info("Data Received : " + jsonObject.toString());
-				switch (jsonObject.get(Constants.OPERATION).toString()) {
-				case "addEventOperation": {
+				if (!jsonObject.get("Sequence").toString().equals("6"))
+					logger.info("Data Received : " + jsonObject.toString());
+				if (jsonObject.get(Constants.OPERATION).toString().trim().equals("addEventOperation")) {
 					String managerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					String eventCapacity = jsonObject.get(Constants.EVENT_CAPACITY).toString();
 					response = torObject.addEvent(managerId, eventId, eventType, eventCapacity);
-					break;
-				}
-				case "removeEventOperation": {
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("removeEventOperation")) {
 					String managerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					response = torObject.removeEvent(managerId, eventId, eventType);
-					break;
-				}
-				case "listEventOperation": {
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("listEventOperation")) {
 					String managerId = jsonObject.get(Constants.ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					response = torObject.listEventAvailability(managerId, eventType);
-					break;
-				}
-				case "eventBookingOperation": {
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("eventBookingOperation")) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					response = torObject.eventBooking(customerId, eventId, eventType);
-					break;
-				}
-				case "cancelBookingOperation": {
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("cancelBookingOperation")) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					String eventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String eventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					response = torObject.cancelBooking(customerId, eventId, eventType);
-					break;
-				}
-				case Constants.SCHEDULE_OPERATION: {
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals(Constants.SCHEDULE_OPERATION)) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					response = torObject.getBookingSchedule(customerId);
-					break;
-				}
-				case "swapEventOperation": {
+				} else if (jsonObject.get(Constants.OPERATION).toString().trim().equals("swapEventOperation")) {
 					String customerId = jsonObject.get(Constants.ID).toString();
 					String newEventId = jsonObject.get(Constants.EVENT_ID).toString();
 					String newEventType = jsonObject.get(Constants.EVENT_TYPE).toString();
 					String oldEventId = jsonObject.get(Constants.OLD_EVENT_ID).toString();
 					String oldEventType = jsonObject.get(Constants.OLD_EVENT_TYPE).toString();
 					response = torObject.swapEvent(customerId, newEventId, newEventType, oldEventId, oldEventType);
-					break;
-				}
 				}
 				updateJSONFile();
 				if (jsonObject.get("Sequence").toString().equals("6")) {
@@ -206,7 +191,6 @@ public class TorontoServer {
 					sendRequestToFrontEnd(response);
 				}
 			}
-
 		} catch (SocketException e) {
 			logger.info("Socket: " + e.getMessage());
 		} catch (IOException e) {
@@ -359,7 +343,7 @@ public class TorontoServer {
 				Gson gson = new Gson();
 				Object obj = parser.parse(data.trim());
 				JSONObject jsonObject = (JSONObject) obj;
-				torObject.torontoData = gson.fromJson(String.valueOf(jsonObject.get("player")), TorontoData.class);
+				torObject.torontoData = gson.fromJson(String.valueOf(jsonObject.get("player")), TORDB.class);
 			}
 		} catch (SocketException e) {
 			logger.info(e.getMessage());
