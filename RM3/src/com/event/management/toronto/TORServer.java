@@ -23,6 +23,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.event.management.constants.Constants;
+import com.event.management.montreal.MTLDB;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -53,12 +54,45 @@ public class TORServer {
 		Runnable RMResponseTask = () -> {
 			updateServerData();
 		};
+		Runnable FailureTask = () -> {
+			generateFailure();
+		};
 		Thread thread1 = new Thread(torontoRequestTask);
 		Thread thread2 = new Thread(torontoResponseTask);
 		Thread thread3 = new Thread(RMResponseTask);
+		Thread thread4 = new Thread(FailureTask);
 		thread1.start();
 		thread2.start();
 		thread3.start();
+		thread4.start();
+	}
+
+	private static void generateFailure() {
+		// TODO Auto-generated method stub
+		DatagramSocket aSocket = null;
+		try {
+			aSocket = new DatagramSocket(5000);
+			while (true) {
+				byte[] buffer = new byte[Constants.BYTE_LENGTH];
+				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+				aSocket.receive(request);
+				String data = new String(request.getData()).trim();
+				if(data.equals("Failure")) {
+					torObject.torontoData = new TORDB();
+					System.out.println("Failure Added");
+				} else {
+					System.out.println("Unable to add Failure");
+				}
+			}
+		} catch (SocketException e) {
+			logger.info(e.getMessage());
+		} catch (UnknownHostException e) {
+			logger.info(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.info(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	public void receive() {
