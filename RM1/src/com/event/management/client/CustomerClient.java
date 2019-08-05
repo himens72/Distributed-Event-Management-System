@@ -87,8 +87,7 @@ class CustomerClient {
 			String customerId = br.readLine().trim();
 			logger.info(id + " started peforming cancel event operation for " + customerId);
 			cancelEventOption(customerId);
-		}
-		else if (option.trim().equals("7")) {
+		} else if (option.trim().equals("7")) {
 			System.out.println("Enter Customer ID");
 			String customerId = br.readLine().trim();
 			logger.info(id + " started peforming Swap event operation for " + customerId);
@@ -140,7 +139,12 @@ class CustomerClient {
 		String eventId = br.readLine().trim();
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
-		logger.info(managerObj.eventBooking(customerId, eventId, eventType));
+		if (eventId.charAt(3) == 'M' || eventId.charAt(3) == 'A' || eventId.charAt(3) == 'E') {
+			logger.info(managerObj.eventBooking(customerId, eventId, eventType));
+		} else {
+			logger.info("Please Enter Proper Event ID");
+
+		}
 	}
 
 	public static void cancelEventOption(String customerId) throws IOException {
@@ -148,7 +152,11 @@ class CustomerClient {
 		String eventId = br.readLine().trim();
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
-		logger.info(managerObj.cancelBooking(customerId, eventId, eventType));
+		if (eventId.charAt(3) == 'M' || eventId.charAt(3) == 'A' || eventId.charAt(3) == 'E') {
+			logger.info(managerObj.cancelBooking(customerId, eventId, eventType));
+		} else {
+			logger.info("Please Enter Proper Event ID");
+		}
 	}
 
 	private static void swapEventOption(String customerId) throws IOException {
@@ -160,7 +168,12 @@ class CustomerClient {
 		String oldEventId = br.readLine().trim();
 		System.out.println("4. Old Event Type");
 		String oldEventType = br.readLine().trim();
-		logger.info(managerObj.swapEvent(customerId, newEventId, newEventType, oldEventId, oldEventType));
+		if ((newEventId.charAt(3) == 'M' || newEventId.charAt(3) == 'A' || newEventId.charAt(3) == 'E')
+				&& (oldEventId.charAt(3) == 'M' || oldEventId.charAt(3) == 'A' || oldEventId.charAt(3) == 'E')) {
+			logger.info(managerObj.swapEvent(customerId, newEventId, newEventType, oldEventId, oldEventType));
+		} else {
+			logger.info("Please Enter Proper Event ID");
+		}
 
 	}
 
@@ -171,10 +184,11 @@ class CustomerClient {
 		String eventType = br.readLine().trim();
 		System.out.println("3. Booking Capacity");
 		String eventCapacity = br.readLine().trim();
-		if(Integer.parseInt(eventCapacity.trim()) >=0) {
-			logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));	
-		}  else {
-			logger.info("Please Enter Proper Capacity");
+		if ((Integer.parseInt(eventCapacity.trim()) >= 0)
+				&& (eventId.charAt(3) == 'M' || eventId.charAt(3) == 'A' || eventId.charAt(3) == 'E')) {
+			logger.info(managerObj.addEvent(managerId, eventId, eventType, eventCapacity));
+		} else {
+			logger.info("Please Enter Proper Capacity or Proper ID");
 		}
 	}
 
@@ -189,7 +203,11 @@ class CustomerClient {
 		String eventId = br.readLine().trim();
 		System.out.println("2. Event Type");
 		String eventType = br.readLine().trim();
-		logger.info(managerObj.removeEvent(managerId, eventId, eventType));
+		if (eventId.charAt(3) == 'M' || eventId.charAt(3) == 'A' || eventId.charAt(3) == 'E') {
+			logger.info(managerObj.removeEvent(managerId, eventId, eventType));
+		} else {
+			logger.info("Please Enter Proper Event ID");
+		}
 	}
 
 	static void setLogger(String location, String id) {
